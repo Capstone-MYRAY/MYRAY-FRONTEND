@@ -25,7 +25,7 @@ function Footer(props) {
     <footer className={"footer" + (props.default ? " footer-default" : "")}>
       <Container fluid={props.fluid}>
         <div className="copyright">
-          &copy; {1900 + new Date().getYear()}, 
+          &copy; {1900 + new Date().getYear()},. 
           <a>
             MYRAY TEAM
           </a>

@@ -1,13 +1,9 @@
 import React from "react";
-// import firebase from 'firebase';
-import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
-
 // reactstrap components
 
 // core components
 import { useRecoilState } from "recoil";
 import { authState } from "state/authState";
-import axios from "axios";
 import jwt_decode from "jwt-decode";
 
 import authApi from "api/authApi";
@@ -46,8 +42,6 @@ function LoginPage() {
 
   const headerstyle = { color: "white", margin: "auto", width: "300px" };
 
-  const clearForm = (e) => {};
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -68,11 +62,14 @@ function LoginPage() {
         // setAuthUser(backendToken.role);
         localStorage.setItem('user', JSON.stringify(response.data));
         
-        if (backendToken.role !== 'Admin') {
+        if (backendToken.role === 'Admin') {
+          window.location.assign('/admin');
+        } else if (backendToken.role === 'Moderator') {
+          window.location.assign('/moderator');
+        } else {
           window.location.assign('/');
         }
         
-        window.location.assign('/admin');
       } else {
         window.location.assign('/');
       }
@@ -80,7 +77,6 @@ function LoginPage() {
     } catch (error) {
       console.log("Failed to login: ", error);
     }
-    //     clearForm(e);
     
   };
   return (

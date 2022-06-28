@@ -102,7 +102,7 @@ function Table({ columns, data }) {
       data,
       defaultColumn, // Be sure to pass the defaultColumn option
       filterTypes,
-      initialState: { pageSize: 10, pageIndex: 0 },
+      initialState: { pageSize: 20, pageIndex: 0 },
     },
     useFilters, // useFilters!
     useSortBy,
@@ -116,7 +116,7 @@ function Table({ columns, data }) {
     null,
     Array(pageOptions.length)
   ).map(function () {});
-  let numberOfRowsData = [50, 100];
+  let numberOfRowsData = [20, 50, 100];
   return (
     <>
       <div className="ReactTable -striped -highlight primary-pagination">

@@ -58,11 +58,19 @@ const events = [
   },
 ];
 
-const alumniStatus = {
-  reject: 'Reject',
-  pending: 'Pending',
-  active: 'Active',
-  deactive: 'Deactive ',
+const JobPostStatusEnglish = ["Cancel", "Pending", "Posted", "Reject", "Expired", "OutOfDate", "Start",];
+const JobPostStatusVN = ["Hủy bỏ", "Chưa giải quyết", "Đã đăng", "Đã từ chối", "Hết hạn", "Quá hạn", "Đã bắt đầu",];
+
+// const JobPostStatus = {
+//   Pending : 'Reject',
+//   pending: 'Pending',
+//   active: 'Active',
+//   deactive: 'Deactive ',
+// }
+
+const jobType = {
+  PayPerHourJob: 'Làm công',
+  PayPerTaskJob: 'Làm khoán'
 }
 
 
@@ -70,5 +78,8 @@ const baseAURL = "http://api.myray.site/api/v1";
 
 export {
   baseAURL, 
-  events
+  events,
+  JobPostStatusEnglish,
+  JobPostStatusVN,
+  jobType
 };

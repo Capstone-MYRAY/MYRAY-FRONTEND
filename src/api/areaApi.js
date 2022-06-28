@@ -1,9 +1,10 @@
 import axiosClient from "./axiosClient";
+import axiosClientFile from "./axiosClientFile";
 
 const areaApi = {
   // [Admin] Endpoint for get all areas with condition
   getAll: (params) => {
-    const url = '/Area';
+    const url = '/area';
     return axiosClient.get(url, { params });
   },
 
@@ -27,6 +28,10 @@ const areaApi = {
   patch: (id, status) => {
     return axiosClient.patch(`alumnus/activate?id=${id}&status=${status}`);
   },
+
+  getProvince: () => { 
+    return axiosClientFile.get(`/quanhuyen.json`);
+  }
 
 }
 

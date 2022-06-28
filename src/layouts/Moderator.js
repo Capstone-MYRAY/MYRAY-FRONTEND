@@ -24,89 +24,23 @@ import NotificationAlert from "react-notification-alert";
 // core components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Footer from "components/Footer/Footer.js";
-import Sidebar from "components/Sidebar/Sidebar.js";
+import SidebarModerator from "components/Sidebar/SidebarModerator";
 
-import routes from "routes.js";
+import routesModerator from "routesModerator";
 import { useRecoilState } from "recoil";
-import { listAreaState } from "state/areaState";
-import { listTreeTypesState } from "state/treeTypeState";
-import { listPostTypesState } from "state/postTypeState";
-import areaApi from "api/areaApi";
-import treeTypeApi from "api/treeTypeApi";
-import postTypeApi from "api/postTypeApi";
+// import { listAreaState } from "state/areaState";
+// import { listTreeTypesState } from "state/treeTypeState";
+// import { listPostTypesState } from "state/postTypeState";
+// import areaApi from "api/areaApi";
+// import treeTypeApi from "api/treeTypeApi";
+// import postTypeApi from "api/postTypeApi";
 
 
 var ps;
 
-function Admin(props) {
+function Moderator(props) {
 
 const conditionDefault = {page:1, 'page-size': 20};
-
-//Area state
-const [listArea, setListArea] = useRecoilState(listAreaState);
-//-----------------------------Call API to get list area, then set to area state
-useEffect(() => {
-  const fetchListArea = async () => {
-   
-    try {
-       //Area
-       const response = await areaApi.getAll(conditionDefault);
- 
-       setListArea(response.data.list_object);
-       console.log("Success to fetch list area. ", response.data.list_object);
-
-      //  const responseGetProvince = await areaApi.getProvince();
-
-      // fetch.
-       console.log("Success to fetch list responseGetProvince. ", response.data);
-
-    } catch (err) {
-      console.log("Failed to fetch list responseGetProvince. ", err);
-    }
-  }
-  
-  fetchListArea();
-},[]);
-
-//Tree type state
-const [listTreeTypes, setListTreeTypes] = useRecoilState(listTreeTypesState);
-//-----------------------------Call API to get list Tree Types, then set to Tree Types state
-useEffect(() => {
-  const fetchListTreeTypes = async () => {
-   
-    try {
-       //Tree Types
-       const response = await treeTypeApi.getAll(conditionDefault);
- 
-       setListTreeTypes(response.data.list_object);
-       console.log("Success to fetch list Tree Types. ", response.data.list_object);
-    } catch (err) {
-      console.log("Failed to fetch list Tree Types. ", err);
-    }
-  }
-  
-  fetchListTreeTypes();
-},[]);
-
-//Post type state
-const [listPostTypes, setListPostTypes] = useRecoilState(listPostTypesState);
-//-----------------------------Call API to get list Post Types, then set to Post Types state
-useEffect(() => {
-  const fetchListPostTypes = async () => {
-   
-    try {
-       //ALUMNI
-       const response = await postTypeApi.getAll(conditionDefault);
- 
-       setListPostTypes(response.data.list_object);
-       console.log("Success to fetch list Post Types. ", response.data.list_object);
-    } catch (err) {
-      console.log("Failed to fetch list Post Types. ", err);
-    }
-  }
-  
-  fetchListPostTypes();
-},[]);
 
   const location = useLocation();
   const [sidebarMini, setSidebarMini] = React.useState(true);
@@ -160,7 +94,7 @@ useEffect(() => {
       if (prop.collapse) {
         return getRoutes(prop.views);
       }
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/moderator") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -196,17 +130,17 @@ useEffect(() => {
   return (
     <div className="wrapper">
       <NotificationAlert ref={notificationAlert} />
-      <Sidebar
+      <SidebarModerator
         {...props}
-        routes={routes}
+        routes={routesModerator}
         minimizeSidebar={minimizeSidebar}
         backgroundColor={backgroundColor}
       />
       <div className="main-panel" ref={mainPanel}>
-        <AdminNavbar {...props} brandText={getActiveRoute(routes)} />
+        <AdminNavbar {...props} brandText={getActiveRoute(routesModerator)} />
         <Switch>
-          {getRoutes(routes)}
-          <Redirect from="/admin" to="/admin/bang-dieu-khien" />
+          {getRoutes(routesModerator)}
+          <Redirect from="/moderator" to="/moderator/bang-dieu-khien-moderator" />
         </Switch>
         {
           // we don't want the Footer to be rendered on full screen maps page
@@ -220,4 +154,4 @@ useEffect(() => {
   );
 }
 
-export default Admin;
+export default Moderator;

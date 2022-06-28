@@ -1,14 +1,9 @@
 // core components
-import areaApi from "api/areaApi";
-import treeTypeApi from "api/treeTypeApi";
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import ReactTable from "components/ReactTable/ReactTable.js";
-import momentjs from "moment";
 import "moment-timezone";
 import React, { useEffect, useState } from "react";
-import Datetime from "react-datetime";
-import Moment from "react-moment";
-import Select from "react-select";
+
 // reactstrap components
 import {
   Button,
@@ -20,23 +15,19 @@ import {
   Form,
   FormGroup,
   Input,
-  Modal,
-  ModalBody,
-  ModalHeader,
   Row,
-  Table,
   Label,
 } from "reactstrap";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { listTreeTypesState } from "state/treeTypeState";
+import treeTypeApi from "api/treeTypeApi";
 
 function ListTreeTypesScreen() {
   //TreeType state
-  const [treeTypeList, setlistTreeTypes] = useRecoilState(listTreeTypesState);
-  const [openEditModal, setOpenEditModal] = useState(false);
+  const [treeTypeList, setListTreeTypes] = useRecoilState(listTreeTypesState);
   const [selectedTreeType, setSelectedTreeType] = useState({});
-  const [isOpenDetail, setIsOpentDetail] = useState(false);
-  const [isOpenEdit, setIsOpentEdit] = useState(false);
+  const [isCreate, setIsCreate] = useState(true);
+
   const [filtersParams, setFiltersParams] = useState({
     page: 1,
     "page-size": 20,
@@ -49,7 +40,7 @@ function ListTreeTypesScreen() {
       try {
         //TreeTypes
         const response = await treeTypeApi.getAll(filtersParams);
-        setlistTreeTypes(response.data.list_object);
+        setListTreeTypes(response.data.list_object);
       } catch (err) {
         console.log("Failed to fetch list TreeTypes. ", err);
       }
@@ -59,33 +50,32 @@ function ListTreeTypesScreen() {
 
   const fetchListTreeType = async (filters) => {
     try {
-      //ALUMNI
+      //tree type
       const response = await treeTypeApi.getAll(filters);
-      response.data ? setlistTreeTypes(response.data) : setlistTreeTypes([]);
+      response.data
+        ? setListTreeTypes(response.data.list_object)
+        : setListTreeTypes([]);
     } catch (err) {
       console.log("Failed to fetch list TreeType. ", err);
     }
   };
 
-  const closeModal = () => {
-    setIsOpentDetail(false);
-  };
-
-  const closeEditModal = () => {
-    setIsOpentEdit(false);
-  };
-
-  //open Edit Modal
-  const openEditTreeTypeModal = () => {
-    setIsOpentDetail(true);
-    setIsOpentEdit(true);
+  //Press "Them moi loai cay" button"
+  const clearFormForCreate = (e) => {
+    setSelectedTreeType(null);
+    setIsCreate(true);
+    e.target.type.value = "";
+    e.target.description.value = "";
   };
 
   //Handle edit button
   const editTreeType = (treeType) => {
     setSelectedTreeType(treeType);
-    setIsOpentDetail(true);
-    setOpenEditModal(true);
+    setIsCreate(false);
+    console.log(
+      "🚀 ~ file: List treeType.js ~ selectedTreeType",
+      selectedTreeType
+    );
   };
 
   //Handle delete button
@@ -99,8 +89,7 @@ function ListTreeTypesScreen() {
       );
 
       try {
-        const response = await treeTypeApi.getAll(filtersParams);
-        setlistTreeTypes(response.data);
+        fetchListTreeType(filtersParams);
       } catch (err) {
         console.log("Failed to fetch list treeType. ", err);
       }
@@ -112,38 +101,53 @@ function ListTreeTypesScreen() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updateTreeType = {
-      id: selectedTreeType.id,
-      type: e.target.type.value,
-      description: e.target.description.value,
-    };
-
     try {
-      const response = await treeTypeApi.put(updateTreeType);
-      console.log(
-        "🚀 ~ file: List treeType.js ~ line 197 ~ handleSubmit ~ response",
-        response
-      );
+      let treeTypeObj = {};
+      if (isCreate) {
+        treeTypeObj = {
+          type: e.target.type.value,
+          description: e.target.description.value,
+        };
+
+        const responseCreate = await treeTypeApi.post(treeTypeObj);
+        console.log(
+          "🚀 ~ file: List treeType.js ~ line 197 ~ handleSubmit ~ responseCreate",
+          responseCreate
+        );
+        alert(`Create successfully!`);
+      } else {
+        treeTypeObj = {
+          id: selectedTreeType ? selectedTreeType.id : null,
+          type: e.target.type.value,
+          description: e.target.description.value,
+          status: selectedTreeType.status,
+        };
+
+        const responseUpdate = await treeTypeApi.put(treeTypeObj);
+        console.log(
+          "🚀 ~ file: List treeType.js ~ line 197 ~ handleSubmit ~ responseUpdate",
+          responseUpdate
+        );
+        alert(`Update successfully!`);
+      }
 
       try {
-        const listTreeTypeUpdate = await treeTypeApi.getAll(filtersParams);
-        setlistTreeTypes(listTreeTypeUpdate.data);
+        fetchListTreeType(filtersParams);
+        clearFormForCreate(e);
       } catch (err) {
         console.log("Failed to fetch list TreeType. ", err);
       }
-
-      alert(`Update successfully!`);
     } catch (err) {
-      alert(`Failed to update TreeType ${err}`);
+      if (isCreate) {
+        alert(`Failed to create TreeType ${err}`);
+      } else {
+        alert(`Failed to update TreeType ${err}`);
+      }
     }
-
-    setOpenEditModal(false);
-    setIsOpentDetail(false);
   };
 
   const dataState = treeTypeList.map((prop, key) => {
     key = prop.id;
-    console.log("PROPS ", prop);
     return {
       id: key,
       type: prop.type,
@@ -155,7 +159,7 @@ function ListTreeTypesScreen() {
           <Button
             onClick={editTreeType.bind(this, prop)}
             className="btn-icon btn-round"
-            color="success"
+            color="primary"
             size="sm"
           >
             <i className="fa fa-edit" />
@@ -174,6 +178,8 @@ function ListTreeTypesScreen() {
     };
   });
 
+  const btnStyle = { width: "max-content" };
+
   return (
     <>
       <PanelHeader size="sm" />
@@ -184,14 +190,29 @@ function ListTreeTypesScreen() {
             <Card>
               <CardHeader>
                 <Row>
-                  <Col xs={10} md={10}>
+                  <Col xs={9} md={9}>
                     <CardTitle tag="h4">Quản lý loại cây</CardTitle>
                   </Col>
+                  {!isCreate ? (
+                    <div>
+                      <Col xs={4} md={4}>
+                        <Button
+                          color="primary"
+                          style={btnStyle}
+                          onClick={clearFormForCreate}
+                        >
+                          Thêm mới loại cây
+                        </Button>
+                      </Col>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
                 </Row>
               </CardHeader>
               <CardBody>
                 <ReactTable
-                  models="alumni"
+                  models="treetype"
                   data={dataState}
                   columns={[
                     {
@@ -224,7 +245,11 @@ function ListTreeTypesScreen() {
                     <CardHeader>
                       <Row>
                         <Col xs={6} md={6}>
-                          <h5 className="card-title">Thêm mới loại cây</h5>
+                          <h5 className="card-title">
+                            {isCreate
+                              ? "Thêm mới loại cây"
+                              : "Chỉnh sửa loại cây"}
+                          </h5>
                         </Col>
                       </Row>
                     </CardHeader>
@@ -232,21 +257,27 @@ function ListTreeTypesScreen() {
                     <CardBody>
                       <Row>
                         <Col md="12">
-                          <Form>
+                          <Form onSubmit={handleSubmit}>
                             <Row className="d-flex justify-content-center">
                               <Col md="7">
                                 <Row>
-                                <Col md="12">
-                                <FormGroup className="">
-                                  <Label className="font-weight-bold">Loại cây</Label>
+                                  <Col md="12">
+                                    <FormGroup className="">
+                                      <Label className="font-weight-bold">
+                                        Loại cây
+                                      </Label>
                                       <Input
-                                        defaultValue=""
+                                        defaultValue={
+                                          selectedTreeType
+                                            ? selectedTreeType.type
+                                            : ""
+                                        }
                                         placeholder="Hãy nhập tên loại cây"
                                         type="text"
                                         name={"type"}
                                       />
                                     </FormGroup>
-                                    </Col>
+                                  </Col>
                                 </Row>
 
                                 <Row>
@@ -260,7 +291,11 @@ function ListTreeTypesScreen() {
                                         placeholder="Hãy nhập mô tả loại cây"
                                         rows="4"
                                         type="textarea"
-                                        defaultValue={selectedTreeType.description}
+                                        defaultValue={
+                                          selectedTreeType
+                                            ? selectedTreeType.description
+                                            : ""
+                                        }
                                         name={"description"}
                                       />
                                     </FormGroup>
@@ -270,20 +305,17 @@ function ListTreeTypesScreen() {
                             </Row>
 
                             <div className="d-flex justify-content-center">
-                              <Button
-                                className="mr-2"
-                                onClick={openEditTreeTypeModal}
-                                color="success"
-                              >
-                                Update
-                              </Button>
-                              <Button
-                                className="ml-2"
-                                onClick={closeModal}
-                                color="danger"
-                              >
-                                Cancel
-                              </Button>
+                              <Row>
+                                <Col md="12">
+                                  <Button
+                                    type="submit"
+                                    className="mr-2"
+                                    color="primary"
+                                  >
+                                    {isCreate ? "Create" : "Update"}
+                                  </Button>
+                                </Col>
+                              </Row>
                             </div>
                           </Form>
                         </Col>
@@ -295,44 +327,6 @@ function ListTreeTypesScreen() {
             </div>
           </Col>
         </Row>
-      </div>
-
-      <div>
-        <Modal
-          isOpen={isOpenEdit}
-          size="lg"
-          style={{ maxWidth: "1000px", width: "100%" }}
-        >
-          <ModalHeader>Thông tin loại cây</ModalHeader>
-            <ModalBody>
-              <Row>
-                <Col xs={12} md={12}>
-                  <Card>
-                    <CardBody>
-                      <div className="content mt-1">
-                        <Row>
-                          <Col md="12">
-                            
-                                <Form onSubmit={handleSubmit}>
-                                  
-                                 
-
-                                  <div className="d-flex justify-content-center">
-                                    <Button type="submit" className="mr-2" color="success">Update</Button>
-                                    <Button className="ml-2" onClick={closeEditModal} color="danger">Cancel</Button>
-                                  </div>
-                                </Form>
-                              
-                          </Col>
-                          
-                        </Row>
-                      </div>
-                    </CardBody>
-                  </Card>
-                </Col>
-              </Row>
-            </ModalBody>
-        </Modal>
       </div>
     </>
   );

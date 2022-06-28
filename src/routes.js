@@ -24,6 +24,7 @@ import ListAreasScreen from "views/ManageAreas/ListAreasScreen";
 import ListTreeTypesScreen from "views/ManageTreeType/ListTreeTypesScreen";
 import ListPostTypesScreen from "views/ManagePostTypes/ListPostTypesScreen";
 import ListGuidePostsScreen from "views/ManageGuidePosts/ListGuidePostsScreen";
+import AddNewArea from "views/ManageAreas/AddNewArea";
 //=======================
 
 
@@ -43,11 +44,22 @@ let routes = [
     layout: "/admin",
   },
   {
+    // collapse: true,
     path: "/khu-vuc",
     name: "Khu vưc",
+    state: "openAreas",
     icon: "fa fa-map text-green",
     component: ListAreasScreen,
     layout: "/admin",
+    // views: [
+    //   {
+    //     path: "/add-area",
+    //     name: "Thêm mới khu vực",
+    //     mini: "LN",
+    //     component: AddNewArea,
+    //     layout: "/admin",
+    //   },
+    // ],
   },
   {
     path: "/ky-thuat-lam-nong",

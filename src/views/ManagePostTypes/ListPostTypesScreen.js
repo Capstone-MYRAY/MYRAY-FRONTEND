@@ -1,17 +1,366 @@
 // core components
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
-import 'moment-timezone';
-import React from "react";
-
-
+import ReactTable from "components/ReactTable/ReactTable.js";
+import "moment-timezone";
+import React, { useEffect, useState } from "react";
+// reactstrap components
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  Row,
+  Label,
+} from "reactstrap";
+import { useRecoilState } from "recoil";
+import { listPostTypesState } from "state/postTypeState";
+import postTypeApi from "api/postTypeApi";
 
 function ListPostTypesScreen() {
+  //TreeType state
+  const [postTypeList, setListPostTypes] = useRecoilState(listPostTypesState);
+  const [selectedPostType, setSelectedPostType] = useState({});
+  const [isCreate, setIsCreate] = useState(true);
 
+  const [filtersParams, setFiltersParams] = useState({
+    page: 1,
+    "page-size": 20,
+  });
+
+  //PostType state
+  //-----------------------------Call API to get list PostType, then set to PostType state
+  useEffect(() => {
+    const fetchListPostTypes = async () => {
+      try {
+        //TreeTypes
+        const response = await postTypeApi.getAll(filtersParams);
+        setListPostTypes(response.data.list_object);
+      } catch (err) {
+        console.log("Failed to fetch list postType. ", err);
+      }
+    };
+    fetchListPostTypes();
+  }, []);
+
+  const fetchListPostType = async (filters) => {
+    try {
+      //Post Type
+      const response = await postTypeApi.getAll(filters);
+      response.data ? setListPostTypes(response.data.list_object) : setListPostTypes([]);
+    } catch (err) {
+      console.log("Failed to fetch list postType. ", err);
+    }
+  };
+
+  //Press "Them moi loai tin button"
+  const clearFormForCreate = (e) => {
+    setSelectedPostType(null);
+    setIsCreate(true);
+      e.target.name.value = "";
+      e.target.description.value = "";
+      e.target.price.value = "";
+      e.target.color.value = "";
+  }
+
+  //Handle edit button
+  const editPostType = (postType) => {
+    setSelectedPostType(postType);
+    setIsCreate(false);
+    console.log(
+      "🚀 ~ file: List PostType.js ~ selectedPostType",
+      selectedPostType
+    );
+  };
+
+  //Handle delete button
+  const deletePostType = async (postType) => {
+    setSelectedPostType(postType);
+    try {
+      const response = await postTypeApi.delete(postType.id);
+      console.log(
+        "🚀 ~ file: List PostType.js ~ line 197 ~ handleSubmit ~ response",
+        response
+      );
+
+      try {
+        fetchListPostType(filtersParams);
+      } catch (err) {
+        console.log("Failed to fetch list postType. ", err);
+      }
+
+      alert(`Delete successfully!`);
+    } catch (err) {
+      alert(`Failed to delete postType ${err}`);
+    }
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  try {
+    let postTypeObj = {};
+    if (isCreate) {
+      postTypeObj = {
+        name: e.target.name.value,
+        description: e.target.description.value,
+        price: e.target.price.value,
+        color: e.target.color.value,
+      };
+
+      const responseCreate = await postTypeApi.post(postTypeObj);
+      console.log(
+        "🚀 ~ file: List postType.js ~ line 197 ~ handleSubmit ~ responseCreate",
+        responseCreate
+      );
+      alert(`Create successfully!`);
+
+    } else {
+      postTypeObj = {
+        id: selectedPostType ? selectedPostType.id : null,
+        name: e.target.name.value,
+        description: e.target.description.value,
+        price: e.target.price.value,
+        color: e.target.color.value,
+      };
+
+      const responseUpdate = await postTypeApi.put(postTypeObj);
+      console.log(
+        "🚀 ~ file: List postType.js ~ line 197 ~ handleSubmit ~ responseUpdate",
+        responseUpdate
+      );
+      alert(`Update successfully!`);
+
+    }
+
+      try {
+        fetchListPostType(filtersParams);
+        clearFormForCreate(e);
+      } catch (err) {
+        console.log("Failed to fetch list postType. ", err);
+      }
+      
+    } catch (err) {
+      if (isCreate) {
+        alert(`Failed to create postType ${err}`);
+      } else {
+        alert(`Failed to update postType ${err}`);
+      }
+    }
+  };
+
+  const dataState = postTypeList.map((prop, key) => {
+    key = prop.id;
+    return {
+      id: key,
+      name: prop.name,
+      description: prop.description,
+      price: prop.price,
+      color: prop.color,
+      actions: (
+        // we've added some custom button actions
+        <div className="actions-right">
+          {/* use this button to add a edit kind of action */}
+          <Button
+            onClick={editPostType.bind(this, prop)}
+            className="btn-icon btn-round"
+            color="primary"
+            size="sm"
+          >
+            <i className="fa fa-edit" />
+          </Button>{" "}
+          {/* use this button to remove the data row */}
+          <Button
+            onClick={deletePostType.bind(this, prop)}
+            className="btn-icon btn-round"
+            color="danger"
+            size="sm"
+          >
+            <i className="fa fa-times" />
+          </Button>{" "}
+        </div>
+      ),
+    };
+  });
+
+  const btnStyle = { width: 'max-content'};
 
   return (
     <>
       <PanelHeader size="sm" />
-      
+
+      <div className="content mt-1">
+        <Row>
+          <Col xs={7} md={7}>
+            <Card>
+              <CardHeader>
+
+                <Row>
+                    <Col xs={9} md={9}>
+                    <CardTitle tag="h4">Quản lý loại tin</CardTitle>
+                  </Col>
+                  {!isCreate ? (
+                    <div>
+                    <Col xs={4} md={4}>
+                        <Button 
+                        color="primary" 
+                        style={btnStyle}
+                        onClick={clearFormForCreate}>
+                          Thêm mới loại tin
+                          </Button>
+                    </Col>
+                    </div> )
+                    : <div></div>
+                    }
+                  </Row>
+
+
+              </CardHeader>
+              <CardBody>
+                <ReactTable
+                  models="treetype"
+                  data={dataState}
+                  columns={[
+                    {
+                      Header: "Loại tin",
+                      accessor: "name",
+                    },
+                    {
+                      Header: "Giá tiền",
+                      accessor: "price",
+                    },
+                    {
+                      Header: "Màu sắc",
+                      accessor: "color",
+                    },
+                    {
+                      Header: "Quản lý",
+                      accessor: "actions",
+                      sortable: false,
+                      filterable: false,
+                    },
+                  ]}
+                />
+              </CardBody>
+            </Card>
+          </Col>
+
+          <Col xs={5} md={5}>
+            {/* DETAILS */}
+
+            <div>
+              <Row>
+                <Col md="12">
+                  <Card>
+                    <CardHeader>
+                      <Row>
+                        <Col xs={6} md={6}>
+                          <h5 className="card-title">
+                          {isCreate 
+                          ? "Thêm mới loại tin" 
+                          : "Chỉnh sửa loại tin"}
+                            </h5>
+                        </Col>
+                      </Row>
+                    </CardHeader>
+
+                    <CardBody>
+                      <Row>
+                        <Col md="12">
+                        <Form onSubmit={handleSubmit}>
+                            <Row className="d-flex justify-content-center">
+                              <Col md="7">
+                                <Row>
+                                <Col md="12">
+                                <FormGroup className="">
+                                  <Label className="font-weight-bold">Loại tin</Label>
+                                      <Input
+                                        defaultValue={selectedPostType? selectedPostType.name : ""}
+                                        placeholder="Hãy nhập tên loại tin"
+                                        type="text"
+                                        name={"name"}
+                                      />
+                                    </FormGroup>
+                                    </Col>
+                                </Row>
+
+                                <Row>
+                                <Col md="12">
+                                <FormGroup className="">
+                                  <Label className="font-weight-bold">Giá cả</Label>
+                                      <Input
+                                        defaultValue={selectedPostType? selectedPostType.price : ""}
+                                        placeholder="Hãy nhập giá"
+                                        type="text"
+                                        name={"price"}
+                                      />
+                                    </FormGroup>
+                                    </Col>
+                                </Row>
+
+                                <Row>
+                                <Col md="12">
+                                <FormGroup className="">
+                                  <Label className="font-weight-bold">Màu sắc hiển thị</Label>
+                                      <Input
+                                        defaultValue={selectedPostType? selectedPostType.color : ""}
+                                        placeholder="Hãy nhập màu sắc hiển thị"
+                                        type="text"
+                                        name={"color"}
+                                      />
+                                    </FormGroup>
+                                    </Col>
+                                </Row>
+
+                                <Row>
+                                  <Col md="12">
+                                    <FormGroup>
+                                      <Label className="font-weight-bold">
+                                        Mô tả
+                                      </Label>
+                                      <Input
+                                        cols="80"
+                                        placeholder="Hãy nhập mô tả loại tin"
+                                        rows="4"
+                                        type="textarea"
+                                        defaultValue={selectedPostType ? selectedPostType.description : ""}
+                                        name={"description"}
+                                      />
+                                    </FormGroup>
+                                  </Col>
+                                </Row>
+                              </Col>
+                            </Row>
+
+                            
+                            <div className="d-flex justify-content-center">
+                            <Row>
+                            <Col md="12">
+                              <Button
+                                type="submit"
+                                className="mr-2"
+                                color="primary"
+                              >
+                                {isCreate ? "Create" : "Update"} 
+                              </Button>
+                              </Col>
+                              </Row>
+                            </div>
+                            
+                          </Form>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Card>
+                </Col> 
+              </Row>
+            </div>
+          </Col>
+        </Row>
+      </div>
+
     </>
   );
 }

@@ -5,7 +5,7 @@ const authApi = {
 //         const headers = { 
 //             'token': token,
 //         };
-        return axiosClient.post(`/Authentication/login`, loginInput);
+        return axiosClient.post(`/authentication/login`, loginInput);
     }
 }
 
