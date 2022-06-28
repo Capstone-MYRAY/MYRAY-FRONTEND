@@ -57,7 +57,6 @@ useEffect(() => {
 
       //  const responseGetProvince = await areaApi.getProvince();
 
-      // fetch.
        console.log("Success to fetch list responseGetProvince. ", response.data);
 
     } catch (err) {
