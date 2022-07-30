@@ -23,15 +23,7 @@ import PropTypes from "prop-types";
 function Footer(props) {
   return (
     <footer className={"footer" + (props.default ? " footer-default" : "")}>
-      <Container fluid={props.fluid}>
-        <div className="copyright">
-          &copy; {1900 + new Date().getYear()},. 
-          <a>
-            MYRAY TEAM
-          </a>
-          .
-        </div>
-      </Container>
+      
     </footer>
   );
 }

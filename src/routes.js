@@ -1,23 +1,3 @@
-/*!
-
-=========================================================
-* Now UI Dashboard PRO React - v1.5.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/now-ui-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
-
-
 import DashboardScreen from "views/DashboardScreen/DashboardScreen";
 import ListModeratorsScreen from "views/ManageModerators/ListModeratorsScreen";
 import ListAreasScreen from "views/ManageAreas/ListAreasScreen";
@@ -25,8 +5,9 @@ import ListTreeTypesScreen from "views/ManageTreeType/ListTreeTypesScreen";
 import ListPostTypesScreen from "views/ManagePostTypes/ListPostTypesScreen";
 import ListGuidePostsScreen from "views/ManageGuidePosts/ListGuidePostsScreen";
 import AddNewArea from "views/ManageAreas/AddNewArea";
+import AddGuidePost from "views/ManageGuidePosts/AddGuidePost";
+import AddNewModerator from "views/ManageModerators/AddNewModerator";
 //=======================
-
 
 let routes = [
   {
@@ -37,36 +18,80 @@ let routes = [
     layout: "/admin",
   },
   {
+    collapse: true,
     path: "/nguoi-dieu-hanh",
     name: "Người điều hành",
+    state: "openModerator",
     icon: "fa fa-users text-green",
     component: ListModeratorsScreen,
+    // component: AddNewModerator,
     layout: "/admin",
+    views: [
+      {
+        path: "/nguoi-dieu-hanh",
+        name: "Người điều hành",
+        mini: "LN",
+        component: ListModeratorsScreen,
+        layout: "/admin",
+      },
+      {
+        path: "/them-moi-nguoi-dieu-hanh",
+        name: "Thêm mới người điều hành",
+        mini: "LN",
+        component: AddNewModerator,
+        layout: "/admin",
+      },
+    ],
   },
   {
-    // collapse: true,
+    collapse: true,
     path: "/khu-vuc",
-    name: "Khu vưc",
+    name: "Khu vực",
     state: "openAreas",
     icon: "fa fa-map text-green",
     component: ListAreasScreen,
     layout: "/admin",
-    // views: [
-    //   {
-    //     path: "/add-area",
-    //     name: "Thêm mới khu vực",
-    //     mini: "LN",
-    //     component: AddNewArea,
-    //     layout: "/admin",
-    //   },
-    // ],
+    views: [
+      {
+        path: "/khu-vuc",
+        name: "Khu vực",
+        mini: "LN",
+        component: ListAreasScreen,
+        layout: "/admin",
+      },
+      {
+        path: "/them-moi-khu-vuc",
+        name: "Thêm mới khu vực",
+        mini: "LN",
+        component: AddNewArea,
+        layout: "/admin",
+      },
+    ],
   },
   {
+    collapse: true,
     path: "/ky-thuat-lam-nong",
     name: "Kỹ thuật làm nông",
+    state: "openGuideposts",
     icon: "fa fa-cog text-green",
     component: ListGuidePostsScreen,
     layout: "/admin",
+    views: [
+      {
+        path: "/ky-thuat-lam-nong",
+        name: "Kỹ thuật làm nông",
+        mini: "LN",
+        component: ListGuidePostsScreen,
+        layout: "/admin",
+      },
+      {
+        path: "/them-moi-ky-thuat-lam-nong",
+        name: "Thêm mới kỹ thuật làm nông",
+        mini: "LN",
+        component: AddGuidePost,
+        layout: "/admin",
+      },
+    ],
   },
   {
     path: "/loai-cay",

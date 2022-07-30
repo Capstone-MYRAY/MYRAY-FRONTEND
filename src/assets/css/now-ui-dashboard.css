@@ -1643,7 +1643,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     border: 1px solid transparent; }
   .navbar .navbar-brand {
     text-transform: uppercase;
-    font-size: 0.8571em;
+    font-size: 1.2em;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     line-height: 1.625rem; }
@@ -5216,7 +5216,7 @@ Created using IcoMoon - icomoon.io
   .card label {
     font-size: 0.8571em;
     margin-bottom: 5px;
-    color: #9a9a9a; }
+    color: #fff; }
   .card .card-footer {
     background-color: transparent;
     border: 0; }
@@ -15152,7 +15152,7 @@ svg {
 .ReactTable .rt-thead .rt-th {
   font-size: 12px;
   text-transform: uppercase;
-  color: #9a9a9a;
+  color: #000000;
   font-weight: 400; }
 
 .react-tagsinput {

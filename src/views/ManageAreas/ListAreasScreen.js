@@ -2,7 +2,6 @@
 import areaApi from "api/areaApi";
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import ReactTable from "components/ReactTable/ReactTable.js";
-import momentjs from "moment";
 import "moment-timezone";
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
@@ -21,15 +20,25 @@ import {
   ModalBody,
   ModalHeader,
   Row,
+  Label,
   Table,
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { listAreaState } from "state/areaState";
+import {
+  listAreaState,
+  provinceComboboxData,
+  listDistrictState,
+} from "state/areaState";
+import {moderatorComboboxDataState} from "state/moderatorState";
 
 function ListAreasScreen() {
   //Alumni state
   const [areaList, setlistArea] = useRecoilState(listAreaState);
+  const provinceCombobox = useRecoilValue(provinceComboboxData);
+  const [districtsData, setDistrictsData] = useRecoilState(listDistrictState);
+  const [moderatorComboboxData, setModeratorComboboxData] = useRecoilState(moderatorComboboxDataState);
+
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedArea, setSelectedArea] = useState({});
   const [isOpenDetail, setIsOpentDetail] = useState(false);
@@ -39,26 +48,140 @@ function ListAreasScreen() {
     "page-size": 20,
   });
 
+  const [provinceFilterSelected, setProvinceFilterSelected] = useState({
+    value: -1,
+    label: "Tất cả tỉnh thành",
+  });
+
+  const provinceFilterSelectData = [
+    {
+      value: -1,
+      label: "Tỉnh thành",
+    },
+    ...provinceCombobox,
+  ];
+
+  const [districtsFilterSelectData, setDistrictsFilterSelectData] = useState([{
+    value: -1,
+    label: "Chọn quận huyện",
+  }]);
+
+  const [districtFilterSelected, setDistrictFilterSelected] = useState({
+    value: -1,
+    label: "Tất cả quận huyện",
+  });
+
+  const [communeDetailsSelected, setCommuneDetailsSelect] = useState({
+    value: -1,
+    label: 'Chọn xấ / thị trấn',
+  });
+
+  const [moderatorFilterSelected, setModeratorFilterSelected] = useState({
+    value: -1,
+    label: "Người điều hành",
+  });
+
+  const moderatorFilterSelectData = [
+    {
+      value: -1,
+      label: "Không có người điều hành",
+    },
+    ...moderatorComboboxData,
+  ];
+
+  //filter province
+  const filtersProvince = async (province) => {
+    setProvinceFilterSelected(province);
+    let filters = {};
+    if (province.value > -1) {
+      filters = { ...filtersParams, province: province.label };
+      console.log("province: province.label " + province.label);
+
+      //fetch districts of province
+      let districtInProvince = districtsData.filter(
+        (district) => district.parent_id == province.value
+      );
+
+      districtInProvince = districtInProvince.map((district) => {
+        return {
+          value: district.id,
+          label: `${district.name}`,
+          communes: district.phuong_xa,
+        };
+      });
+
+      setDistrictsFilterSelectData([{
+        value: -1,
+        label: "Tất cả quận huyện",
+      },
+      ...districtInProvince,]);
+
+      console.log("districtsFilterSelectData " + districtsFilterSelectData);
+
+
+    } else {
+      filters = {
+        page: 1,
+        "page-size": 20,
+      };
+
+      setDistrictsFilterSelectData([{
+        value: -1,
+        label: "Chọn quận huyện",
+      }])
+    }
+
+    setFiltersParams(filters);
+    fetchListArea(filters);
+  };
+
+  const filtersDistrict = async (district) => {
+    setDistrictFilterSelected(district);
+    console.log("districtsFilterSelectData " + districtsFilterSelectData);
+
+    let filters = {};
+    if (district.value > -1) {
+      filters = { ...filtersParams, district: district.label };
+      console.log("district: district.label " + district.label);
+
+    } else {
+      console.log("provinceFilterSelected " + provinceFilterSelected);
+      filters = {
+        page: 1,
+        "page-size": 20,
+        province: provinceFilterSelected.label,
+      };
+
+      setDistrictsFilterSelectData([{
+        value: -1,
+        label: "Chọn quận huyện",
+      }])
+    }
+
+    setFiltersParams(filters);
+    fetchListArea(filters);
+  }
+
   //Area state
   //-----------------------------Call API to get list Area, then set to Area state
   useEffect(() => {
     const fetchListArea = async () => {
       try {
         //Area
-        const response = await areaApi.getAll(filtersParams);
-        setlistArea(response.data.list_object);
+        fetchListArea(filtersParams);
       } catch (err) {
         console.log("Failed to fetch list Area. ", err);
       }
     };
     fetchListArea();
-  }, []);
+  }, [filtersParams, districtsFilterSelectData]);
 
   const fetchListArea = async (filters) => {
     try {
       //Area
       const response = await areaApi.getAll(filters);
-      response.data ? setlistArea(response.data) : setlistArea([]);
+      response.data ? setlistArea(response.data.list_object) : setlistArea([]);
+      console.log("Success to fetch list Area. ", response.data.list_object);
     } catch (err) {
       console.log("Failed to fetch list Area. ", err);
     }
@@ -80,6 +203,23 @@ function ListAreasScreen() {
 
   //Handle edit button
   const editArea = (area) => {
+    
+    setProvinceFilterSelected({
+      value: 0,
+      label: area.province,
+    });
+
+    setDistrictFilterSelected({
+      value: 0,
+      label: area.district,
+    })
+
+    setCommuneDetailsSelect({
+      value: 0,
+      label: area.commune,
+    })
+
+
     setSelectedArea(area);
     setIsOpentDetail(true);
     setOpenEditModal(true);
@@ -111,29 +251,36 @@ function ListAreasScreen() {
     e.preventDefault();
     const updateArea = {
       id: selectedArea.id,
-      province: e.target.province.value,
-      district: e.target.district.value,
-      commune: e.target.commune.value,
-    };
-
-    try {
-      const response = await areaApi.put(updateArea);
-      console.log(
-        "🚀 ~ file: List Area.js ~ line 197 ~ handleSubmit ~ response",
-        response
-      );
-
-      try {
-        const listAreaUpdate = await areaApi.getAll();
-        setlistArea(listAreaUpdate.data);
-      } catch (err) {
-        console.log("Failed to fetch list Area. ", err);
-      }
-
-      alert(`Update successfully!`);
-    } catch (err) {
-      alert(`Failed to update Area ${err}`);
+      province: provinceFilterSelected.label,
+      district: districtFilterSelected.label,
+      commune: communeDetailsSelected.label,
+      moderator_id: moderatorFilterSelected.value == -1 ? null : moderatorFilterSelected.value,
     }
+
+    console.log(
+          "🚀 ~ file: List Area.js ~ line 197 ~ handleSubmit ~ updateArea",
+          updateArea
+        );
+
+
+    // try {
+    //   const response = await areaApi.put(updateArea);
+    //   console.log(
+    //     "🚀 ~ file: List Area.js ~ line 197 ~ handleSubmit ~ response",
+    //     response
+    //   );
+
+    //   try {
+    //     const listAreaUpdate = await areaApi.getAll();
+    //     setlistArea(listAreaUpdate.data);
+    //   } catch (err) {
+    //     console.log("Failed to fetch list Area. ", err);
+    //   }
+
+    //   alert(`Update successfully!`);
+    // } catch (err) {
+    //   alert(`Failed to update Area ${err}`);
+    // }
 
     setOpenEditModal(false);
     setIsOpentDetail(false);
@@ -149,27 +296,27 @@ function ListAreasScreen() {
       moderator:
         prop.area_accounts.length > 0
           ? prop.area_accounts[0].account.fullname
-          : "None",
+          : "Chưa có người điều hành",
       actions: (
         // we've added some custom button actions
         <div className="actions-right">
           {/* use this button to add a edit kind of action */}
           <Button
             onClick={editArea.bind(this, prop)}
-            className="btn-icon btn-round"
+            className="btn-round"
             color="primary"
             size="sm"
           >
-            <i className="fa fa-edit" />
+            Chi tiết
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
             onClick={deleteArea.bind(this, prop)}
-            className="btn-icon btn-round"
+            className="btn-round"
             color="danger"
             size="sm"
           >
-            <i className="fa fa-times" />
+            Ẩn
           </Button>{" "}
         </div>
       ),
@@ -190,8 +337,8 @@ function ListAreasScreen() {
                       <CardTitle tag="h4">Quản lý khu vực</CardTitle>
                     </Col>
                     <Col xs={2} md={2}>
-                      <Link to="/admin/add-area">
-                        <Button color="primary">Thêm khu vực mới</Button>
+                      <Link to="/admin/them-moi-khu-vuc">
+                        <Button color="primary">Thêm mới</Button>
                       </Link>
                     </Col>
                   </Row>
@@ -206,15 +353,14 @@ function ListAreasScreen() {
                           classNamePrefix="react-select"
                           placeholder="Chọn tỉnh thành"
                           name="province"
-                          //   value={universityFilterSelected}
-                          //   // options={selectOptions}
-                          //   onChange={filtersUni}
-                          //   options={universityFilterSelectData.map((prop) => {
-                          //     return {
-                          //       value: prop.value,
-                          //       label: prop.label,
-                          //     };
-                          //   })}
+                          value={provinceFilterSelected}
+                          onChange={filtersProvince}
+                          options={provinceFilterSelectData.map((prop) => {
+                            return {
+                              value: prop.value,
+                              label: prop.label,
+                            };
+                          })}
                         />
                       </FormGroup>
                     </Col>
@@ -227,14 +373,15 @@ function ListAreasScreen() {
                           classNamePrefix="react-select"
                           placeholder="Chọn quận huyện"
                           name="district"
-                          //   value={companyFilterSelected}
-                          //   onChange={filters}
-                          //   options={companyFilterSelectData.map((prop) => {
-                          //     return {
-                          //       value: prop.value,
-                          //       label: prop.label,
-                          //     };
-                          //   })}
+                            value={districtFilterSelected}
+                            onChange={filtersDistrict}
+                            options={districtsFilterSelectData.map((prop) => {
+                              return {
+                                value: prop.value,
+                                label: prop.label,
+                                communes: prop.communes,
+                              };
+                            })}
                         />
                       </FormGroup>
                     </Col>
@@ -262,7 +409,7 @@ function ListAreasScreen() {
                         accessor: "moderator",
                       },
                       {
-                        Header: "Quản lý",
+                        Header: "",
                         accessor: "actions",
                         sortable: false,
                         filterable: false,
@@ -325,14 +472,14 @@ function ListAreasScreen() {
                               onClick={openEditAreaModal}
                               color="primary"
                             >
-                              Update
+                              Chỉnh sửa 
                             </Button>
                             <Button
                               className="ml-2"
                               onClick={closeModal}
                               color="danger"
                             >
-                              Cancel
+                              Đóng
                             </Button>
                           </div>
                         </Form>
@@ -348,59 +495,96 @@ function ListAreasScreen() {
             isOpen={isOpenEdit}
             size="lg"
             style={{ maxWidth: "800px", width: "100%" }}
+            className="mt-5"
           >
             <ModalHeader>Thông tin khu vực</ModalHeader>
             <ModalBody>
               <Row>
                 <Col xs={12} md={12}>
-                  <Card>
-                    <CardBody>
+                  
+                   
                       <div className="content mt-1">
                         <Row>
                           <Col md="12">
                             <Form onSubmit={handleSubmit}>
                               <Col className="px-1" md="8">
                                 <FormGroup>
-                                  <label>Tỉnh thành</label>
+                                  <Label className="font-weight-bold">Tỉnh thành</Label>
                                   <Select
-                                    className="react-select primary"
-                                    classNamePrefix="react-select"
-                                    placeholder="Chọn tỉnh thành"
-                                    name="province"
-                                  />
+                                            isDisabled={true}
+                                            className="react-select primary"
+                                            classNamePrefix="react-select"
+                                            placeholder="Tỉnh thành"
+                                            name="province"
+                                            value={provinceFilterSelected}
+                                            onChange={(value) => setProvinceFilterSelected(value)}
+                                            options={provinceFilterSelectData.map((prop) => {
+                                              return {
+                                                value: prop.value,
+                                                label: prop.label,
+                                              };
+                                            })}
+                                          />
                                 </FormGroup>
                               </Col>
                               <Col className="px-1" md="8">
                                 <FormGroup>
-                                  <label>Quận huyện</label>
+                                  <Label className="font-weight-bold">Quận huyện</Label>
                                   <Select
-                                    className="react-select primary"
-                                    classNamePrefix="react-select"
-                                    placeholder="Chọn quận huyện"
-                                    name="district"
-                                  />
+                                            isDisabled={true}
+                                            className="react-select primary"
+                                            classNamePrefix="react-select"
+                                            placeholder="Quận huyện"
+                                            name="district"
+                                            value={districtFilterSelected}
+                                            onChange={(value) => setDistrictFilterSelected(value)}
+                                            options={districtsFilterSelectData.map((prop) => {
+                                              return {
+                                                value: prop.value,
+                                                label: prop.label,
+                                                communes: prop.communes,
+                                              };
+                                            })}
+                                          />
                                 </FormGroup>
                               </Col>
                               <Col className="px-1" md="8">
                                 <FormGroup>
-                                  <label>Xã/Thị trấn</label>
+                                  <Label className="font-weight-bold">Xã/Thị trấnn</Label>
                                   <Select
-                                    className="react-select primary"
-                                    classNamePrefix="react-select"
-                                    placeholder="Chọn xã/thị trấn"
-                                    name="commune"
-                                  />
+                                            isDisabled={true}
+                                            className="react-select primary"
+                                            classNamePrefix="react-select"
+                                            placeholder="Tỉnh thành"
+                                            name="commune"
+                                            value={communeDetailsSelected}
+                                            onChange={(value) => setCommuneDetailsSelect(value)}
+                                            options={provinceFilterSelectData.map((prop) => {
+                                              return {
+                                                value: prop.value,
+                                                label: prop.label,
+                                              };
+                                            })}
+                                          />
                                 </FormGroup>
                               </Col>
                               <Col className="px-1" md="8">
                                 <FormGroup>
-                                  <label>Người điều hành</label>
+                                  <Label className="font-weight-bold">Người điều hành</Label>
                                   <Select
-                                    className="react-select primary"
-                                    classNamePrefix="react-select"
-                                    placeholder="Chọn người điều hành"
-                                    name="moderator"
-                                  />
+                                            className="react-select primary"
+                                            classNamePrefix="react-select"
+                                            placeholder="Người điều hành"
+                                            name="moderator"
+                                            value={moderatorFilterSelected}
+                                            onChange={(value) => setModeratorFilterSelected(value)}
+                                            options={moderatorFilterSelectData.map((prop) => {
+                                              return {
+                                                value: prop.value,
+                                                label: prop.label,
+                                              };
+                                            })}
+                                          />
                                 </FormGroup>
                               </Col>
 
@@ -410,22 +594,22 @@ function ListAreasScreen() {
                                   className="mr-2"
                                   color="primary"
                                 >
-                                  Update
+                                  Chỉnh sửa
                                 </Button>
                                 <Button
                                   className="ml-2"
                                   onClick={closeEditModal}
                                   color="danger"
                                 >
-                                  Cancel
+                                  Đóng
                                 </Button>
                               </div>
                             </Form>
                           </Col>
                         </Row>
                       </div>
-                    </CardBody>
-                  </Card>
+                    
+                 
                 </Col>
               </Row>
             </ModalBody>

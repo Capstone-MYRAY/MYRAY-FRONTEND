@@ -25,7 +25,7 @@ function DefaultColumnFilter({
   return (
     <FormGroup>
       <Input
-        placeholder={`Search ${count} records...`}
+        placeholder={`Tìm kiếm...`}
         type="text"
         onChange={(e) => {
           setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
@@ -45,12 +45,12 @@ fuzzyTextFilterFn.autoRemove = (val) => !val;
 // Our table component
 function Table({ columns, data }) {
   const [numberOfRows, setNumberOfRows] = React.useState({
-    value: 50,
-    label: "50 rows",
+    value: 20,
+    label: "20 kết quả",
   });
   const [pageSelect, handlePageSelect] = React.useState({
     value: 0,
-    label: "Page 1",
+    label: "Trang 1",
   });
   const filterTypes = React.useMemo(
     () => ({
@@ -129,13 +129,13 @@ function Table({ columns, data }) {
                 disabled={!canPreviousPage}
                 className="-btn"
               >
-                Previous
+                Trước
               </button>
             </div>
             <div className="-center">
               <Container>
                 <Row className="justify-content-center">
-                  <Col md="4" sm="6" xs="12">
+                  <Col md="6" sm="6" xs="12">
                     <Select
                       className="react-select primary"
                       classNamePrefix="react-select"
@@ -148,13 +148,13 @@ function Table({ columns, data }) {
                       options={pageSelectData.map((prop, key) => {
                         return {
                           value: key,
-                          label: "Page " + (key + 1),
+                          label: "Trang " + (key + 1),
                         };
                       })}
-                      placeholder="Choose Page"
+                      placeholder="Chọn trang"
                     />
                   </Col>
-                  <Col md="4" sm="6" xs="12">
+                  <Col md="6" sm="6" xs="12">
                     <Select
                       className="react-select primary"
                       classNamePrefix="react-select"
@@ -167,10 +167,10 @@ function Table({ columns, data }) {
                       options={numberOfRowsData.map((prop) => {
                         return {
                           value: prop,
-                          label: prop + " rows",
+                          label: prop + " kết quả",
                         };
                       })}
-                      placeholder="Choose Rows"
+                      placeholder="Chọn số dòng hiển thị"
                     />
                   </Col>
                 </Row>
@@ -183,7 +183,7 @@ function Table({ columns, data }) {
                 disabled={!canNextPage}
                 className="-btn"
               >
-                Next
+                Tiếp
               </button>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import axiosClient from "./axiosClient";
 
-const treeTypeApi = {
+const postTypeApi = {
  // [Admin] Endpoint for get all post types with condition
  getAll: (params) => {
     const url = '/posttype';
@@ -23,4 +23,4 @@ const treeTypeApi = {
   },
 }
 
-export default treeTypeApi;
+export default postTypeApi;

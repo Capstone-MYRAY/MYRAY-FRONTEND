@@ -1,19 +1,3 @@
-/*!
-
-=========================================================
-* Now UI Dashboard PRO React - v1.5.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/now-ui-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React, { useEffect } from "react";
 import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 // javascript plugin used to create scrollbars on windows
@@ -28,12 +12,15 @@ import SidebarModerator from "components/Sidebar/SidebarModerator";
 
 import routesModerator from "routesModerator";
 import { useRecoilState } from "recoil";
+import { accountState } from "state/accountState";
+import { reportState } from "state/reportState";
 // import { listAreaState } from "state/areaState";
 // import { listTreeTypesState } from "state/treeTypeState";
-// import { listPostTypesState } from "state/postTypeState";
-// import areaApi from "api/areaApi";
+import accountApi from "api/accountApi";
+import reportApi from "api/reportApi";
 // import treeTypeApi from "api/treeTypeApi";
 // import postTypeApi from "api/postTypeApi";
+import { roleId } from "variables/general";
 
 
 var ps;
@@ -41,12 +28,54 @@ var ps;
 function Moderator(props) {
 
 const conditionDefault = {page:1, 'page-size': 20};
+const [listAccounts, setListAccounts] = useRecoilState(accountState);
+const [listReports, setListReports] = useRecoilState(reportState);
 
   const location = useLocation();
   const [sidebarMini, setSidebarMini] = React.useState(true);
   const [backgroundColor, setBackgroundColor] = React.useState("orange");
   const notificationAlert = React.useRef();
   const mainPanel = React.useRef();
+
+//-----------------------------Call API to get list all moderators, then set to moderators state
+useEffect(() => {
+  const fetchListModerators = async () => {
+   
+    try {
+       //Moderators 
+       const response = await accountApi.getAll({...conditionDefault, roleId: roleId.landowner});
+       setListAccounts(response.data.list_object);
+       console.log("Success to fetch list account. ", response.data.list_object);
+
+    } catch (err) {
+      console.log("Failed to fetch list account. ", err);
+    }
+  }
+  
+  fetchListModerators();
+},[]);
+
+//-----------------------------Call API to get list all report, then set to report state
+useEffect(() => {
+  const fetchListReports = async () => {
+   
+    try {
+       //Moderators 
+       const response = await reportApi.getAll(conditionDefault);
+       setListReports(response.data.list_object);
+       console.log("Success to fetch list Reports. ", response.data.list_object);
+
+    } catch (err) {
+      console.log("Failed to fetch list Reports. ", err);
+    }
+  }
+  
+  fetchListReports();
+},[]);
+
+
+
+
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
       document.documentElement.className += " perfect-scrollbar-on";

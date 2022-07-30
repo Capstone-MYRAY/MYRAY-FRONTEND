@@ -1,19 +1,3 @@
-/*!
-
-=========================================================
-* Now UI Dashboard PRO React - v1.5.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/now-ui-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React, { useEffect } from "react";
 import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 // javascript plugin used to create scrollbars on windows
@@ -26,15 +10,22 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
+import { roleId } from "variables/general";
+
 import routes from "routes.js";
 import { useRecoilState } from "recoil";
-import { listAreaState } from "state/areaState";
+import { listAreaState, listProvinceState, listDistrictState, listCommuneState } from "state/areaState";
 import { listTreeTypesState } from "state/treeTypeState";
 import { listPostTypesState } from "state/postTypeState";
+import { moderatorState, moderatorsComboboxData } from "state/moderatorState";
+import { listGuidePostState } from "state/guidePostState";
+import { statisticState } from "state/statisticState";
 import areaApi from "api/areaApi";
 import treeTypeApi from "api/treeTypeApi";
 import postTypeApi from "api/postTypeApi";
-
+import moderatorApi from "api/moderatorApi";
+import guidePostApi from "api/guidePostApi";
+import statisticApi from "api/statisticApi";
 
 var ps;
 
@@ -42,8 +33,25 @@ function Admin(props) {
 
 const conditionDefault = {page:1, 'page-size': 20};
 
-//Area state
+// fetch('https://api.myray.site/upload/tinhthanh.json')
+//   .then(response => response.json())
+//   .then(data => {
+//     console.log("TINH NÈEEEEEEEEEEEEEEE:", data);
+//   });
+
+//State
 const [listArea, setListArea] = useRecoilState(listAreaState);
+const [listProvince, setListProvince] = useRecoilState(listProvinceState);
+const [listDistrict, setListDistrict] = useRecoilState(listDistrictState);
+const [listCommune, setListCommune] = useRecoilState(listCommuneState);
+const [listModerators, setListModerators] = useRecoilState(moderatorState);
+const [listModeratorsComboboxData, setListModeratorsComboboxData] = useRecoilState(moderatorsComboboxData);
+const [listGuidePost, setListGuidePost] = useRecoilState(listGuidePostState);
+const [listTreeTypes, setListTreeTypes] = useRecoilState(listTreeTypesState);
+const [listPostTypes, setListPostTypes] = useRecoilState(listPostTypesState);
+const [statisticResult, setStatisticResult] = useRecoilState(statisticState);
+
+
 //-----------------------------Call API to get list area, then set to area state
 useEffect(() => {
   const fetchListArea = async () => {
@@ -55,9 +63,17 @@ useEffect(() => {
        setListArea(response.data.list_object);
        console.log("Success to fetch list area. ", response.data.list_object);
 
-      //  const responseGetProvince = await areaApi.getProvince();
+       const responseGetProvince = await areaApi.getProvince();
+       setListProvince(responseGetProvince);
+       console.log("Success to fetch list responseGetProvince. ", responseGetProvince);
 
-       console.log("Success to fetch list responseGetProvince. ", response.data);
+       const responseDistrict = await areaApi.getDistrict();
+       setListDistrict(responseDistrict);
+       console.log("Success to fetch list responseDistrict. ", responseDistrict);
+
+       const responseGetCommune = await areaApi.getCommune();
+       setListCommune(responseGetCommune);
+       console.log("Success to fetch list responseGetCommune. ", responseGetCommune);
 
     } catch (err) {
       console.log("Failed to fetch list responseGetProvince. ", err);
@@ -67,8 +83,77 @@ useEffect(() => {
   fetchListArea();
 },[]);
 
+//-----------------------------Call API to get StatisticResult, then set to StatisticResult state
+useEffect(() => {
+  const fetchStatisticResult = async () => {
+   
+    try {
+       //StatisticResult
+       const response = await statisticApi.getStatistic();
+       setStatisticResult(response.data);
+       console.log("Success to fetch StatisticResult. ", response.data);
+    } catch (err) {
+      console.log("Failed to fetch StatisticResult. ", err);
+    }
+  }
+  
+  fetchStatisticResult();
+},[]);
+
+//-----------------------------Call API to get list moderators do not manage area, then set to moderators state
+useEffect(() => {
+  const fetchListModeratorsNoManage = async () => {
+   
+    try {
+       //Moderators do not manage area
+       const response = await moderatorApi.getModeratorNoManage(conditionDefault);
+       setListModeratorsComboboxData(response.data);
+       console.log("Success to fetch list moderator no manage. ", response.data);
+
+    } catch (err) {
+      console.log("Failed to fetch list moderator no manage. ", err);
+    }
+  }
+  
+  fetchListModeratorsNoManage();
+},[]);
+
+//-----------------------------Call API to get list all moderators, then set to moderators state
+useEffect(() => {
+  const fetchListModerators = async () => {
+   
+    try {
+       //Moderators 
+       const response = await moderatorApi.getAll(conditionDefault);
+       setListModerators(response.data.list_object);
+       console.log("Success to fetch list moderator. ", response.data.list_object);
+
+    } catch (err) {
+      console.log("Failed to fetch list moderator. ", err);
+    }
+  }
+  
+  fetchListModerators();
+},[]);
+
+//Guidepost state
+//-----------------------------Call API to get list Guidepost, then set to Guidepost state
+useEffect(() => {
+  const fetchListPostTypes = async () => {
+   
+    try {
+       const response = await guidePostApi.getAll(conditionDefault);
+       setListGuidePost(response.data.list_object);
+       console.log("Success to fetch list Guidepost. ", response.data.list_object);
+    } catch (err) {
+      console.log("Failed to fetch list Guidepost. ", err);
+    }
+  }
+  
+  fetchListPostTypes();
+},[]);
+
 //Tree type state
-const [listTreeTypes, setListTreeTypes] = useRecoilState(listTreeTypesState);
 //-----------------------------Call API to get list Tree Types, then set to Tree Types state
 useEffect(() => {
   const fetchListTreeTypes = async () => {
@@ -76,7 +161,6 @@ useEffect(() => {
     try {
        //Tree Types
        const response = await treeTypeApi.getAll(conditionDefault);
- 
        setListTreeTypes(response.data.list_object);
        console.log("Success to fetch list Tree Types. ", response.data.list_object);
     } catch (err) {
@@ -88,15 +172,12 @@ useEffect(() => {
 },[]);
 
 //Post type state
-const [listPostTypes, setListPostTypes] = useRecoilState(listPostTypesState);
 //-----------------------------Call API to get list Post Types, then set to Post Types state
 useEffect(() => {
   const fetchListPostTypes = async () => {
    
     try {
-       //ALUMNI
        const response = await postTypeApi.getAll(conditionDefault);
- 
        setListPostTypes(response.data.list_object);
        console.log("Success to fetch list Post Types. ", response.data.list_object);
     } catch (err) {

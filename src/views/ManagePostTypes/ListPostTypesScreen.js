@@ -159,26 +159,27 @@ function ListPostTypesScreen() {
       description: prop.description,
       price: prop.price,
       color: prop.color,
+      background: prop.background,
       actions: (
         // we've added some custom button actions
         <div className="actions-right">
           {/* use this button to add a edit kind of action */}
           <Button
             onClick={editPostType.bind(this, prop)}
-            className="btn-icon btn-round"
+            className="btn-round"
             color="primary"
             size="sm"
           >
-            <i className="fa fa-edit" />
+            Chi tiết
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
             onClick={deletePostType.bind(this, prop)}
-            className="btn-icon btn-round"
+            className="btn-round"
             color="danger"
             size="sm"
           >
-            <i className="fa fa-times" />
+            Xóa
           </Button>{" "}
         </div>
       ),
@@ -193,7 +194,7 @@ function ListPostTypesScreen() {
 
       <div className="content mt-1">
         <Row>
-          <Col xs={7} md={7}>
+          <Col xs={8} md={8}>
             <Card>
               <CardHeader>
 
@@ -208,7 +209,7 @@ function ListPostTypesScreen() {
                         color="primary" 
                         style={btnStyle}
                         onClick={clearFormForCreate}>
-                          Thêm mới loại tin
+                          Thêm mới
                           </Button>
                     </Col>
                     </div> )
@@ -232,11 +233,15 @@ function ListPostTypesScreen() {
                       accessor: "price",
                     },
                     {
-                      Header: "Màu sắc",
+                      Header: "Màu nền",
+                      accessor: "background",
+                    },
+                    {
+                      Header: "Màu chữ",
                       accessor: "color",
                     },
                     {
-                      Header: "Quản lý",
+                      Header: "",
                       accessor: "actions",
                       sortable: false,
                       filterable: false,
@@ -247,7 +252,7 @@ function ListPostTypesScreen() {
             </Card>
           </Col>
 
-          <Col xs={5} md={5}>
+          <Col xs={4} md={4}>
             {/* DETAILS */}
 
             <div>
@@ -303,9 +308,23 @@ function ListPostTypesScreen() {
                                 <Row>
                                 <Col md="12">
                                 <FormGroup className="">
-                                  <Label className="font-weight-bold">Màu sắc hiển thị</Label>
+                                  <Label className="font-weight-bold">Màu nền</Label>
                                       <Input
-                                        defaultValue={selectedPostType? selectedPostType.color : ""}
+                                        defaultValue={selectedPostType ? (selectedPostType.background ?  '#' + selectedPostType.background : "") : ""}
+                                        placeholder="Hãy nhập màu sắc hiển thị"
+                                        type="text"
+                                        name={"background"}
+                                      />
+                                    </FormGroup>
+                                    </Col>
+                                </Row>
+
+                                <Row>
+                                <Col md="12">
+                                <FormGroup className="">
+                                  <Label className="font-weight-bold">Màu chữ</Label>
+                                      <Input
+                                        defaultValue={selectedPostType ? (selectedPostType.color ?  '#' + selectedPostType.color : "") : ""}
                                         placeholder="Hãy nhập màu sắc hiển thị"
                                         type="text"
                                         name={"color"}
@@ -343,7 +362,7 @@ function ListPostTypesScreen() {
                                 className="mr-2"
                                 color="primary"
                               >
-                                {isCreate ? "Create" : "Update"} 
+                                {isCreate ? "Tạo" : "Cập nhật"} 
                               </Button>
                               </Col>
                               </Row>

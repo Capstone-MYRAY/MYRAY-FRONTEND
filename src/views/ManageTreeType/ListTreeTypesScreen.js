@@ -21,6 +21,7 @@ import {
 import { useRecoilState } from "recoil";
 import { listTreeTypesState } from "state/treeTypeState";
 import treeTypeApi from "api/treeTypeApi";
+import { treeTypeVNStatus } from "variables/general";
 
 function ListTreeTypesScreen() {
   //TreeType state
@@ -151,28 +152,32 @@ function ListTreeTypesScreen() {
     return {
       id: key,
       type: prop.type,
-      status: prop.status,
+      status: treeTypeVNStatus[prop.status],
       actions: (
         // we've added some custom button actions
         <div className="actions-right">
           {/* use this button to add a edit kind of action */}
           <Button
             onClick={editTreeType.bind(this, prop)}
-            className="btn-icon btn-round"
+            className="btn-round"
             color="primary"
             size="sm"
           >
-            <i className="fa fa-edit" />
+          Chi tiết
           </Button>{" "}
           {/* use this button to remove the data row */}
+          {prop.status == 1 ? (
           <Button
             onClick={deleteTreeType.bind(this, prop)}
-            className="btn-icon btn-round"
+            className="btn-round"
             color="danger"
             size="sm"
           >
-            <i className="fa fa-times" />
-          </Button>{" "}
+          Xóa
+          </Button>
+         )
+          : (<div></div>) }
+          
         </div>
       ),
     };
@@ -201,7 +206,7 @@ function ListTreeTypesScreen() {
                           style={btnStyle}
                           onClick={clearFormForCreate}
                         >
-                          Thêm mới loại cây
+                          Thêm mới
                         </Button>
                       </Col>
                     </div>
@@ -224,7 +229,7 @@ function ListTreeTypesScreen() {
                       accessor: "status",
                     },
                     {
-                      Header: "Quản lý",
+                      Header: "",
                       accessor: "actions",
                       sortable: false,
                       filterable: false,
@@ -312,7 +317,7 @@ function ListTreeTypesScreen() {
                                     className="mr-2"
                                     color="primary"
                                   >
-                                    {isCreate ? "Create" : "Update"}
+                                    {isCreate ? "Tạo" : "Cập nhật"}
                                   </Button>
                                 </Col>
                               </Row>

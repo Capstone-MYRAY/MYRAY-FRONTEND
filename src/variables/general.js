@@ -58,20 +58,52 @@ const events = [
   },
 ];
 
-const JobPostStatusEnglish = ["Cancel", "Pending", "Posted", "Reject", "Expired", "OutOfDate", "Start",];
-const JobPostStatusVN = ["Hủy bỏ", "Chưa giải quyết", "Đã đăng", "Đã từ chối", "Hết hạn", "Quá hạn", "Đã bắt đầu",];
+const JobPostStatusEnglish = ["Deleted", "Pending", "Posted", "Reject", "Expired", "OutOfDate", "Cancel",  "Approved",];
+const JobPostStatusVN = ["Đã xóa", "Chờ duyệt", "Đang đăng tải", "Bị từ chối", "Hết hạn", "Quá hạn", "Đã hủy", "Đã duyệt"];
 
-// const JobPostStatus = {
-//   Pending : 'Reject',
-//   pending: 'Pending',
-//   active: 'Active',
-//   deactive: 'Deactive ',
-// }
+const JobPostStatusVNCombobox = [
+  { value: -1, label: "Tất cả"},
+  { value: 0, label: "Hủy bỏ"},
+  { value: 1, label: "Chờ duyệt"},
+  { value: 2, label: "Đang đăng tải"},
+  { value: 3, label: "Bị từ chối"},
+  { value: 4, label: "Hết hạn"},
+  { value: 5, label: "Quá hạn"},
+  { value: 6, label: "Đã hủy"},
+  { value: 7, label: "Đã duyệt"},
+];
+
+const JobPostStatus = {
+  deleted : 0,
+  pending: 1,
+  posted: 2,
+  reject: 3,
+  expired: 4,
+  outOfDate: 5,
+  cancel: 6,
+  approved: 7,
+
+}
 
 const jobType = {
   PayPerHourJob: 'Làm công',
   PayPerTaskJob: 'Làm khoán'
 }
+
+const roleId = {
+  admin: 1,
+  moderator: 2,
+  landowner: 3,
+  farmer: 4,
+}
+
+const roleNameVN = ["Khác","Quản trị viên","Người điều hành","Chủ đất","Nông dân"]
+
+const gender = ["Nam", "Nữ", "Khác"];
+
+const reportStatus = ["Đã xóa", "Chờ xử lí", "Đã xử lí"];
+
+const treeTypeVNStatus = ["Ẩn","Hoạt động"];
 
 
 const baseAURL = "http://api.myray.site/api/v1";
@@ -81,5 +113,12 @@ export {
   events,
   JobPostStatusEnglish,
   JobPostStatusVN,
-  jobType
+  jobType,
+  roleId,
+  JobPostStatusVNCombobox,
+  JobPostStatus,
+  gender,
+  roleNameVN,
+  reportStatus,
+  treeTypeVNStatus,
 };

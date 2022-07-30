@@ -100,11 +100,8 @@ function AdminNavbar(props) {
           <NavbarBrand href="/">{props.brandText}</NavbarBrand>
           </Col>
 
-          
-
         </div>
         <Col md="1">
-          <Button onClick={logout} href="/auth" className="mr-2" color="primary">Logout</Button>
           </Col>
       </Container>
     </Navbar>

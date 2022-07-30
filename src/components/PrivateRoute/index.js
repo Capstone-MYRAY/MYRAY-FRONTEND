@@ -12,19 +12,15 @@ const PrivateRoute = (props) => {
         console.log("🚀 ~ file: index.js ~ line 11 ~ PrivateRoute ~ token", custom_token)
         if (custom_token) {
             const backendToken = jwt_decode(custom_token.token);
-            console.log("🚀 ~ file: index.js ~ line 13 ~ PrivateRoute ~ backendToken", backendToken)
-
+            console.log("🚀 ~ file: index.js ~ line 15 ~ PrivateRoute ~ backendToken", backendToken);
             switch(backendToken.role) {
                 case "Admin":
                     return <Route {...props} />
                 case "Moderator":
-                    console.log("🚀 ~ file: index.js ~ line 9 ~ PrivateRoute ~ authUser VO DUOC TOI MODERATOR KHONG", );
                     return <Route {...props} />
                 default:
                     return <Redirect to="/" />
               }
-           
-            
         }
     }
     

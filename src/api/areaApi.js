@@ -1,5 +1,6 @@
 import axiosClient from "./axiosClient";
 import axiosClientFile from "./axiosClientFile";
+import axios from "axios";
 
 const areaApi = {
   // [Admin] Endpoint for get all areas with condition
@@ -30,8 +31,16 @@ const areaApi = {
   },
 
   getProvince: () => { 
-    return axiosClientFile.get(`/quanhuyen.json`);
-  }
+    return axiosClientFile.get(`https://api.myray.site/upload/tinhthanh.json`);
+  },
+
+  getDistrict: () => { 
+    return axiosClientFile.get(`https://api.myray.site/upload/quanhuyen.json`);
+  },
+
+  getCommune: () => { 
+    return axiosClientFile.get(`http://api.myray.site/upload/phuongxa.json`);
+  },
 
 }
 

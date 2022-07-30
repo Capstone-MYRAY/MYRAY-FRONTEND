@@ -1,20 +1,4 @@
-/*!
 
-=========================================================
-* Now UI Dashboard PRO React - v1.5.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/now-ui-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-/*eslint-disable*/
 import React from "react";
 import { NavLink } from "react-router-dom";
 // used for making the prop types of this component
@@ -27,13 +11,16 @@ import { Nav, Collapse, Button } from "reactstrap";
 
 // core components
 import avatar from "assets/img/default-avatar.png";
-import logo from "logo-white.svg";
+import logo from "myrayLogoGreen.png";
 
 var ps;
 
 function SidebarModerator(props) {
   const [openAvatar, setOpenAvatar] = React.useState(false);
   const [collapseStates, setCollapseStates] = React.useState({});
+  const userAccount = JSON.parse(localStorage.getItem('account'));
+  console.log("const userAccount = JSON.parse(localStorage.getItem('account'));" , userAccount);
+
   const sidebar = React.useRef();
   React.useEffect(() => {
     // if you are using a Windows Machine, the scrollbars will have a Mac look
@@ -147,24 +134,23 @@ function SidebarModerator(props) {
     <>
       <div className="sidebar" data-color={props.backgroundColor}>
         <div className="logo">
-          <a
-            href="https://www.creative-tim.com?ref=nudr-sidebar"
+          {/* <a
             className="simple-text logo-mini"
             target="_blank"
-          >
+          > */}
             <div className="logo-img">
-              <img src={logo} alt="react-logo" />
+              <img src={logo} alt="react-logo"  width="150" height="50" />
             </div>
-          </a>
-          <a
+          {/* </a> */}
+          {/* <a
             href="#"
             className="simple-text business_bank"
             target="_blank"
           >
             MYRAY
-          </a>
+          </a> */}
           <div className="navbar-minimize">
-            <Button
+            {/* <Button
               outline
               className="btn-round btn-icon"
               color="neutral"
@@ -173,7 +159,7 @@ function SidebarModerator(props) {
             >
               <i className="now-ui-icons text_align-center visible-on-sidebar-regular" />
               <i className="now-ui-icons design_bullet-list-67 visible-on-sidebar-mini" />
-            </Button>
+            </Button> */}
           </div>
         </div>
 
@@ -190,20 +176,20 @@ function SidebarModerator(props) {
                 onClick={() => setOpenAvatar(!openAvatar)}
               >
                 <span>
-                  Moderator Name
-                  {/* <b className="caret" /> */}
+                {userAccount.FullName}
+                  <b className="caret" />
                 </span>
               </a>
-              {/* <Collapse isOpen={openAvatar}>
+              <Collapse isOpen={openAvatar}>
                 <ul className="nav">
                   <li>
-                    <a href="/auth">
+                    <a href="/auth" onClick={() => localStorage.removeItem('user')}>
                       <span className="sidebar-mini-icon">SO</span>
-                      <span className="sidebar-normal">Sign out</span>
+                      <span className="sidebar-normal">Đăng xuất</span>
                     </a>
                   </li>
                 </ul>
-              </Collapse> */}
+              </Collapse>
             </div>
           </div>
           <Nav>{createLinks(props.routes)}</Nav>

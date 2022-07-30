@@ -1,23 +1,3 @@
-/*!
-
-=========================================================
-* Now UI Dashboard PRO React - v1.5.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/now-ui-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
-
-
 import DashboardModScreen from "ViewsModerator/DashboardModScreen/DashboardModScreen";
 import ListJobPostsScreen from "ViewsModerator/ManageJobPosts/ListJobPostsScreen";
 import ListAccountsScreen from "ViewsModerator/ManageAccounts/ListAccountsScreen";
@@ -37,28 +17,28 @@ let routesModerator = [
   {
     path: "/quan-ly-bai-dang",
     name: "Quản lý bài đăng",
-    icon: "fa fa-users text-green",
+    icon: "fa fa-book text-green",
     component: ListJobPostsScreen,
     layout: "/moderator",
   },
   {
     path: "/quan-ly-tai-khoan",
     name: "Quản lý tài khoản",
-    icon: "fa fa-map text-green",
+    icon: "fa fa-users text-green",
     component: ListAccountsScreen,
     layout: "/moderator",
   },
-  {
-    path: "/nap-tien",
-    name: "Nạp tiền vào tài khoản",
-    icon: "fa fa-cog text-green",
-    component: TopUpScreen,
-    layout: "/moderator",
-  },
+  // {
+  //   path: "/nap-tien",
+  //   name: "Nạp tiền vào tài khoản",
+  //   icon: "fa fa-cog text-green",
+  //   component: TopUpScreen,
+  //   layout: "/moderator",
+  // },
   {
     path: "/quan-ly-bao-cao",
     name: "Quản lý báo cáo",
-    icon: "fa fa-tree text-green",
+    icon: "fa fa-bell text-green",
     component: ListReportsScreen,
     layout: "/moderator",
   },

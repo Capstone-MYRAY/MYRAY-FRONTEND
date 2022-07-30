@@ -12,19 +12,9 @@ const axiosClientFile = axios.create({
   paramsSerializer: params => queryString.stringify(params),
 });
 
-// axiosClientFile.interceptors.request.use(async (config) => {
-//   const token = JSON.parse(localStorage.getItem('user'));
-//   console.log('[AXIOS] Logged in user token: ', token);
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token.token}`;
-//   }
-
-//   return config;
-// });
-
 axiosClientFile.interceptors.response.use((response) => {
   if (response && response.data) {
-    return response;
+    return response.data;
   }
 
   return response;

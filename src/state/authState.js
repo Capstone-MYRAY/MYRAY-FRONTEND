@@ -5,6 +5,11 @@ export const authState = atom({
     default: {},
   });
 
+export const accountState = atom({
+    key: "userAccount",
+    default: {},
+  });
+
   export const addUserAuth = (user, userAuth) => {
     user = userAuth;
     return user;

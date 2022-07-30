@@ -1,5 +1,4 @@
 import { atom, selector } from "recoil";
-import { alumniStatus } from "variables/general";
 
 //Area state
 export const listAreaState = atom({
@@ -7,17 +6,34 @@ export const listAreaState = atom({
   default: [],
 });
 
-//Add new alumni list to alumniList
-export const addListAlumni = (listAlumni, newList) => {
-  const newListAlumni = [...listAlumni];
-  newListAlumni.push(...newList);
-  return newList;
-}
+//Province state
+export const listProvinceState = atom({
+  key: "listProvinces",
+  default: [],
+});
 
-//Paging
-export const alumniPagingState = atom({
-  key: "alumniPagingState",
-  default: {
-    name: 'alumni',
-    paging: {'page': 1, 'page-size': 50}}
+//District state
+export const listDistrictState = atom({
+  key: "listDistricts",
+  default: [],
+});
+
+//Commune state
+export const listCommuneState = atom({
+  key: "listCommunes",
+  default: [],
+});
+
+//Province Combobox Data
+export const provinceComboboxData = selector({	
+  key: 'listProvinceCombobox',
+  get: ({ get }) => {
+    const list = get(listProvinceState);	
+    return list.map((item) => {
+      return {
+         value: item.id, 
+         label: `${item.name}`,
+      }
+    });	
+  }
 });

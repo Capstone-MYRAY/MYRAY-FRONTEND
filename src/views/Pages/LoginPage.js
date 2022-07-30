@@ -61,7 +61,8 @@ function LoginPage() {
 
         // setAuthUser(backendToken.role);
         localStorage.setItem('user', JSON.stringify(response.data));
-        
+        localStorage.setItem('account', JSON.stringify(backendToken));
+
         if (backendToken.role === 'Admin') {
           window.location.assign('/admin');
         } else if (backendToken.role === 'Moderator') {

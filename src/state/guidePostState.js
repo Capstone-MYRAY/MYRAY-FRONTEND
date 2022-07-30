@@ -5,3 +5,8 @@ export const listGuidePostState = atom({
     key: "listGuidePostTypes",
     default: [],
   });
+
+  export const guidepostContentState = atom({
+    key: "guidePostContent",
+    default: "",
+  });

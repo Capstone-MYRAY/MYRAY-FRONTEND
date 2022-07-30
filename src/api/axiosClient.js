@@ -47,7 +47,7 @@ const getFirebaseToken = async () => {
 // Set up default config for http requests here
 // Please have a look at here `https://github.com/axios/axios#request- config` for the full list of configs
 const axiosClient = axios.create({
-  baseURL: "http://api.myray.site/api/v1",
+  baseURL: "https://api.myray.site/api/v1",
   // baseURL: baseAURL,
   headers: {
     'content-type': 'application/json',
