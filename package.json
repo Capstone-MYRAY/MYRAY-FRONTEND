@@ -2,7 +2,7 @@
   "name": "myray",
   "version": "1.5.0",
   "private": true,
-  "homepage": "https://fptalumni.tk/#/",
+  "homepage": "https://myray.site/#/",
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^34.2.0",
     "@ckeditor/ckeditor5-react": "^5.0.2",
