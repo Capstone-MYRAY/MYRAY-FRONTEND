@@ -23,6 +23,7 @@ import {
   Label,
   Table,
 } from "reactstrap";
+import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -242,9 +243,18 @@ function ListAreasScreen() {
         console.log("Failed to fetch list area. ", err);
       }
 
-      alert(`Delete successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Xóa thành công!',  
+      });
     } catch (err) {
-      alert(`Failed to delete area ${err}`);
+      console.log(`Failed to delete area ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Xóa không thành công!',  
+      });
     }
   };
   const handleSubmit = async (e) => {
@@ -277,16 +287,25 @@ function ListAreasScreen() {
     //     console.log("Failed to fetch list Area. ", err);
     //   }
 
-    //   alert(`Update successfully!`);
+    //   Swal.fire({  
+      //   icon: 'success',
+      //   title: 'Thành công',  
+      //   text: 'Cập nhật thành công!',  
+      // });
     // } catch (err) {
-    //   alert(`Failed to update Area ${err}`);
+    //   console.log(`Failed to update Area ${err}`);
+    // Swal.fire({  
+    //   icon: 'error',
+    //   title: 'Lỗi',  
+    //   text: 'Cập nhật không thành công!',  
+    // });
     // }
 
     setOpenEditModal(false);
     setIsOpentDetail(false);
   };
 
-  const dataState = areaList.map((prop, key) => {
+  const dataState = areaList ?  areaList.map((prop, key) => {
     key = prop.id;
     return {
       id: key,
@@ -321,7 +340,8 @@ function ListAreasScreen() {
         </div>
       ),
     };
-  });
+  })
+  : [];
 
   return (
     <>

@@ -17,6 +17,7 @@ import {
   FormGroup,
   Row,
 } from "reactstrap";
+import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -236,7 +237,7 @@ function AddNewArea() {
         );
 
     try {
-      const response = await areaApi.put(areaCreated);
+      const response = await areaApi.post(areaCreated);
       console.log(
         "🚀 ~ file: List Area.js ~ line 197 ~ handleSubmit ~ response",
         response
@@ -249,9 +250,18 @@ function AddNewArea() {
         console.log("Failed to fetch list Area. ", err);
       }
 
-      alert(`Created successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Tạo mới thành công!',  
+      });
     } catch (err) {
-      alert(`Failed to update Area ${err}`);
+      console.log(`Failed to create Area ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Tạo mới không thành công!',  
+      });
     }
 
   };

@@ -23,7 +23,7 @@ import Select from "react-select";
 import React, { useEffect, useState } from "react";
 import momentjs from "moment";
 import "moment-timezone";
-
+import Swal from 'sweetalert2';
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import { useRecoilState } from "recoil";
 // import ImageUpload from "components/CustomUpload/ImageUpload";
@@ -145,9 +145,19 @@ function ListJobPostsScreen() {
         console.log("Failed to fetch list jobPost. ", err);
       }
 
-      alert(`Verified Job Post successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Bài đăng đã được duyệt!',  
+      });
+
     } catch (err) {
-      alert(`Failed to verify Job Post ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Bài đăng chưa được duyệt!',  
+      });
+
     }
 
     closeDetailScreen();
@@ -168,9 +178,17 @@ function ListJobPostsScreen() {
         console.log("Failed to fetch list jobPost. ", err);
       }
 
-      alert(`Verified Job Post successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Bài đăng đã bị từ chối!',  
+      });
     } catch (err) {
-      alert(`Failed to verify Job Post ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Bài đăng chưa được duyệt!',  
+      });
     }
     closeDetailScreen();
   };

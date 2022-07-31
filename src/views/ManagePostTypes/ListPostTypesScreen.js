@@ -17,6 +17,7 @@ import {
   Row,
   Label,
 } from "reactstrap";
+import Swal from 'sweetalert2';
 import { useRecoilState } from "recoil";
 import { listPostTypesState } from "state/postTypeState";
 import postTypeApi from "api/postTypeApi";
@@ -93,9 +94,18 @@ function ListPostTypesScreen() {
         console.log("Failed to fetch list postType. ", err);
       }
 
-      alert(`Delete successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Xóa thành công!',  
+      });
     } catch (err) {
-      alert(`Failed to delete postType ${err}`);
+      console.log(`Failed to delete postType ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Xóa không thành công!',  
+      });
     }
   };
   const handleSubmit = async (e) => {
@@ -115,7 +125,11 @@ function ListPostTypesScreen() {
         "🚀 ~ file: List postType.js ~ line 197 ~ handleSubmit ~ responseCreate",
         responseCreate
       );
-      alert(`Create successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Tạo mới thành công!',  
+      });
 
     } else {
       postTypeObj = {
@@ -131,8 +145,11 @@ function ListPostTypesScreen() {
         "🚀 ~ file: List postType.js ~ line 197 ~ handleSubmit ~ responseUpdate",
         responseUpdate
       );
-      alert(`Update successfully!`);
-
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Cập nhật thành công!',  
+      });
     }
 
       try {
@@ -144,9 +161,19 @@ function ListPostTypesScreen() {
       
     } catch (err) {
       if (isCreate) {
-        alert(`Failed to create postType ${err}`);
+        console.log(`Failed to create postType ${err}`);
+        Swal.fire({  
+          icon: 'error',
+          title: 'Lỗi',  
+          text: 'Tạo mới không thành công!',  
+        });
       } else {
-        alert(`Failed to update postType ${err}`);
+        console.log(`Failed to update postType ${err}`);
+        Swal.fire({  
+          icon: 'error',
+          title: 'Lỗi',  
+          text: 'Cập nhật không thành công!',  
+        });
       }
     }
   };

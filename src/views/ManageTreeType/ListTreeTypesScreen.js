@@ -18,6 +18,7 @@ import {
   Row,
   Label,
 } from "reactstrap";
+import Swal from 'sweetalert2';
 import { useRecoilState } from "recoil";
 import { listTreeTypesState } from "state/treeTypeState";
 import treeTypeApi from "api/treeTypeApi";
@@ -79,6 +80,22 @@ function ListTreeTypesScreen() {
     );
   };
 
+  const handleDeleteButton = async (treeType) => {
+    Swal.fire({
+      title: 'Bạn có muốn xóa thông tin này?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#4F9E1D',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteTreeType(treeType);
+      }
+    })
+  };
+
   //Handle delete button
   const deleteTreeType = async (treeType) => {
     setSelectedTreeType(treeType);
@@ -94,12 +111,20 @@ function ListTreeTypesScreen() {
       } catch (err) {
         console.log("Failed to fetch list treeType. ", err);
       }
-
-      alert(`Delete successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Xóa thành công!',  
+      });
     } catch (err) {
-      alert(`Failed to delete treeType ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Xoá không thành công!',  
+      });
     }
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -115,7 +140,11 @@ function ListTreeTypesScreen() {
           "🚀 ~ file: List treeType.js ~ line 197 ~ handleSubmit ~ responseCreate",
           responseCreate
         );
-        alert(`Create successfully!`);
+        Swal.fire({  
+          icon: 'success',
+          title: 'Thành công',  
+          text: 'Tạo mới thành công!',  
+        });
       } else {
         treeTypeObj = {
           id: selectedTreeType ? selectedTreeType.id : null,
@@ -129,7 +158,11 @@ function ListTreeTypesScreen() {
           "🚀 ~ file: List treeType.js ~ line 197 ~ handleSubmit ~ responseUpdate",
           responseUpdate
         );
-        alert(`Update successfully!`);
+        Swal.fire({  
+          icon: 'success',
+          title: 'Thành công',  
+          text: 'Cập nhật thành công!',  
+        });
       }
 
       try {
@@ -140,9 +173,19 @@ function ListTreeTypesScreen() {
       }
     } catch (err) {
       if (isCreate) {
-        alert(`Failed to create TreeType ${err}`);
+        console.log(`Failed to create TreeType. ${err}`);
+        Swal.fire({  
+          icon: 'error',
+          title: 'Lỗi',  
+          text: 'Tạo mới không thành công!',  
+        });
       } else {
-        alert(`Failed to update TreeType ${err}`);
+        console.log(`Failed to update TreeType ${err}`);
+        Swal.fire({  
+          icon: 'error',
+          title: 'Lỗi',  
+          text: 'Cập nhật không thành công!',  
+        });
       }
     }
   };
@@ -168,7 +211,7 @@ function ListTreeTypesScreen() {
           {/* use this button to remove the data row */}
           {prop.status == 1 ? (
           <Button
-            onClick={deleteTreeType.bind(this, prop)}
+            onClick={handleDeleteButton.bind(this, prop)}
             className="btn-round"
             color="danger"
             size="sm"

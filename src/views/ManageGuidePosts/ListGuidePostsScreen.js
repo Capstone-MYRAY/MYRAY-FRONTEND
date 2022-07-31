@@ -20,6 +20,7 @@ import {
   Row,
   Label,
 } from "reactstrap";
+import Swal from 'sweetalert2';
 import { useRecoilState } from "recoil";
 import {
   guidepostContentState,
@@ -99,9 +100,18 @@ function ListGuidePostsScreen() {
         console.log("Failed to fetch list guidepost. ", err);
       }
 
-      alert(`Delete successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Xóa thành công!',  
+      });
     } catch (err) {
-      alert(`Failed to delete guidepost ${err}`);
+      console.log(`Failed to delete guidepost ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Xóa không thành công!',  
+      });
     }
   };
   const handleSubmit = async (e) => {
@@ -123,8 +133,12 @@ function ListGuidePostsScreen() {
             response
           );
     
-          alert(`Create successfully!`);
-       
+          Swal.fire({  
+            icon: 'success',
+            title: 'Thành công',  
+            text: 'Tạo mới thành công!',  
+          });
+            
       } else {
         postTypeObj = {
           id: selectedGuidePost ? selectedGuidePost.id : null,
@@ -137,7 +151,11 @@ function ListGuidePostsScreen() {
           "🚀 ~ file: List postType.js ~ line 197 ~ handleSubmit ~ responseUpdate",
           responseUpdate
         );
-        alert(`Update successfully!`);
+        Swal.fire({  
+          icon: 'success',
+          title: 'Thành công',  
+          text: 'Cập nhật thành công!',  
+        });
       }
 
       try {
@@ -148,9 +166,17 @@ function ListGuidePostsScreen() {
       }
     } catch (err) {
       if (isCreate) {
-        alert(`Failed to create guidepost ${err}`);
+        Swal.fire({  
+          icon: 'error',
+          title: 'Lỗi',  
+          text: 'Tạo mới không thành công!',  
+        });
       } else {
-        alert(`Failed to update guidepost ${err}`);
+        Swal.fire({  
+          icon: 'error',
+          title: 'Lỗi',  
+          text: 'Cập nhật không thành công!',  
+        });
       }
     }
   };
@@ -164,40 +190,6 @@ function ListGuidePostsScreen() {
   const clearForm = (e) => {
     e.target.title.value = "";
     setGuidepostContent("<p>Nhập nội dung ở đây!</p>");
-  };
-
-  const handleCreateSubmit = async (e) => {
-    e.preventDefault();
-
-    const createGuidepost = {
-      title: e.target.title.value,
-      content: guidepostContent,
-    };
-
-    console.log("🚀 ~ file: createGuidepost", createGuidepost);
-
-    try {
-      const response = await guidePostApi.post(createGuidepost);
-      console.log(
-        "🚀 ~ file: ListReportsScreen ~ handleSubmit ~ response",
-        response
-      );
-
-      try {
-        const response = await guidePostApi.getAll(filtersParams);
-        setListGuidePosts(response.data.list_object);
-        console.log(
-          "Success to fetch list guidePost. ",
-          response.data.list_object
-        );
-      } catch (err) {
-        console.log("Failed to fetch list guidePost. ", err);
-      }
-
-      alert(`Create successfully!`);
-    } catch (err) {
-      alert(`Failed to update guidePost ${err}`);
-    }
   };
 
   const dataState = guidepostList.map((prop, key) => {

@@ -23,6 +23,7 @@ import {
   Row,
   Table,
 } from "reactstrap";
+import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -148,9 +149,18 @@ function AddNewModerator() {
         console.log("Failed to fetch list Area. ", err);
       }
 
-      alert(`Created successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Tạo mới thành công!',  
+      });
     } catch (err) {
-      alert(`Failed to update Area ${err}`);
+      console.log(`Failed to update moderator ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Tạo mới không thành công!',  
+      });
     }
   };
 

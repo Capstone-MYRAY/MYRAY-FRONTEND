@@ -23,7 +23,7 @@ import Select from "react-select";
 import React, { useEffect, useState } from "react";
 import momentjs from "moment";
 import "moment-timezone";
-
+import Swal from 'sweetalert2';
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import { useRecoilState } from "recoil";
 // import ImageUpload from "components/CustomUpload/ImageUpload";
@@ -147,9 +147,18 @@ function ListModeratorsScreen() {
         console.log("Failed to fetch list moderator. ", err);
       }
 
-      alert(`Update successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Cập nhật thành công!',  
+      });
     } catch (err) {
-      alert(`Failed to update moderator ${err}`);
+      console.log(`Failed to update moderator ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Cập nhật không thành công!',  
+      });
     }
 
     setIsOpentEdit(false);
@@ -173,9 +182,18 @@ function ListModeratorsScreen() {
         console.log("Failed to fetch list moderator. ", err);
       }
 
-      alert(`Delete successfully!`);
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Xóa thành công!',  
+      });
     } catch (err) {
-      alert(`Failed to delete moderator ${err}`);
+      console.log(`Failed to delete moderator ${err}`);
+      Swal.fire({  
+        icon: 'error',
+        title: 'Lỗi',  
+        text: 'Xóa không thành công!',  
+      });
     }
   }
 

@@ -16,8 +16,8 @@ const areaApi = {
   },
   
   // [Admin] Endpoint for Alumni or Admin edit profile.
-  put: (alumnus) => {
-    return axiosClient.put(`/alumnus`, alumnus);
+  post: (area) => {
+    return axiosClient.post(`/area`, area);
   },
 
   // [Admin] Endpoint for Admin Deactivation a alumni.

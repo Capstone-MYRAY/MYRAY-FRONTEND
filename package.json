@@ -44,6 +44,7 @@
     "react-tagsinput": "3.19.0",
     "reactstrap": "8.9.0",
     "recoil": "^0.4.1",
+    "sweetalert2": "^11.4.24",
     "yup": "^0.32.9"
   },
   "scripts": {

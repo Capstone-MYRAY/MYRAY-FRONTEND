@@ -21,6 +21,7 @@ import {
   Row,
   Table,
 } from "reactstrap";
+import Swal from 'sweetalert2';
 import { guidepostContentState, listGuidePostState } from "state/guidePostState";
 import { useRecoilState } from "recoil";
 import guidePostApi from "api/guidePostApi";
@@ -66,10 +67,19 @@ function ListGuidePostsScreen() {
         } catch (err) {
           console.log("Failed to fetch list guidePost. ", err);
         }
-  
-        alert(`Create successfully!`);
+
+        Swal.fire({  
+          icon: 'success',
+          title: 'Thành công',  
+          text: 'Tạo mới thành công!',  
+        });
       } catch (err) {
-        alert(`Failed to update guidePost ${err}`);
+        console.log(`Failed to create guidePost ${err}`);
+        Swal.fire({  
+          icon: 'error',
+          title: 'Lỗi',  
+          text: 'Tạo mới không thành công!',  
+        });
       }
 
   };
