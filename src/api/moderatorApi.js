@@ -25,6 +25,11 @@ const moderatorApi = {
   return axiosClient.delete(`/account/${accountId}`);
 },
 
+ // [Admin] Endpoint for create moderator
+ post: (moderator) => {
+  return axiosClient.post(`/account`, moderator);
+},
+
 }
 
 export default moderatorApi;

@@ -16,6 +16,7 @@ import {
   Form,
   FormGroup,
   Row,
+  Input,
 } from "reactstrap";
 import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
@@ -224,12 +225,16 @@ function AddNewArea() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const areaCreated = {
+    let areaCreated = {
       province: provinceFilterSelected.label,
       district: districtFilterSelected.label,
       commune: communeFilterSelected.label,
-      moderator_id: moderatorFilterSelected.value
+      address: e.target.address.value,
     };
+
+    if (moderatorFilterSelected.value > -1) {
+      areaCreated = {...areaCreated, moderator_id: moderatorFilterSelected.value};
+    }
 
     console.log(
           "🚀 ~ file: CREATE AREA",
@@ -243,6 +248,29 @@ function AddNewArea() {
         response
       );
 
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Tạo mới thành công!',  
+      });
+
+      setDistrictFilterSelected({
+        value: -1,
+        label: "Quận huyện",
+      });
+
+      setCommuneFilterSelected({
+        value: -1,
+        label: "Xã / Thị trấn",
+      });
+
+      setModeratorFilterSelected({
+        value: -1,
+        label: "Người điều hành",
+      });
+
+      e.target.address.value = "";
+
       try {
         const listAreaUpdate = await areaApi.getAll();
         setlistArea(listAreaUpdate.data);
@@ -250,11 +278,7 @@ function AddNewArea() {
         console.log("Failed to fetch list Area. ", err);
       }
 
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Tạo mới thành công!',  
-      });
+      
     } catch (err) {
       console.log(`Failed to create Area ${err}`);
       Swal.fire({  
@@ -299,7 +323,8 @@ function AddNewArea() {
                         <Row>
                           <Col md="12">
                             <Form className="form-horizontal" method="get" onSubmit={handleSubmit}>
-                              <Col className="px-1" md="8">
+                              <Row className="d-flex justify-content-center">
+                              <Col className="px-1" md="7">
                                 <FormGroup>
                                   <Label className="font-weight-bold">Tỉnh thành:</Label>
                                   <Select
@@ -318,7 +343,7 @@ function AddNewArea() {
                                           />
                                 </FormGroup>
                               </Col>
-                              <Col className="px-1" md="8">
+                              <Col className="px-1" md="7">
                                 <FormGroup>
                                   <Label className="font-weight-bold">Quận huyện:</Label>
                                   <Select
@@ -338,7 +363,7 @@ function AddNewArea() {
                                           />
                                 </FormGroup>
                               </Col>
-                              <Col className="px-1" md="8">
+                              <Col className="px-1" md="7">
                                 <FormGroup>
                                   <Label className="font-weight-bold">Xã/Thị trấn:</Label>
                                   <Select
@@ -357,7 +382,19 @@ function AddNewArea() {
                                           />
                                 </FormGroup>
                               </Col>
-                              <Col className="px-1" md="8">
+
+                              <Col className="px-1" md="7">
+                                <FormGroup>
+                                  <Label className="font-weight-bold">Địa chỉ:</Label>
+                                  <Input
+                                      placeholder="Nhập địa chỉ..."
+                                      type="text"
+                                      name={"address"}
+                                    />
+                                </FormGroup>
+                              </Col>
+
+                              <Col className="px-1" md="7">
                                 <FormGroup>
                                   <Label className="font-weight-bold">Người điều hành</Label>
                                   <Select
@@ -377,6 +414,9 @@ function AddNewArea() {
                                 </FormGroup>
                               </Col>
 
+
+                              
+                              </Row>
                               <div className="d-flex justify-content-center">
                                 <Button
                                   type="submit"

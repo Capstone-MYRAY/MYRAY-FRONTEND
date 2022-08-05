@@ -33,6 +33,8 @@ import {
 } from "state/areaState";
 import { moderatorComboboxDataState } from "state/moderatorState";
 import Datetime from "react-datetime";
+import momentjs from "moment";
+import { roleId } from "variables/general";
 
 function AddNewModerator() {
   //Alumni state
@@ -56,7 +58,7 @@ function AddNewModerator() {
   const [dobDateSelected, setDOBSelected] = React.useState(createDate());
 
   const handleChangeDOB = (e) => {
-    setDOBSelected(e.format("DD--MM-YYYY"));
+    setDOBSelected(e.format("DD/MM/YYYY"));
   };
 
   const [provinceFilterSelected, setProvinceFilterSelected] = useState({
@@ -117,23 +119,39 @@ function AddNewModerator() {
     }
   };
 
-  const handleCreateSubmit = async (e) => {
+  const clearFormForCreate = (e) => {
     e.preventDefault();
+    e.target.fullname.value = "";
+    e.target.exampleRadios.value = 0;
+    e.target.address.value = "";
+    e.target.phone_number.value = "";
+    e.target.email.value = "";
+    e.target.about_me.value = "";
+  };
+
+  const handleCreateSubmit = async (e) => {
     const moderatorCreated = {
-      province: provinceFilterSelected.label,
-      district: districtFilterSelected.label,
-      commune: communeFilterSelected.label,
-      moderator_id: moderatorFilterSelected.value,
+      role_id: roleId.moderator,
+      fullname: e.target.fullname.value,
+      date_of_birth: momentjs(Date(dobDateSelected)).format(
+        "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+      ),
+      gender: e.target.exampleRadios.value,
+      address: e.target.address.value,
+      phone_number: e.target.phone_number.value,
+      password: "123456",
+      email: e.target.email.value,
+      about_me: e.target.about_me.value,
     };
 
     console.log("🚀 ~ file: CREATE MODERATOR", moderatorCreated);
 
     try {
-      const response = await moderatorApi.put(moderatorCreated);
-      console.log(
-        "🚀 ~ file: moderatorCreated~ handleSubmit ~ response",
-        response
-      );
+    //   const response = await moderatorApi.post(moderatorCreated);
+    //   console.log(
+    //     "🚀 ~ file: moderatorCreated~ handleSubmit ~ response",
+    //     response
+    //   );
 
       // try {
       //   const listAreaUpdate = await areaApi.getAll();
@@ -142,18 +160,20 @@ function AddNewModerator() {
       //   console.log("Failed to fetch list Area. ", err);
       // }
 
-      try {
-        const listAreaUpdate = await areaApi.getAll();
-        setlistArea(listAreaUpdate.data);
-      } catch (err) {
-        console.log("Failed to fetch list Area. ", err);
-      }
+      // try {
+      //   const listAreaUpdate = await areaApi.getAll();
+      //   setlistArea(listAreaUpdate.data);
+      // } catch (err) {
+      //   console.log("Failed to fetch list Area. ", err);
+      // }
 
       Swal.fire({  
         icon: 'success',
         title: 'Thành công',  
         text: 'Tạo mới thành công!',  
       });
+
+      clearFormForCreate(e);
     } catch (err) {
       console.log(`Failed to update moderator ${err}`);
       Swal.fire({  
@@ -231,17 +251,45 @@ function AddNewModerator() {
                               </Row>
 
                               <Row>
-                                <Label className="font-weight-bold" sm="3">Giới tính:</Label>
-                                <Col sm="9" md="9">
-                                  <FormGroup className="">
-                                    <Input
-                                      placeholder="Nhập giới tính..."
-                                      type="text"
-                                      name={"gender"}
-                                    />
-                                  </FormGroup>
-                                </Col>
-                              </Row>
+                            <Label className="font-weight-bold" sm="3">Giới tính:</Label>
+                            <FormGroup check className="form-check-radio">
+                              <Label check>
+                                  <Input
+                                    defaultChecked
+                                    defaultValue="0"
+                                    id="exampleRadios1"
+                                    name="exampleRadios"
+                                    type="radio"
+                                  />
+                                <span className="form-check-sign" />
+                                Nam
+                              </Label>
+                            </FormGroup>
+                            <FormGroup check className="form-check-radio">
+                              <Label check>
+                                  <Input
+                                    defaultValue="1"
+                                    id="exampleRadios2"
+                                    name="exampleRadios"
+                                    type="radio"
+                                  />
+                                <span className="form-check-sign" />
+                                Nữ
+                              </Label>
+                            </FormGroup>
+                            <FormGroup check className="form-check-radio">
+                              <Label check>
+                                  <Input
+                                    defaultValue="2"
+                                    id="exampleRadios2"
+                                    name="exampleRadios"
+                                    type="radio"
+                                  />
+                                <span className="form-check-sign" />
+                                Khác
+                              </Label>
+                            </FormGroup>
+                          </Row>
 
                               <Row>
                                 <Label className="font-weight-bold" sm="3">Email:</Label>

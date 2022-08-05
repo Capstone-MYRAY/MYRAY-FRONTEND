@@ -223,7 +223,6 @@ function ListAreasScreen() {
 
     setSelectedArea(area);
     setIsOpentDetail(true);
-    setOpenEditModal(true);
   };
 
   //Handle delete button
@@ -236,12 +235,7 @@ function ListAreasScreen() {
         response
       );
 
-      try {
-        const response = await areaApi.getAll(filtersParams);
-        setlistArea(response.data);
-      } catch (err) {
-        console.log("Failed to fetch list area. ", err);
-      }
+      fetchListArea(filtersParams);
 
       Swal.fire({  
         icon: 'success',
@@ -259,59 +253,58 @@ function ListAreasScreen() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updateArea = {
+    let updateArea = {
       id: selectedArea.id,
       province: provinceFilterSelected.label,
       district: districtFilterSelected.label,
       commune: communeDetailsSelected.label,
-      moderator_id: moderatorFilterSelected.value == -1 ? null : moderatorFilterSelected.value,
+      address: e.target.address.value,
+    }
+
+    if (moderatorFilterSelected.value > -1) {
+      updateArea = {...updateArea, moderator_id: moderatorFilterSelected.value};
     }
 
     console.log(
           "🚀 ~ file: List Area.js ~ line 197 ~ handleSubmit ~ updateArea",
           updateArea
         );
+        Swal.fire({  
+          icon: 'success',
+          title: 'Thành công',  
+          text: 'Cập nhật thành công!',  
+        });
 
+    try {
+      const response = await areaApi.put(updateArea);
+      console.log(
+        "🚀 ~ file: List Area.js ~ line 197 ~ handleSubmit ~ response",
+        response
+      );
 
-    // try {
-    //   const response = await areaApi.put(updateArea);
-    //   console.log(
-    //     "🚀 ~ file: List Area.js ~ line 197 ~ handleSubmit ~ response",
-    //     response
-    //   );
-
-    //   try {
-    //     const listAreaUpdate = await areaApi.getAll();
-    //     setlistArea(listAreaUpdate.data);
-    //   } catch (err) {
-    //     console.log("Failed to fetch list Area. ", err);
-    //   }
-
-    //   Swal.fire({  
-      //   icon: 'success',
-      //   title: 'Thành công',  
-      //   text: 'Cập nhật thành công!',  
-      // });
-    // } catch (err) {
-    //   console.log(`Failed to update Area ${err}`);
-    // Swal.fire({  
-    //   icon: 'error',
-    //   title: 'Lỗi',  
-    //   text: 'Cập nhật không thành công!',  
-    // });
-    // }
+      fetchListArea(filtersParams);
+      
+    } catch (err) {
+      console.log(`Failed to update Area ${err}`);
+    Swal.fire({  
+      icon: 'error',
+      title: 'Lỗi',  
+      text: 'Cập nhật không thành công!',  
+    });
+    }
 
     setOpenEditModal(false);
     setIsOpentDetail(false);
   };
 
-  const dataState = areaList ?  areaList.map((prop, key) => {
+  const dataState = areaList.map((prop, key) => {
     key = prop.id;
     return {
       id: key,
       province: prop.province,
       commune: prop.commune,
       district: prop.district,
+      address: prop.address,
       moderator:
         prop.area_accounts.length > 0
           ? prop.area_accounts[0].account.fullname
@@ -340,8 +333,7 @@ function ListAreasScreen() {
         </div>
       ),
     };
-  })
-  : [];
+  });
 
   return (
     <>
@@ -425,6 +417,10 @@ function ListAreasScreen() {
                         accessor: "commune",
                       },
                       {
+                        Header: "Địa chỉ",
+                        accessor: "address",
+                      },
+                      {
                         Header: "Người điều hành",
                         accessor: "moderator",
                       },
@@ -479,6 +475,11 @@ function ListAreasScreen() {
                                 </tr>
 
                                 <tr>
+                                  <th md="1">Địa chỉ:</th>
+                                  <td md="7">{selectedArea.address}</td>
+                                </tr>
+
+                                <tr>
                                   <th md="1">Người điều hành:</th>
                                   <td md="7">{selectedArea.commune}</td>
                                 </tr>
@@ -527,6 +528,7 @@ function ListAreasScreen() {
                         <Row>
                           <Col md="12">
                             <Form onSubmit={handleSubmit}>
+                            <Row className="d-flex justify-content-center">
                               <Col className="px-1" md="8">
                                 <FormGroup>
                                   <Label className="font-weight-bold">Tỉnh thành</Label>
@@ -590,6 +592,17 @@ function ListAreasScreen() {
                               </Col>
                               <Col className="px-1" md="8">
                                 <FormGroup>
+                                  <Label className="font-weight-bold">Địa chỉ</Label>
+                                  <Input
+                                      placeholder="Nhập địa chỉ..."
+                                      defaultValue={selectedArea.address}
+                                      type="text"
+                                      name={"address"}
+                                    />
+                                </FormGroup>
+                              </Col>
+                              <Col className="px-1" md="8">
+                                <FormGroup>
                                   <Label className="font-weight-bold">Người điều hành</Label>
                                   <Select
                                             className="react-select primary"
@@ -607,7 +620,7 @@ function ListAreasScreen() {
                                           />
                                 </FormGroup>
                               </Col>
-
+                              <Col className="px-1" md="8">
                               <div className="d-flex justify-content-center">
                                 <Button
                                   type="submit"
@@ -624,6 +637,8 @@ function ListAreasScreen() {
                                   Đóng
                                 </Button>
                               </div>
+                              </Col>
+                              </Row>
                             </Form>
                           </Col>
                         </Row>

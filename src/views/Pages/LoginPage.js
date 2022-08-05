@@ -17,6 +17,7 @@ import {
   Form,
   Container,
   Col,
+  Row,
   Input,
   InputGroup,
   InputGroupAddon,
@@ -91,8 +92,8 @@ function LoginPage() {
                   <CardHeader>
                     <div className="logo-container">
                       <img src={nowLogo} alt="now-logo" />
-                      <h2 className="font-weight-bold" style={headerstyle}>
-                        ADMIN SIGN IN
+                      <h2 className="ml-5 font-weight-bold" style={headerstyle}>
+                        ĐĂNG NHẬP
                       </h2>
                     </div>
                   </CardHeader>
@@ -111,7 +112,7 @@ function LoginPage() {
                       <Input
                         name="phone_number"
                         type="text"
-                        placeholder="Phone Number..."
+                        placeholder="Số điện thoại..."
                         onFocus={(e) => setPhoneNumberFocus(true)}
                         onBlur={(e) => setPhoneNumberFocus(false)}
                       />
@@ -130,7 +131,7 @@ function LoginPage() {
                       <Input
                         name="password"
                         type="password"
-                        placeholder="Password..."
+                        placeholder="Mật khẩu..."
                         onFocus={(e) => setPasswordFocus(true)}
                         onBlur={(e) => setPasswordFocus(false)}
                       />
@@ -144,13 +145,13 @@ function LoginPage() {
                       type="submit"
                       className="mb-3 btn-round"
                     >
-                      Sign in
+                      Đăng nhập
                     </Button>
 
                     <div className="pull-right">
                       <h6>
                         <a href="#pablo" className="link footer-link">
-                          Forgot password
+                          Quên mật khẩu
                         </a>
                       </h6>
                     </div>

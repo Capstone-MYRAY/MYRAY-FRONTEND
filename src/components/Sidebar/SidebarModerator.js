@@ -184,7 +184,13 @@ function SidebarModerator(props) {
                 <ul className="nav">
                   <li>
                     <a href="/auth" onClick={() => localStorage.removeItem('user')}>
-                      <span className="sidebar-mini-icon">SO</span>
+                      <span className="sidebar-mini-icon">HS</span>
+                      <span className="sidebar-normal">Hồ sơ</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/auth" onClick={() => localStorage.removeItem('user')}>
+                      <span className="sidebar-mini-icon">ĐX</span>
                       <span className="sidebar-normal">Đăng xuất</span>
                     </a>
                   </li>

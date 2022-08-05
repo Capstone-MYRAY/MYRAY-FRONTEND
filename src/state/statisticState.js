@@ -10,3 +10,8 @@ export const statisticState = atom({
     total_farmer: 0,
   },
 });
+
+export const chartDataState = atom({
+  key: "chartData",
+  default: {},
+});

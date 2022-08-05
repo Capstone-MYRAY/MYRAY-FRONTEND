@@ -71,6 +71,7 @@ function ListGuidePostsScreen() {
     setSelectedGuidepost(null);
     setIsCreate(true);
     setGuidepostContent("");
+    e.target.title.value = "";
   };
 
   //Handle edit button

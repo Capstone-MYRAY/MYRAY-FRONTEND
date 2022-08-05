@@ -165,6 +165,12 @@ function ListReportsScreen() {
         response
       );
 
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Cập nhật thành công!',  
+      });
+
       try {
         const response = await reportApi.getAll(filtersParams);
         setListReports(response.data.list_object);
@@ -175,12 +181,6 @@ function ListReportsScreen() {
       } catch (err) {
         console.log("Failed to fetch list Report. ", err);
       }
-
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Cập nhật thành công!',  
-      });
     } catch (err) {
       console.log(`Failed to update Report ${err}`);
       Swal.fire({  

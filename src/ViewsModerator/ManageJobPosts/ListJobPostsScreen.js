@@ -138,19 +138,18 @@ function ListJobPostsScreen() {
         response
       );
 
-      try {
-        const jobPost = await jobPostApi.getAll(filtersParams);
-        setListJobPosts(jobPost.data.list_object);
-      } catch (err) {
-        console.log("Failed to fetch list jobPost. ", err);
-      }
-
       Swal.fire({  
         icon: 'success',
         title: 'Thành công',  
         text: 'Bài đăng đã được duyệt!',  
       });
 
+      try {
+        const jobPost = await jobPostApi.getAll(filtersParams);
+        setListJobPosts(jobPost.data.list_object);
+      } catch (err) {
+        console.log("Failed to fetch list jobPost. ", err);
+      }
     } catch (err) {
       Swal.fire({  
         icon: 'error',
@@ -170,6 +169,11 @@ function ListJobPostsScreen() {
         "🚀 ~ file: selectedJobPost.js ~ line 165 ~ handleSubmit ~ response",
         response
       );
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Bài đăng đã bị từ chối!',  
+      });
 
       try {
         const jobPost = await jobPostApi.getAll(filtersParams);
@@ -177,12 +181,7 @@ function ListJobPostsScreen() {
       } catch (err) {
         console.log("Failed to fetch list jobPost. ", err);
       }
-
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Bài đăng đã bị từ chối!',  
-      });
+      
     } catch (err) {
       Swal.fire({  
         icon: 'error',

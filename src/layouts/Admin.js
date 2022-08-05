@@ -19,7 +19,7 @@ import { listTreeTypesState } from "state/treeTypeState";
 import { listPostTypesState } from "state/postTypeState";
 import { moderatorState, moderatorsComboboxData } from "state/moderatorState";
 import { listGuidePostState } from "state/guidePostState";
-import { statisticState } from "state/statisticState";
+import { statisticState, chartDataState } from "state/statisticState";
 import areaApi from "api/areaApi";
 import treeTypeApi from "api/treeTypeApi";
 import postTypeApi from "api/postTypeApi";
@@ -50,7 +50,7 @@ const [listGuidePost, setListGuidePost] = useRecoilState(listGuidePostState);
 const [listTreeTypes, setListTreeTypes] = useRecoilState(listTreeTypesState);
 const [listPostTypes, setListPostTypes] = useRecoilState(listPostTypesState);
 const [statisticResult, setStatisticResult] = useRecoilState(statisticState);
-
+const [chartData, setChartData] = useRecoilState(chartDataState);
 
 //-----------------------------Call API to get list area, then set to area state
 useEffect(() => {
@@ -94,6 +94,22 @@ useEffect(() => {
        console.log("Success to fetch StatisticResult. ", response.data);
     } catch (err) {
       console.log("Failed to fetch StatisticResult. ", err);
+    }
+  }
+  
+  fetchStatisticResult();
+},[]);
+
+useEffect(() => {
+  const fetchStatisticResult = async () => {
+   
+    try {
+       //StatisticResult
+       const response = await statisticApi.getChartData(2022);
+       setChartData(response.data);
+       console.log("Success to fetch getChartData. ", response.data);
+    } catch (err) {
+      console.log("Failed to fetch getChartData. ", err);
     }
   }
   

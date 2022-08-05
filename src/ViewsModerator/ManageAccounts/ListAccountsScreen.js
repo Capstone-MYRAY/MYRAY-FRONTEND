@@ -109,13 +109,13 @@ function ListAccountsScreen() {
              landowner: true
         },
         selectedBackgroundColor: "#4F9E1D",
-        selectedFontColor: "#fff",
+        selectedFontColor: "#ffffff",
     },
     {
         label: "Nông dân",
         value: "Farmer",
         selectedBackgroundColor: "#4F9E1D",
-        selectedFontColor: "#fff",
+        selectedFontColor: "#ffffff",
     }
  ];
  
@@ -262,11 +262,33 @@ function ListAccountsScreen() {
     setIsOpentDetail(false);
   };
 
-  const deleteModerator = async (account) => {
+  const handleDeleteButton = async (treeType) => {
+    Swal.fire({
+      title: 'Bạn có muốn xóa thông tin này?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#4F9E1D',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+    }).then((account) => {
+      if (account.isConfirmed) {
+        deleteAccount(treeType);
+      }
+    })
+  };
+
+  const deleteAccount = async (account) => {
     setSelectedAccount(account);
     try {
       const response = await moderatorApi.delete(selectedAccount.id);
       console.log("🚀 ~ file: ListNewsPage.js ~ line 141 ~ deleteNews ~ response", response)
+
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Xóa thành công!',  
+      });
 
       try {
         const response = await moderatorApi.getAll(filtersParams);
@@ -278,12 +300,6 @@ function ListAccountsScreen() {
       } catch (err) {
         console.log("Failed to fetch list moderator. ", err);
       }
-
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Xóa thành công!',  
-      });
     } catch (err) {
       console.log(`Failed to delete moderator ${err}`);
       Swal.fire({  
@@ -313,6 +329,12 @@ function ListAccountsScreen() {
       const response = await accountApi.topUp(account);
       console.log("🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response", response)
 
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Nạp tiền thành công!',  
+      });
+
       try {
         const response = await accountApi.getAll(filtersParams);
         setListAccounts(response.data.list_object);
@@ -323,12 +345,6 @@ function ListAccountsScreen() {
       } catch (err) {
         console.log("Failed to fetch list account. ", err);
       }
-
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Nạp tiền thành công!',  
-      });
 
     } catch (err) {
       console.log(`Failed to update account ${err}`);
@@ -369,7 +385,7 @@ function ListAccountsScreen() {
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
-              onClick={deleteModerator.bind(this, prop)}
+              onClick={handleDeleteButton.bind(this, prop)}
             className="btn-round"
             color="danger"
             size="sm"

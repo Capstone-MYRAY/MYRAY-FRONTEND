@@ -23,14 +23,14 @@ import Select from "react-select";
 import React, { useEffect, useState } from "react";
 import momentjs from "moment";
 import "moment-timezone";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import { useRecoilState } from "recoil";
 // import ImageUpload from "components/CustomUpload/ImageUpload";
 import { moderatorState } from "state/moderatorState";
 import moderatorApi from "api/moderatorApi";
 import { JobPostStatusVN, jobType, gender } from "variables/general";
-import Datetime from 'react-datetime';
+import Datetime from "react-datetime";
 
 function ListModeratorsScreen() {
   const [listModerators, setListModerators] = useRecoilState(moderatorState);
@@ -42,7 +42,7 @@ function ListModeratorsScreen() {
     "page-size": 20,
   });
 
-  //-----------------------------Call API to get list all moderators, then set to moderators state
+  //Call API to get list all moderators, then set to moderators state
   useEffect(() => {
     const fetchListModerators = async () => {
       try {
@@ -78,14 +78,14 @@ function ListModeratorsScreen() {
   const createDate = () => {
     const d = new Date();
     return d;
-  }
+  };
 
   const [dobDateSelected, setDOBSelected] = React.useState(createDate());
 
-  
   const handleChangeDOB = (e) => {
-    setDOBSelected(e.format("DD--MM-YYYY"));
-  }
+    console.log("EDDDDDDDIIIIIIIT TIMEEEEEEEEEEEEE:", e.format("DD/MM/YYYY"));
+    setDOBSelected(e.format("DD/MM/YYYY"));
+  };
 
   const openEditModal = () => {};
 
@@ -102,6 +102,7 @@ function ListModeratorsScreen() {
     setSelectedModerator(moderator);
     console.log("EDDDDDDDIIIIIIIT moderator:", moderator);
     setIsOpentDetail(true);
+    setDOBSelected(momentjs(moderator.date_of_birth).format("DD-MM-YYYY"));
   };
 
   const closeDetailScreen = () => {
@@ -117,24 +118,34 @@ function ListModeratorsScreen() {
     e.preventDefault();
 
     const updateModerator = {
-      id:selectedModerator.id,
-  role_id: selectedModerator.role_id,
-  fullname: e.target.fullname.value,
-  image_url: "",
-  date_of_birth: momentjs(Date(dobDateSelected)).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-  gender: e.target.gender.value,
-  address:  e.target.address.value,
-  phone_number: e.target.phone_number.value,
-  email: e.target.email.value,
-  about_me: e.target.about_me.value,
-  // area_id: 0
-    }
+      id: selectedModerator.id,
+      role_id: selectedModerator.role_id,
+      fullname: e.target.fullname.value,
+      date_of_birth: momentjs(Date(dobDateSelected)).format(
+        "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+      ),
+      gender: e.target.exampleRadios.value,
+      address: e.target.address.value,
+      phone_number: e.target.phone_number.value,
+      email: e.target.email.value,
+      about_me: e.target.about_me.value,
+      // area_id: 0
+    };
 
-    console.log("updateModerator moderator:" + updateModerator.address);
+    console.log("updateModerator moderator:" + updateModerator.date_of_birth);
 
     try {
       const response = await moderatorApi.put(updateModerator);
-      console.log("🚀 ~ file: moderatorApi.js ~ line 197 ~ handleSubmit ~ response", response)
+      console.log(
+        "🚀 ~ file: moderatorApi.js ~ line 197 ~ handleSubmit ~ response",
+        response
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Cập nhật thành công!",
+      });
 
       try {
         const response = await moderatorApi.getAll(filtersParams);
@@ -147,17 +158,13 @@ function ListModeratorsScreen() {
         console.log("Failed to fetch list moderator. ", err);
       }
 
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Cập nhật thành công!',  
-      });
+      setIsOpentDetail(false);
     } catch (err) {
       console.log(`Failed to update moderator ${err}`);
-      Swal.fire({  
-        icon: 'error',
-        title: 'Lỗi',  
-        text: 'Cập nhật không thành công!',  
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Cập nhật không thành công!",
       });
     }
 
@@ -166,10 +173,22 @@ function ListModeratorsScreen() {
 
   const deleteModerator = async (moderator) => {
     setSelectedModerator(moderator);
-    console.log("🚀 ~ file: ListNewsPage.js ~ line 141 ~ delete moderator ~ response", moderator.id)
+    console.log(
+      "🚀 ~ file: ListNewsPage.js ~ line 141 ~ delete moderator ~ response",
+      moderator.id
+    );
     try {
       const response = await moderatorApi.delete(parseInt(moderator.id));
-      console.log("🚀 ~ file: ListNewsPage.js ~ line 141 ~ delete response ~ response", response);
+      console.log(
+        "🚀 ~ file: ListNewsPage.js ~ line 141 ~ delete response ~ response",
+        response
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Xóa thành công!",
+      });
 
       try {
         const response = await moderatorApi.getAll(filtersParams);
@@ -181,22 +200,15 @@ function ListModeratorsScreen() {
       } catch (err) {
         console.log("Failed to fetch list moderator. ", err);
       }
-
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Xóa thành công!',  
-      });
     } catch (err) {
       console.log(`Failed to delete moderator ${err}`);
-      Swal.fire({  
-        icon: 'error',
-        title: 'Lỗi',  
-        text: 'Xóa không thành công!',  
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Xóa không thành công!",
       });
     }
-  }
-
+  };
 
   const dataState = listModerators.map((prop, key) => {
     key = prop.id;
@@ -221,16 +233,16 @@ function ListModeratorsScreen() {
             color="primary"
             size="sm"
           >
-          Chi tiết
+            Chi tiết
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
-              onClick={deleteModerator.bind(this, prop)}
+            onClick={deleteModerator.bind(this, prop)}
             className="btn-round"
             color="danger"
             size="sm"
           >
-          Xóa
+            Xóa
           </Button>{" "}
         </div>
       ),
@@ -251,7 +263,7 @@ function ListModeratorsScreen() {
                     </Col>
                     <Col xs={2} md={2}>
                       <Link to="/admin/them-moi-nguoi-dieu-hanh">
-                      <Button color="primary">Thêm mới</Button>
+                        <Button color="primary">Thêm mới</Button>
                       </Link>
                     </Col>
                   </Row>
@@ -352,7 +364,7 @@ function ListModeratorsScreen() {
                                 <th md="1">Ngày sinh:</th>
                                 <td md="7">
                                   <Moment format="DD/MM/YYYY">
-                                    {selectedModerator.date_of_birth}
+                                    {dobDateSelected}
                                   </Moment>
                                 </td>
                               </tr>
@@ -367,22 +379,22 @@ function ListModeratorsScreen() {
                               <tr>
                                 <th md="1">Mô tả:</th>
                                 <td md="7">
-                                    <Col className="" md="12">
-                                      <FormGroup>
-                                        <Row className="">
-                                          <Input
-                                            cols="80"
-                                            placeholder="Giới thiệu"
-                                            rows="20"
-                                            type="textarea"
-                                            defaultValue={
-                                              selectedModerator.about_me
-                                            }
-                                            name={"about_me"}
-                                          />
-                                        </Row>
-                                      </FormGroup>
-                                    </Col>
+                                  <Col className="" md="12">
+                                    <FormGroup>
+                                      <Row className="">
+                                        <Input
+                                          cols="80"
+                                          placeholder="Giới thiệu"
+                                          rows="20"
+                                          type="textarea"
+                                          defaultValue={
+                                            selectedModerator.about_me
+                                          }
+                                          name={"about_me"}
+                                        />
+                                      </Row>
+                                    </FormGroup>
+                                  </Col>
                                 </td>
                               </tr>
                             </Table>
@@ -427,7 +439,7 @@ function ListModeratorsScreen() {
                     <Row>
                       <Col md="12">
                         <Form
-                            onSubmit={handleUpdateSubmit}
+                          onSubmit={handleUpdateSubmit}
                           className="form-horizontal"
                           method="get"
                         >
@@ -436,7 +448,7 @@ function ListModeratorsScreen() {
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
-                                    defaultValue={selectedModerator.fullname}
+                                  defaultValue={selectedModerator.fullname}
                                   placeholder="fullname"
                                   type="text"
                                   name={"fullname"}
@@ -449,53 +461,111 @@ function ListModeratorsScreen() {
                             <Label sm="3">Ngày sinh:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
-                              <Datetime
-                                          timeFormat={false}
-                                          utc={true}
-                                          dateFormat="DD/MM/YYYY"
-                                          inputProps={{ placeholder: "Datetime Picker" }}
-                                          name="date_of_birth"
-                                          onChange={handleChangeDOB}
-                                          value={dobDateSelected}
-                                        />
-                              </FormGroup>
-                            </Col>
-                          </Row>   
-
-                          <Row>
-                            <Label sm="3">Giới tính:</Label>
-                            <Col sm="9" md="9">
-                              <FormGroup className="">
-                                <Input
-                                    defaultValue={gender[selectedModerator.gender]}
-                                  placeholder="gender"
-                                  type="text"
-                                  name={"gender"}
+                                <Datetime
+                                  timeFormat={false}
+                                  utc={true}
+                                  dateFormat="DD/MM/YYYY"
+                                  inputProps={{
+                                    placeholder: "Datetime Picker",
+                                  }}
+                                  name="date_of_birth"
+                                  onChange={handleChangeDOB}
+                                  value={dobDateSelected}
                                 />
                               </FormGroup>
                             </Col>
-                          </Row>   
+                          </Row>
+
+                          <Row>
+                            <Label sm="3">Giới tính:</Label>
+                            <FormGroup check className="form-check-radio">
+                              <Label check>
+                                {selectedModerator.gender == 0 ? (
+                                  <Input
+                                    defaultChecked
+                                    defaultValue="0"
+                                    id="exampleRadios1"
+                                    name="exampleRadios"
+                                    type="radio"
+                                  />
+                                ) : (
+                                  <Input
+                                    defaultValue="0"
+                                    id="exampleRadios1"
+                                    name="exampleRadios"
+                                    type="radio"
+                                  />
+                                )}
+                                <span className="form-check-sign" />
+                                Nam
+                              </Label>
+                            </FormGroup>
+                            <FormGroup check className="form-check-radio">
+                              <Label check>
+                                {selectedModerator.gender == 1 ? (
+                                  <Input
+                                    defaultChecked
+                                    defaultValue="1"
+                                    id="exampleRadios2"
+                                    name="exampleRadios"
+                                    type="radio"
+                                  />
+                                ) : (
+                                  <Input
+                                    defaultValue="1"
+                                    id="exampleRadios2"
+                                    name="exampleRadios"
+                                    type="radio"
+                                  />
+                                )}
+                                <span className="form-check-sign" />
+                                Nữ
+                              </Label>
+                            </FormGroup>
+                            <FormGroup check className="form-check-radio">
+                              <Label check>
+                                {selectedModerator.gender == 2 ? (
+                                  <Input
+                                    defaultChecked
+                                    defaultValue="2"
+                                    id="exampleRadios2"
+                                    name="exampleRadios"
+                                    type="radio"
+                                  />
+                                ) : (
+                                  <Input
+                                    defaultValue="2"
+                                    id="exampleRadios2"
+                                    name="exampleRadios"
+                                    type="radio"
+                                  />
+                                )}
+                                <span className="form-check-sign" />
+                                Khác
+                              </Label>
+                            </FormGroup>
+                          </Row>
 
                           <Row>
                             <Label sm="3">Email:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
-                                    defaultValue={selectedModerator.email}
+                                  defaultValue={selectedModerator.email}
                                   placeholder="email"
                                   type="text"
                                   name={"email"}
                                 />
                               </FormGroup>
                             </Col>
-                          </Row> 
+                          </Row>
 
                           <Row>
                             <Label sm="3">Số điện thoại:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
-                                    defaultValue={selectedModerator.phone_number}
+                                  defaultValue={selectedModerator.phone_number}
                                   placeholder="phonenumber"
                                   type="text"
                                   name={"phone_number"}
@@ -509,7 +579,7 @@ function ListModeratorsScreen() {
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
-                                    defaultValue={selectedModerator.address}
+                                  defaultValue={selectedModerator.address}
                                   placeholder="address"
                                   type="text"
                                   name={"address"}
@@ -519,24 +589,22 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                          <Label sm="3">Mô tả:</Label>
-                          <Col sm="9" md="9">
-                                      <FormGroup>
-                                        <Row className="">
-                                          <Input
-                                            cols="80"
-                                            placeholder="Giới thiệu"
-                                            rows="20"
-                                            type="textarea"
-                                            defaultValue={
-                                              selectedModerator.about_me
-                                            }
-                                            name={"about_me"}
-                                          />
-                                        </Row>
-                                      </FormGroup>
-                                    </Col>
-                                    </Row>
+                            <Label sm="3">Mô tả:</Label>
+                            <Col sm="9" md="9">
+                              <FormGroup>
+                                <Row className="">
+                                  <Input
+                                    cols="80"
+                                    placeholder="Giới thiệu"
+                                    rows="20"
+                                    type="textarea"
+                                    defaultValue={selectedModerator.about_me}
+                                    name={"about_me"}
+                                  />
+                                </Row>
+                              </FormGroup>
+                            </Col>
+                          </Row>
 
                           <Row>
                             <Col sm="12">
