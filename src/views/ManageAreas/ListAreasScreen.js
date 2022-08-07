@@ -306,8 +306,8 @@ function ListAreasScreen() {
       district: prop.district,
       address: prop.address,
       moderator:
-        prop.area_accounts.length > 0
-          ? prop.area_accounts[0].account.fullname
+        prop.manager_of.length > 0
+          ? prop.manager_of[0].fullname
           : "Chưa có người điều hành",
       actions: (
         // we've added some custom button actions

@@ -1,4 +1,5 @@
 import React from "react";
+import { useRecoilState } from "recoil";
 import { NavLink } from "react-router-dom";
 // used for making the prop types of this component
 import PropTypes from "prop-types";
@@ -11,6 +12,7 @@ import { Nav, Collapse, Button } from "reactstrap";
 // core components
 import avatar from "assets/img/default-avatar.png";
 import logo from "myrayLogoGreen.png";
+import { accountInfoState } from "state/authState";
 
 var ps;
 
@@ -18,6 +20,7 @@ function Sidebar(props) {
   const [openAvatar, setOpenAvatar] = React.useState(false);
   const [collapseStates, setCollapseStates] = React.useState({});
   const userAccount = JSON.parse(localStorage.getItem('account'));
+  const [userInfo, setUserInfo] = useRecoilState(accountInfoState);
   console.log("const userAccount = JSON.parse(localStorage.getItem('account'));" , userAccount);
 
   const sidebar = React.useRef();
@@ -165,7 +168,7 @@ function Sidebar(props) {
         <div className="sidebar-wrapper" ref={sidebar}>
           <div className="user">
             <div className="photo">
-              <img src={avatar} alt="Avatar" />
+              <img src={userInfo.image_url ? userInfo.image_url : avatar} alt="Avatar"/>
             </div>
             <div className="info">
               <a
@@ -181,6 +184,12 @@ function Sidebar(props) {
               </a>
               <Collapse isOpen={openAvatar}>
                 <ul className="nav">
+                <li>
+                    <a href="/admin/ho-so">
+                      <span className="sidebar-mini-icon">HS</span>
+                      <span className="sidebar-normal">Hồ sơ</span>
+                    </a>
+                  </li>
                   <li>
                     <a href="/auth" onClick={() => localStorage.removeItem('user')}>
                       <span className="sidebar-mini-icon">SO</span>

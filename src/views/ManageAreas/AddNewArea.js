@@ -42,7 +42,7 @@ function AddNewArea() {
 
   const [provinceFilterSelected, setProvinceFilterSelected] = useState({
     value: -1,
-    label: "Tỉnh thành",
+    label: "Tất cả tỉnh thành",
   });
 
   const provinceFilterSelectData = [

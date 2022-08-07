@@ -7,6 +7,7 @@ import ListGuidePostsScreen from "views/ManageGuidePosts/ListGuidePostsScreen";
 import AddNewArea from "views/ManageAreas/AddNewArea";
 import AddGuidePost from "views/ManageGuidePosts/AddGuidePost";
 import AddNewModerator from "views/ManageModerators/AddNewModerator";
+import UserPage from "views/Pages/UserPage"; 
 //=======================
 
 let routes = [
@@ -24,7 +25,6 @@ let routes = [
     state: "openModerator",
     icon: "fa fa-users text-green",
     component: ListModeratorsScreen,
-    // component: AddNewModerator,
     layout: "/admin",
     views: [
       {
@@ -39,6 +39,13 @@ let routes = [
         name: "Thêm mới người điều hành",
         mini: "LN",
         component: AddNewModerator,
+        layout: "/admin",
+      },
+      {
+        path: "/ho-so",
+        name: "Hồ sơ",
+        mini: "HS",
+        component: UserPage,
         layout: "/admin",
       },
     ],

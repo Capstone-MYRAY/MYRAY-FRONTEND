@@ -32,12 +32,13 @@ import {
   listDistrictState,
 } from "state/areaState";
 import { moderatorComboboxDataState } from "state/moderatorState";
+import { moderatorState } from "state/moderatorState";
 import Datetime from "react-datetime";
 import momentjs from "moment";
 import { roleId } from "variables/general";
 
 function AddNewModerator() {
-  //Alumni state
+  const [listModerators, setListModerators] = useRecoilState(moderatorState);
   const [areaList, setlistArea] = useRecoilState(listAreaState);
   const provinceCombobox = useRecoilValue(provinceComboboxData);
   const [districtsData, setDistrictsData] = useRecoilState(listDistrictState);
@@ -96,18 +97,6 @@ function AddNewModerator() {
     label: "Người điều hành",
   });
 
-  useEffect(() => {
-    const fetchListArea = async () => {
-      try {
-        //Area
-        fetchListArea(filtersParams);
-      } catch (err) {
-        console.log("Failed to fetch list Area. ", err);
-      }
-    };
-    fetchListArea();
-  }, [filtersParams, districtsFilterSelectData]);
-
   const fetchListArea = async (filters) => {
     try {
       //Area
@@ -119,10 +108,22 @@ function AddNewModerator() {
     }
   };
 
+  const fetchListModerators = async (filtersParams) => {
+    try {
+      const response = await moderatorApi.getAll(filtersParams);
+      setListModerators(response.data.list_object);
+      console.log(
+        "Success to fetch list moderator. ",
+        response.data.list_object
+      );
+    } catch (err) {
+      console.log("Failed to fetch list moderator. ", err);
+    }
+  };
+
   const clearFormForCreate = (e) => {
-    e.preventDefault();
     e.target.fullname.value = "";
-    e.target.exampleRadios.value = 0;
+    // e.target.exampleRadios.value = 0;
     e.target.address.value = "";
     e.target.phone_number.value = "";
     e.target.email.value = "";
@@ -147,25 +148,11 @@ function AddNewModerator() {
     console.log("🚀 ~ file: CREATE MODERATOR", moderatorCreated);
 
     try {
-    //   const response = await moderatorApi.post(moderatorCreated);
-    //   console.log(
-    //     "🚀 ~ file: moderatorCreated~ handleSubmit ~ response",
-    //     response
-    //   );
-
-      // try {
-      //   const listAreaUpdate = await areaApi.getAll();
-      //   setlistArea(listAreaUpdate.data);
-      // } catch (err) {
-      //   console.log("Failed to fetch list Area. ", err);
-      // }
-
-      // try {
-      //   const listAreaUpdate = await areaApi.getAll();
-      //   setlistArea(listAreaUpdate.data);
-      // } catch (err) {
-      //   console.log("Failed to fetch list Area. ", err);
-      // }
+      const response = await moderatorApi.post(moderatorCreated);
+      console.log(
+        "🚀 ~ file: moderatorCreated~ handleSubmit ~ response",
+        response
+      );
 
       Swal.fire({  
         icon: 'success',
@@ -174,6 +161,7 @@ function AddNewModerator() {
       });
 
       clearFormForCreate(e);
+      
     } catch (err) {
       console.log(`Failed to update moderator ${err}`);
       Swal.fire({  

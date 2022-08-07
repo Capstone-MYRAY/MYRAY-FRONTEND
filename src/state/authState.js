@@ -13,4 +13,9 @@ export const accountState = atom({
   export const addUserAuth = (user, userAuth) => {
     user = userAuth;
     return user;
-  }
+  };
+
+  export const accountInfoState = atom({
+    key: "infoAccount",
+    default: {},
+  });

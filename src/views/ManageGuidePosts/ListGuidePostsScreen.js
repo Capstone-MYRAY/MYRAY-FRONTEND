@@ -229,6 +229,41 @@ function ListGuidePostsScreen() {
 
   const btnStyle = { width: "max-content" };
 
+  const editorConfiguration = {
+    toolbar: {
+      items: [
+        'heading',
+        '|',
+        'fontSize',
+        'fontFamily',
+        '|',
+        'bold',
+        'italic',
+        '|',
+        'alignment',
+        '|',
+        'numberedList',
+        'bulletedList',
+        '|',
+        'link',
+        'blockQuote',
+        'insertTable',
+        'mediaEmbed',
+        '|',
+        'placeholder',
+      ],
+    },
+    image: {
+      toolbar: ['imageTextAlternative', 'imageStyle:full', 'imageStyle:side'],
+    },
+    table: {
+      contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
+    },
+    placeholderConfig: {
+      types: ['Name', 'DOB'],
+    },
+  };
+
   return (
     <>
       <PanelHeader size="sm" />
@@ -282,7 +317,6 @@ function ListGuidePostsScreen() {
 
           <Col xs={6} md={6}>
             {/* DETAILS */}
-
             <div>
               <Row>
                 <Col md="12">
@@ -306,7 +340,7 @@ function ListGuidePostsScreen() {
                             <Row className="d-flex justify-content-center">
                               <Col md="10">
                                 <Row>
-                                  <Col md="12">
+                                  <Col lg="9" md={12}>
                                     <FormGroup>
                                     <Row>
                                       <Label className="font-weight-bold">
@@ -339,7 +373,7 @@ function ListGuidePostsScreen() {
                                     <Row className="content mt-1">
                                         <CKEditor
                                           editor={ClassicEditor}
-                                          /* config={editorConfiguration} */
+                                          config={editorConfiguration} 
                                           data={guidepostContent}
                                           onInit={(editor) => {
                                             // You can store the "editor" and use when it is needed.

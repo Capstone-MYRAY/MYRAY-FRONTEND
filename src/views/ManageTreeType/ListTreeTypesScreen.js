@@ -64,10 +64,8 @@ function ListTreeTypesScreen() {
 
   //Press "Them moi loai cay" button"
   const clearFormForCreate = (e) => {
-    setSelectedTreeType(null);
     setIsCreate(true);
-    e.target.type.value = "";
-    e.target.description.value = "";
+    setSelectedTreeType({});
   };
 
   //Handle edit button
@@ -105,17 +103,16 @@ function ListTreeTypesScreen() {
         "🚀 ~ file: List treeType.js ~ line 197 ~ handleSubmit ~ response",
         response
       );
-
-      try {
-        fetchListTreeType(filtersParams);
-      } catch (err) {
-        console.log("Failed to fetch list treeType. ", err);
-      }
       Swal.fire({  
         icon: 'success',
         title: 'Thành công',  
         text: 'Xóa thành công!',  
       });
+      try {
+        fetchListTreeType(filtersParams);
+      } catch (err) {
+        console.log("Failed to fetch list treeType. ", err);
+      }
     } catch (err) {
       Swal.fire({  
         icon: 'error',

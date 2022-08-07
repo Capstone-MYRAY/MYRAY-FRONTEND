@@ -14,6 +14,7 @@ import routesModerator from "routesModerator";
 import { useRecoilState } from "recoil";
 import { accountState } from "state/accountState";
 import { reportState } from "state/reportState";
+import { accountInfoState } from "state/authState";
 // import { listAreaState } from "state/areaState";
 // import { listTreeTypesState } from "state/treeTypeState";
 import accountApi from "api/accountApi";
@@ -22,7 +23,6 @@ import reportApi from "api/reportApi";
 // import postTypeApi from "api/postTypeApi";
 import { roleId } from "variables/general";
 
-
 var ps;
 
 function Moderator(props) {
@@ -30,16 +30,18 @@ function Moderator(props) {
 const conditionDefault = {page:1, 'page-size': 20};
 const [listAccounts, setListAccounts] = useRecoilState(accountState);
 const [listReports, setListReports] = useRecoilState(reportState);
+const [userInfo, setUserInfo] = useRecoilState(accountInfoState);
 
   const location = useLocation();
   const [sidebarMini, setSidebarMini] = React.useState(true);
   const [backgroundColor, setBackgroundColor] = React.useState("orange");
   const notificationAlert = React.useRef();
   const mainPanel = React.useRef();
+  const userAccountLocal = JSON.parse(localStorage.getItem('account'));
 
 //-----------------------------Call API to get list all moderators, then set to moderators state
 useEffect(() => {
-  const fetchListModerators = async () => {
+  const fetchListAccounts = async () => {
    
     try {
        //Moderators 
@@ -47,12 +49,15 @@ useEffect(() => {
        setListAccounts(response.data.list_object);
        console.log("Success to fetch list account. ", response.data.list_object);
 
+       const userAccount = await accountApi.get(userAccountLocal.id);
+       console.log("Success to fetch user information. ", userAccount.data);
+       setUserInfo(userAccount.data);
     } catch (err) {
       console.log("Failed to fetch list account. ", err);
     }
   }
   
-  fetchListModerators();
+  fetchListAccounts();
 },[]);
 
 //-----------------------------Call API to get list all report, then set to report state
@@ -169,7 +174,7 @@ useEffect(() => {
         <AdminNavbar {...props} brandText={getActiveRoute(routesModerator)} />
         <Switch>
           {getRoutes(routesModerator)}
-          <Redirect from="/moderator" to="/moderator/bang-dieu-khien-moderator" />
+          <Redirect from="/moderator" to="/moderator/quan-ly-bai-dang" />
         </Switch>
         {
           // we don't want the Footer to be rendered on full screen maps page

@@ -20,12 +20,14 @@ import { listPostTypesState } from "state/postTypeState";
 import { moderatorState, moderatorsComboboxData } from "state/moderatorState";
 import { listGuidePostState } from "state/guidePostState";
 import { statisticState, chartDataState } from "state/statisticState";
+import { accountInfoState } from "state/authState";
 import areaApi from "api/areaApi";
 import treeTypeApi from "api/treeTypeApi";
 import postTypeApi from "api/postTypeApi";
 import moderatorApi from "api/moderatorApi";
 import guidePostApi from "api/guidePostApi";
 import statisticApi from "api/statisticApi";
+import accountApi from "api/accountApi";
 
 var ps;
 
@@ -51,7 +53,8 @@ const [listTreeTypes, setListTreeTypes] = useRecoilState(listTreeTypesState);
 const [listPostTypes, setListPostTypes] = useRecoilState(listPostTypesState);
 const [statisticResult, setStatisticResult] = useRecoilState(statisticState);
 const [chartData, setChartData] = useRecoilState(chartDataState);
-
+const [userInfo, setUserInfo] = useRecoilState(accountInfoState);
+const userAccountLocal = JSON.parse(localStorage.getItem('account'));
 //-----------------------------Call API to get list area, then set to area state
 useEffect(() => {
   const fetchListArea = async () => {
@@ -143,6 +146,10 @@ useEffect(() => {
        const response = await moderatorApi.getAll(conditionDefault);
        setListModerators(response.data.list_object);
        console.log("Success to fetch list moderator. ", response.data.list_object);
+
+       const userAccount = await accountApi.get(userAccountLocal.id);
+       console.log("Success to fetch user information. ", userAccount.data);
+       setUserInfo(userAccount.data);
 
     } catch (err) {
       console.log("Failed to fetch list moderator. ", err);

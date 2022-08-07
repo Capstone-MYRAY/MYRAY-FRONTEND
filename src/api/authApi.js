@@ -1,12 +1,13 @@
-import axiosClient from './axiosClient';
+import axiosClient from "./axiosClient";
 
 const authApi = {
-    authen:  (loginInput) => {
-//         const headers = { 
-//             'token': token,
-//         };
-        return axiosClient.post(`/authentication/login`, loginInput);
-    }
-}
+  authen: (loginInput) => {
+    return axiosClient.post(`/authentication/login`, loginInput);
+  },
+
+  resetpassword: (phoneNumber) => {
+    return axiosClient.post(`/authentication/resetpassword`, phoneNumber);
+  },
+};
 
 export default authApi;

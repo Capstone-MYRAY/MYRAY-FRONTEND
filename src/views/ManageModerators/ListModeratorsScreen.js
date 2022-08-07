@@ -46,7 +46,6 @@ function ListModeratorsScreen() {
   useEffect(() => {
     const fetchListModerators = async () => {
       try {
-        //Moderators do not manage area
         const response = await moderatorApi.getAll(filtersParams);
         setListModerators(response.data.list_object);
         console.log(

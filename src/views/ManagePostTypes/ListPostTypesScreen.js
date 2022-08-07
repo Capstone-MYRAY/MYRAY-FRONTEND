@@ -335,9 +335,9 @@ function ListPostTypesScreen() {
                                 <Row>
                                 <Col md="12">
                                 <FormGroup className="">
-                                  <Label className="font-weight-bold">Màu nền</Label>
+                                  <Label className="font-weight-bold">Màu nền (hex)</Label>
                                       <Input
-                                        defaultValue={selectedPostType ? (selectedPostType.background ?  '#' + selectedPostType.background : "") : ""}
+                                        defaultValue={selectedPostType ? (selectedPostType.background ? selectedPostType.background : "") : ""}
                                         placeholder="Hãy nhập màu sắc hiển thị"
                                         type="text"
                                         name={"background"}
@@ -349,9 +349,9 @@ function ListPostTypesScreen() {
                                 <Row>
                                 <Col md="12">
                                 <FormGroup className="">
-                                  <Label className="font-weight-bold">Màu chữ</Label>
+                                  <Label className="font-weight-bold">Màu chữ (hex)</Label>
                                       <Input
-                                        defaultValue={selectedPostType ? (selectedPostType.color ?  '#' + selectedPostType.color : "") : ""}
+                                        defaultValue={selectedPostType ? (selectedPostType.color ? selectedPostType.color : "") : ""}
                                         placeholder="Hãy nhập màu sắc hiển thị"
                                         type="text"
                                         name={"color"}
