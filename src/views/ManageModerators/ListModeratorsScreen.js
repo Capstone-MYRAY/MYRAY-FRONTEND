@@ -443,7 +443,7 @@ function ListModeratorsScreen() {
                           method="get"
                         >
                           <Row>
-                            <Label sm="3">Họ và tên:</Label>
+                            <Label className="font-weight-bold" sm="3">Họ và tên:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
@@ -457,7 +457,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label sm="3">Ngày sinh:</Label>
+                            <Label className="font-weight-bold" sm="3">Ngày sinh:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Datetime
@@ -476,7 +476,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label sm="3">Giới tính:</Label>
+                            <Label className="font-weight-bold" sm="3">Giới tính:</Label>
                             <FormGroup check className="form-check-radio">
                               <Label check>
                                 {selectedModerator.gender == 0 ? (
@@ -546,7 +546,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label sm="3">Email:</Label>
+                            <Label className="font-weight-bold" sm="3">Email:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
@@ -560,7 +560,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label sm="3">Số điện thoại:</Label>
+                            <Label className="font-weight-bold" sm="3">Số điện thoại:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
@@ -574,7 +574,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label sm="3">Địa chỉ:</Label>
+                            <Label className="font-weight-bold" sm="3">Địa chỉ:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
@@ -588,7 +588,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label sm="3">Mô tả:</Label>
+                            <Label className="font-weight-bold" sm="3">Mô tả:</Label>
                             <Col sm="9" md="9">
                               <FormGroup>
                                 <Row className="">

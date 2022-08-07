@@ -62,9 +62,10 @@ function ListPostTypesScreen() {
   const clearFormForCreate = (e) => {
     setSelectedPostType(null);
     setIsCreate(true);
-      e.target.name.value = "";
+      e.target.typeName.value = "";
       e.target.description.value = "";
       e.target.price.value = "";
+      e.target.background.value = "";
       e.target.color.value = "";
   }
 
@@ -114,9 +115,10 @@ function ListPostTypesScreen() {
     let postTypeObj = {};
     if (isCreate) {
       postTypeObj = {
-        name: e.target.name.value,
+        name: e.target.typeName.value,
         description: e.target.description.value,
         price: e.target.price.value,
+        background: e.target.background.value,
         color: e.target.color.value,
       };
 
@@ -134,9 +136,10 @@ function ListPostTypesScreen() {
     } else {
       postTypeObj = {
         id: selectedPostType ? selectedPostType.id : null,
-        name: e.target.name.value,
+        name: e.target.typeName.value,
         description: e.target.description.value,
         price: e.target.price.value,
+        background: e.target.background.value,
         color: e.target.color.value,
       };
 
@@ -150,6 +153,8 @@ function ListPostTypesScreen() {
         title: 'Thành công',  
         text: 'Cập nhật thành công!',  
       });
+      setIsCreate(true);
+      
     }
 
       try {
@@ -304,20 +309,19 @@ function ListPostTypesScreen() {
                         <Form onSubmit={handleSubmit}>
                             <Row className="d-flex justify-content-center">
                               <Col md="7">
-                                <Row>
+                              <Row>
                                 <Col md="12">
                                 <FormGroup className="">
                                   <Label className="font-weight-bold">Loại tin</Label>
                                       <Input
-                                        defaultValue={selectedPostType? selectedPostType.name : ""}
+                                        defaultValue={!isCreate ? selectedPostType.name : ""}
                                         placeholder="Hãy nhập tên loại tin"
                                         type="text"
-                                        name={"name"}
+                                        name={"typeName"}
                                       />
                                     </FormGroup>
                                     </Col>
                                 </Row>
-
                                 <Row>
                                 <Col md="12">
                                 <FormGroup className="">

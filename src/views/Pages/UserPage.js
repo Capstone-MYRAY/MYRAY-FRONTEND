@@ -8,7 +8,10 @@ import {
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import { accountInfoState } from "state/authState";
 import accountApi from "api/accountApi";
-
+import Moment from "react-moment";
+import Datetime from "react-datetime";
+import momentjs from "moment";
+import "moment-timezone";
 
 function User() {
   const [userInfo, setUserInfo] = useRecoilState(accountInfoState);
@@ -30,6 +33,18 @@ function User() {
     fetchListAccounts();
   },[]);
 
+  const createDate = () => {
+    const d = momentjs(userInfo.date_of_birth).format("DD-MM-YYYY");
+    return d;
+  };
+
+  const [dobDateSelected, setDOBSelected] = React.useState(momentjs(userInfo.date_of_birth).format("DD-MM-YYYY"));
+
+  const handleChangeDOB = (e) => {
+    console.log("EDDDDDDDIIIIIIIT TIMEEEEEEEEEEEEE:", e.format("DD/MM/YYYY")
+    );
+    setDOBSelected(e.format("DD/MM/YYYY"));
+  };
 
   return (
     <>
@@ -46,7 +61,7 @@ function User() {
                   <Row>
                   <Col className="pr-1" md="6">
                       <FormGroup>
-                        <label>Họ và tên</label>
+                        <label className="font-weight-bold">Họ và tên</label>
                         <Input
                           defaultValue={userInfo.fullname}
                           placeholder="Họ và tên"
@@ -57,34 +72,41 @@ function User() {
                     
                     <Col className="pl-1" md="6">
                     <FormGroup>
-                        <label>Ngày sinh</label>
-                        <Input
-                          defaultValue={userInfo.date_of_birth}
-                          placeholder="DOB"
-                          type="text"
-                        />
+                        <label className="font-weight-bold">Ngày sinh</label>
+                        <Datetime
+                                  timeFormat={false}
+                                  utc={true}
+                                  dateFormat="DD/MM/YYYY"
+                                  inputProps={{
+                                    placeholder: "Chọn ngày sinh",
+                                  }}
+                                  name="date_of_birth"
+                                  onChange={handleChangeDOB}
+                                  value={dobDateSelected}
+                                  // defaultValue={userInfo.date_of_birth}
+                                />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
                     <Col className="pr-1" md="6">
                     <FormGroup>
-                        <label>Số điện thoại</label>
+                        <label className="font-weight-bold">Số điện thoại</label>
                         <Input
                           defaultValue={userInfo.phone_number}
-                          placeholder="Job"
+                          placeholder="Số điện thoại"
                           type="text"
                         />
                       </FormGroup>
                     </Col>
                     <Col className="pl-1" md="6">
                     <FormGroup>
-                      <label htmlFor="exampleInputEmail1">
+                      <label className="font-weight-bold" htmlFor="exampleInputEmail1">
                           Email
                           </label>
                         <Input
                           defaultValue={userInfo.email}
-                          placeholder="Company"
+                          placeholder="Email"
                           type="text"
                         />
                       </FormGroup>
@@ -94,32 +116,10 @@ function User() {
                   <Row>
                     <Col md="12">
                       <FormGroup>
-                        <label>Địa chỉ</label>
+                        <label className="font-weight-bold">Địa chỉ</label>
                         <Input
                           defaultValue={userInfo.address}
-                          placeholder="Home Address"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="6">
-                      <FormGroup>
-                        <label>Số điện thoại</label>
-                        <Input
-                          defaultValue={userInfo.phone_number}
-                          placeholder="Job"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-1" md="6">
-                      <FormGroup>
-                        <label>Company</label>
-                        <Input
-                          defaultValue="Company Picker"
-                          placeholder="Company"
+                          placeholder="Địa chỉ"
                           type="text"
                         />
                       </FormGroup>
@@ -128,11 +128,11 @@ function User() {
                   <Row>
                     <Col md="12">
                       <FormGroup>
-                        <label>Giới thiệu:</label>
+                        <label className="font-weight-bold">Giới thiệu:</label>
                         <Input
                           cols="80"
                           defaultValue={userInfo.about_me}
-                          placeholder="Here can be your description"
+                          placeholder="Giới thiệu"
                           rows="4"
                           type="textarea"
                         />

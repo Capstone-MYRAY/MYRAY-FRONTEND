@@ -493,7 +493,7 @@ function ListAreasScreen() {
                               onClick={openEditAreaModal}
                               color="primary"
                             >
-                              Chỉnh sửa 
+                              Cập nhật
                             </Button>
                             <Button
                               className="ml-2"
@@ -627,7 +627,7 @@ function ListAreasScreen() {
                                   className="mr-2"
                                   color="primary"
                                 >
-                                  Chỉnh sửa
+                                  Cập nhật
                                 </Button>
                                 <Button
                                   className="ml-2"

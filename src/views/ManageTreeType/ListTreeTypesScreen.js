@@ -65,7 +65,8 @@ function ListTreeTypesScreen() {
   //Press "Them moi loai cay" button"
   const clearFormForCreate = (e) => {
     setIsCreate(true);
-    setSelectedTreeType({});
+    e.target.typeName.value = "";
+    e.target.description.value = "";
   };
 
   //Handle edit button
@@ -128,7 +129,7 @@ function ListTreeTypesScreen() {
       let treeTypeObj = {};
       if (isCreate) {
         treeTypeObj = {
-          type: e.target.type.value,
+          type: e.target.typeName.value,
           description: e.target.description.value,
         };
 
@@ -145,7 +146,7 @@ function ListTreeTypesScreen() {
       } else {
         treeTypeObj = {
           id: selectedTreeType ? selectedTreeType.id : null,
-          type: e.target.type.value,
+          type: e.target.typeName.value,
           description: e.target.description.value,
           status: selectedTreeType.status,
         };
@@ -319,7 +320,7 @@ function ListTreeTypesScreen() {
                                         }
                                         placeholder="Hãy nhập tên loại cây"
                                         type="text"
-                                        name={"type"}
+                                        name={"typeName"}
                                       />
                                     </FormGroup>
                                   </Col>
