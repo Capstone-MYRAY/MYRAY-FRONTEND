@@ -38,7 +38,7 @@ function User() {
     return d;
   };
 
-  const [dobDateSelected, setDOBSelected] = React.useState(momentjs(userInfo.date_of_birth).format("DD-MM-YYYY"));
+  const [dobDateSelected, setDOBSelected] = React.useState(momentjs(userInfo.date_of_birth).format("DD/MM/YYYY"));
 
   const handleChangeDOB = (e) => {
     console.log("EDDDDDDDIIIIIIIT TIMEEEEEEEEEEEEE:", e.format("DD/MM/YYYY")

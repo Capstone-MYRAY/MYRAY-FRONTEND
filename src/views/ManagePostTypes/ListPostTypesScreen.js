@@ -198,20 +198,20 @@ function ListPostTypesScreen() {
           {/* use this button to add a edit kind of action */}
           <Button
             onClick={editPostType.bind(this, prop)}
-            className="btn-round"
+            className="btn-icon btn-round"
             color="primary"
             size="sm"
           >
-            Chi tiết
+            <i className="fa fa-edit" />
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
             onClick={deletePostType.bind(this, prop)}
-            className="btn-round"
+            className="btn-icon btn-round"
             color="danger"
             size="sm"
           >
-            Xóa
+            <i className="fa fa-times" />
           </Button>{" "}
         </div>
       ),
@@ -293,7 +293,7 @@ function ListPostTypesScreen() {
                   <Card>
                     <CardHeader>
                       <Row>
-                        <Col xs={6} md={6}>
+                        <Col xs={12} md={12}>
                           <h5 className="card-title">
                           {isCreate 
                           ? "Thêm mới loại tin" 
@@ -315,7 +315,7 @@ function ListPostTypesScreen() {
                                   <Label className="font-weight-bold">Loại tin</Label>
                                       <Input
                                         defaultValue={!isCreate ? selectedPostType.name : ""}
-                                        placeholder="Hãy nhập tên loại tin"
+                                        placeholder="Nhập tên loại tin"
                                         type="text"
                                         name={"typeName"}
                                       />
@@ -328,7 +328,7 @@ function ListPostTypesScreen() {
                                   <Label className="font-weight-bold">Giá cả</Label>
                                       <Input
                                         defaultValue={selectedPostType? selectedPostType.price : ""}
-                                        placeholder="Hãy nhập giá"
+                                        placeholder="Nhập giá"
                                         type="text"
                                         name={"price"}
                                       />
@@ -342,7 +342,7 @@ function ListPostTypesScreen() {
                                   <Label className="font-weight-bold">Màu nền (hex)</Label>
                                       <Input
                                         defaultValue={selectedPostType ? (selectedPostType.background ? selectedPostType.background : "") : ""}
-                                        placeholder="Hãy nhập màu sắc hiển thị"
+                                        placeholder="Nhập màu sắc hiển thị"
                                         type="text"
                                         name={"background"}
                                       />
@@ -356,7 +356,7 @@ function ListPostTypesScreen() {
                                   <Label className="font-weight-bold">Màu chữ (hex)</Label>
                                       <Input
                                         defaultValue={selectedPostType ? (selectedPostType.color ? selectedPostType.color : "") : ""}
-                                        placeholder="Hãy nhập màu sắc hiển thị"
+                                        placeholder="Nhập màu sắc hiển thị"
                                         type="text"
                                         name={"color"}
                                       />
@@ -372,7 +372,7 @@ function ListPostTypesScreen() {
                                       </Label>
                                       <Input
                                         cols="80"
-                                        placeholder="Hãy nhập mô tả loại tin"
+                                        placeholder="Nhập mô tả loại tin"
                                         rows="4"
                                         type="textarea"
                                         defaultValue={selectedPostType ? selectedPostType.description : ""}

@@ -6,7 +6,7 @@ const authApi = {
   },
 
   resetpassword: (phoneNumber) => {
-    return axiosClient.post(`/authentication/resetpassword`, phoneNumber);
+    return axiosClient.post(`/authentication/resetpassword?phoneNumber=${phoneNumber}`);
   },
 };
 

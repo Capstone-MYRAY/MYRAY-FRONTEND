@@ -200,21 +200,21 @@ function ListTreeTypesScreen() {
           {/* use this button to add a edit kind of action */}
           <Button
             onClick={editTreeType.bind(this, prop)}
-            className="btn-round"
+            className="btn-icon btn-round"
             color="primary"
             size="sm"
           >
-          Chi tiết
+          <i className="fa fa-edit" />
           </Button>{" "}
           {/* use this button to remove the data row */}
           {prop.status == 1 ? (
           <Button
             onClick={handleDeleteButton.bind(this, prop)}
-            className="btn-round"
+            className="btn-icon btn-round"
             color="danger"
             size="sm"
           >
-          Xóa
+          <i className="fa fa-times" />
           </Button>
          )
           : (<div></div>) }

@@ -229,6 +229,8 @@ function ListGuidePostsScreen() {
 
   const btnStyle = { width: "max-content" };
 
+  const ckStyle = { width: "100%" };
+
   const editorConfiguration = {
     toolbar: {
       items: [
@@ -323,7 +325,7 @@ function ListGuidePostsScreen() {
                   <Card>
                     <CardHeader>
                       <Row>
-                        <Col xs={6} md={6}>
+                        <Col>
                           <h5 className="card-title">
                             {isCreate
                               ? "Thêm mới bài hướng dẫn"
@@ -340,7 +342,7 @@ function ListGuidePostsScreen() {
                             <Row className="d-flex justify-content-center">
                               <Col md="10">
                                 <Row>
-                                  <Col lg="9" md={12}>
+                                  <Col lg="12" md={12}>
                                     <FormGroup>
                                     <Row>
                                       <Label className="font-weight-bold">
@@ -372,6 +374,7 @@ function ListGuidePostsScreen() {
                                     </Row>
                                     <Row className="content mt-1">
                                         <CKEditor
+                                          style={ckStyle}
                                           editor={ClassicEditor}
                                           config={editorConfiguration} 
                                           data={guidepostContent}

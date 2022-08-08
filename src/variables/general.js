@@ -105,6 +105,13 @@ const reportStatus = ["Đã xóa", "Chờ xử lí", "Đã xử lí"];
 
 const treeTypeVNStatus = ["Ẩn","Hoạt động"];
 
+const accountStatus = ["Không hoạt động", "Hoạt động", "Bị khóa"];
+
+const accountStatusNum = {
+  deactive: 0,
+  active: 1,
+  banned: 2,
+};
 
 const baseAURL = "http://api.myray.site/api/v1";
 
@@ -121,4 +128,6 @@ export {
   roleNameVN,
   reportStatus,
   treeTypeVNStatus,
+  accountStatus,
+  accountStatusNum
 };

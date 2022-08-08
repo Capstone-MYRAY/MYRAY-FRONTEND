@@ -101,7 +101,7 @@ function ListModeratorsScreen() {
     setSelectedModerator(moderator);
     console.log("EDDDDDDDIIIIIIIT moderator:", moderator);
     setIsOpentDetail(true);
-    setDOBSelected(momentjs(moderator.date_of_birth).format("DD-MM-YYYY"));
+    setDOBSelected(momentjs(moderator.date_of_birth).format("DD/MM/YYYY"));
   };
 
   const closeDetailScreen = () => {

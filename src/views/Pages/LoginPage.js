@@ -98,7 +98,7 @@ function LoginPage() {
         console.log("RESET PASS:" ,response);
         setIsResetPassword(false);
       } catch (error) {
-        console.log("Failed to login: ", error);
+        console.log("Failed to reset: ", error);
       }
     }
   };

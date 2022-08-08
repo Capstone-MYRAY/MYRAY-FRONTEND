@@ -30,10 +30,11 @@ import { useRecoilState } from "recoil";
 import { moderatorState } from "state/moderatorState";
 import accountApi from "api/accountApi";
 import moderatorApi from "api/moderatorApi";
-import { JobPostStatusVN, jobType, gender, roleId } from "variables/general";
+import { JobPostStatusVN, jobType, gender, roleId, accountStatusNum } from "variables/general";
 import Datetime from 'react-datetime';
 import SwitchSelector from "react-switch-selector";
 import { accountState } from "state/accountState";
+import { accountStatus} from "variables/general";
 
 
 function ListAccountsScreen() {
@@ -47,40 +48,37 @@ function ListAccountsScreen() {
     "page-size": 20,
     roleId: roleId.landowner,
   });
-  const [toggleSelected, setToggleSelected] = useState('Landowner');
-
+  const [toggleSelected, setToggleSelected] = useState("Landowner");
+  const [rangeState, setrangeState] = React.useState("");
+  const [range, setrange] = React.useState("");
 
   //-----------------------------Call API to get list all moderators, then set to moderators state
   useEffect(() => {
     const fetchListAccounts = async () => {
       try {
-        // let roleId = roleId.landowner;
-        let role_Id = 3;
-        //Accounts
-        if (toggleSelected) {
-          switch(toggleSelected) {
-          case "Landowner":
-            // roleId = roleId.landowner;
-            role_Id = 3;
-            console.log("roleIdroleIdroleIdroleIdroleId ", role_Id);
-            filtersParams= {...filtersParams, roleId: roleId};
-            break;
-          case "Farmer":
-            // roleId = roleId.farmer;
-            role_Id = 4;
-            filtersParams= {...filtersParams, roleId: role_Id};
-            break;
-          default:
-            break;
-        }
-      } 
-        const response = await accountApi.getAll(filtersParams);
-        setListAccounts(response.data.list_object);
-        console.log(
-          "Success to fetch list accounts. ",
-          response.data.list_object
-        );
-        
+        let role_Id = roleId.landowner;
+      let filtersParamsToggle = {...filtersParams, roleId: role_Id};
+      //Accounts
+      switch(toggleSelected) {
+        case "Landowner":
+          role_Id = roleId.landowner;
+          console.log("roleIdroleIdroleIdroleIdroleId ", role_Id);
+          break;
+        case "Farmer":
+          role_Id = roleId.farmer;
+          filtersParamsToggle = ({...filtersParams, roleId: role_Id});
+          break;
+        default:
+          break;
+      }
+      
+
+      const response = await accountApi.getAll(filtersParamsToggle);
+      setListAccounts(response.data.list_object);
+      console.log(
+        `Success to fetch list accounts. ${role_Id}`,
+        response.data.list_object
+      );
       } catch (err) {
         console.log("Failed to fetch list accounts. ", err);
       }
@@ -104,15 +102,16 @@ function ListAccountsScreen() {
 
   const options = [
     {
-        label: <span>Chủ đất</span>,
-        value: {
-             landowner: true
-        },
+        label: <span style={{color: "#ffffff"}}>Chủ đất</span>,
+        value: "Landowner",
+        // {
+        //      landowner: true
+        // },
         selectedBackgroundColor: "#4F9E1D",
         selectedFontColor: "#ffffff",
     },
     {
-        label: "Nông dân",
+        label: <span style={{color: "#ffffff"}}>Nông dân</span>,
         value: "Farmer",
         selectedBackgroundColor: "#4F9E1D",
         selectedFontColor: "#ffffff",
@@ -136,26 +135,27 @@ function ListAccountsScreen() {
     //     break;
     // }
     try {
-      let roleId = roleId.landowner;
+      let role_Id = roleId.landowner;
+      let filtersParamsToggle = {...filtersParams, roleId: role_Id};
       //Accounts
-      switch(toggleSelected) {
+      switch(newValue) {
         case "Landowner":
-          roleId = roleId.landowner;
-          console.log("roleIdroleIdroleIdroleIdroleId ", roleId);
-          filtersParams= {...filtersParams, roleId: roleId};
+          role_Id = roleId.landowner;
+          console.log("roleIdroleIdroleIdroleIdroleId ", role_Id);
           break;
         case "Farmer":
-          roleId = roleId.farmer;
-          filtersParams= {...filtersParams, roleId: roleId};
+          role_Id = roleId.farmer;
+          filtersParamsToggle = ({...filtersParams, roleId: role_Id});
           break;
         default:
           break;
       }
+      
 
-      const response = await accountApi.getAll(filtersParams);
+      const response = await accountApi.getAll(filtersParamsToggle);
       setListAccounts(response.data.list_object);
       console.log(
-        "Success to fetch list accounts. ",
+        `Success to fetch list accounts. ${role_Id}`,
         response.data.list_object
       );
       
@@ -185,6 +185,12 @@ function ListAccountsScreen() {
   };
 
   const closeEditModal = () => {
+    if (selectedAccount.role_id == roleId.landowner) {
+      setToggleSelected("Landowner");
+    } else {
+      setToggleSelected("Farmer");
+    }
+    
     setIsOpentEdit(false);
   };
 
@@ -195,6 +201,7 @@ function ListAccountsScreen() {
   //Handle edit button
   const openDetailScreen = async (account) => {
     setSelectedAccount(account);
+    setDOBSelected(momentjs(account.date_of_birth).format("DD/MM/YYYY"));
     console.log("EDDDDDDDIIIIIIIT acc:", account);
     setIsOpentDetail(true);
   };
@@ -262,52 +269,81 @@ function ListAccountsScreen() {
     setIsOpentDetail(false);
   };
 
-  const handleDeleteButton = async (treeType) => {
-    Swal.fire({
-      title: 'Bạn có muốn xóa thông tin này?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#4F9E1D',
-      confirmButtonText: 'Xóa',
-      cancelButtonText: 'Hủy',
-    }).then((account) => {
-      if (account.isConfirmed) {
-        deleteAccount(treeType);
-      }
-    })
+  const handleBanButton = async (accountCurrent) => {
+    setSelectedAccount(accountCurrent);
+    if (accountCurrent.status == accountStatusNum.banned) {
+      Swal.fire({
+        title: 'Bạn có muốn mở khóa tài khoản này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#4F9E1D',
+        confirmButtonText: 'Mở khóa',
+        cancelButtonText: 'Hủy',
+      }).then((event) => {
+        if (event.isConfirmed) {
+          banAccount(accountCurrent);
+        }
+      })
+    } else {
+      Swal.fire({
+        title: 'Bạn có muốn khóa tài khoản này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#4F9E1D',
+        confirmButtonText: 'Khóa',
+        cancelButtonText: 'Hủy',
+      }).then((event) => {
+        if (event.isConfirmed) {
+          banAccount(accountCurrent);
+        }
+      })
+    }
+    
   };
 
-  const deleteAccount = async (account) => {
-    setSelectedAccount(account);
+  const banAccount = async (account) => {
     try {
-      const response = await moderatorApi.delete(selectedAccount.id);
-      console.log("🚀 ~ file: ListNewsPage.js ~ line 141 ~ deleteNews ~ response", response)
+      if (account.status == accountStatusNum.banned) {
+        console.log("🚀 ~ selectedAccount UNbanAccount ~ response", account);
+        const response = await accountApi.patchUnban(account.id);
+      console.log("🚀 ~ banAccount ~ response", response)
 
       Swal.fire({  
         icon: 'success',
         title: 'Thành công',  
-        text: 'Xóa thành công!',  
+        text: 'Mở khóa thành công!',  
       });
+      } else {
+        console.log("🚀 ~ selectedAccount BANAccount ~ response", account);
+        const response = await accountApi.banAccount(account.id);
+      console.log("🚀 ~ unbanAccount ~ response", response)
+
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Khóa thành công!',  
+      });
+      }
 
       try {
-        const response = await moderatorApi.getAll(filtersParams);
+        const response = await accountApi.getAll({...filtersParams, roleId: account.role_id});
         setListAccounts(response.data.list_object);
         console.log(
           "Success to fetch list account. ",
           response.data.list_object
         );
       } catch (err) {
-        console.log("Failed to fetch list moderator. ", err);
+        console.log("Failed to fetch list account. ", err);
       }
     } catch (err) {
       console.log(`Failed to delete moderator ${err}`);
       Swal.fire({  
         icon: 'error',
         title: 'Lỗi',  
-        text: 'Xoá không thành công!',  
+        text: 'Không thành công!',  
       });
-
     }
   };
 
@@ -319,48 +355,64 @@ function ListAccountsScreen() {
   const handleTopUpSubmit = async (e) => {
     e.preventDefault();
 
-    const account = {
-      accountId: selectedAccount.id,
-      topUp: e.target.topUp.value,
-    }
-    console.log("🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response", account.topUp, "    " , account.accountId)
-
-    try {
-      const response = await accountApi.topUp(account);
-      console.log("🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response", response)
-
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Nạp tiền thành công!',  
-      });
-
+    if (rangeState === "has-success") {
+      const account = {
+        accountId: selectedAccount.id,
+        topUp: e.target.topUp.value,
+      }
+      console.log("🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response", account.topUp, "    " , account.accountId)
+  
       try {
-        const response = await accountApi.getAll(filtersParams);
-        setListAccounts(response.data.list_object);
-        console.log(
-          "Success to fetch list account. ",
-          response.data.list_object
-        );
+        const response = await accountApi.topUp(account);
+        console.log("🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response", response)
+  
+        Swal.fire({  
+          icon: 'success',
+          title: 'Thành công',  
+          text: 'Nạp tiền thành công!',  
+        });
+  
+        try {
+          const response = await accountApi.getAll(filtersParams);
+          setListAccounts(response.data.list_object);
+          console.log(
+            "Success to fetch list account. ",
+            response.data.list_object
+          );
+        } catch (err) {
+          console.log("Failed to fetch list account. ", err);
+        }
+  
       } catch (err) {
-        console.log("Failed to fetch list account. ", err);
+        console.log(`Failed to update account ${err}`);
+        Swal.fire({  
+          icon: 'error',
+          title: 'Lỗi',  
+          text: 'Nạp tiền không thành công!',  
+        });
+  
       }
 
-    } catch (err) {
-      console.log(`Failed to update account ${err}`);
+      setIsOpentTopUp(false);
+    setIsOpentDetail(false);
+    } else {
       Swal.fire({  
         icon: 'error',
-        title: 'Lỗi',  
-        text: 'Nạp tiền không thành công!',  
+        title: 'Số tiền không hợp lệ',  
+        text: `Vui lòng nhập số tiền không vượt quá một triệu đồng!`,  
       });
-
     }
 
-    setIsOpentTopUp(false);
-    setIsOpentDetail(false);
+  };
+
+// function that verifies if value contains only numbers
+const verifyNumber = (value) => {
+  var numberRex = new RegExp("^[0-9]+$");
+  if (numberRex.test(value)) {
+    return true;
   }
-
-
+  return false;
+};
 
   const dataState = listAccounts.map((prop, key) => {
     key = prop.id;
@@ -371,6 +423,7 @@ function ListAccountsScreen() {
       address: prop.address,
       balance: prop.balance.toLocaleString('it-IT', {style : 'currency', currency : 'VND'}),
       point: prop.point,
+      status: accountStatus[prop.status],
       actions: (
         // we've added some custom button actions
         <div className="actions-right">
@@ -385,17 +438,20 @@ function ListAccountsScreen() {
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
-              onClick={handleDeleteButton.bind(this, prop)}
+              onClick={handleBanButton.bind(this, prop)}
             className="btn-round"
             color="danger"
             size="sm"
           >
-          Khóa
+          {prop.status == accountStatusNum.banned ? "Mở khóa" : "Khóa"}
           </Button>{" "}
         </div>
       ),
     };
   });
+
+  const codeStyle = { "max-width" : "280px" };
+
   return (
     <>
       <PanelHeader size="sm" />
@@ -446,6 +502,10 @@ function ListAccountsScreen() {
                       {
                         Header: "Điểm",
                         accessor: "point",
+                      },
+                      {
+                        Header: "Trạng thái",
+                        accessor: "status",
                       },
                       {
                         Header: "",
@@ -525,6 +585,7 @@ function ListAccountsScreen() {
                         </Row>
 
                         <div className="d-flex justify-content-center">
+                        {selectedAccount.role_id == roleId.landowner ? (
                         <Button
                             className="mr-2"
                             color="warning"
@@ -532,6 +593,7 @@ function ListAccountsScreen() {
                           >
                             Nạp tiền
                           </Button>
+                        ) : null}
 
                           <Button
                             className="ml-2 mr-2"
@@ -561,6 +623,7 @@ function ListAccountsScreen() {
             isOpen={isOpenEdit}
             size="lg"
             style={{ maxWidth: "800px", width: "100%" }}
+            className="modal-dialog modal-dialog-centered"
           >
             <ModalHeader>Cập nhật thông tin</ModalHeader>
             <ModalBody>
@@ -653,7 +716,8 @@ function ListAccountsScreen() {
           <Modal
             isOpen={isOpenTopUp}
             size="lg"
-            style={{ maxWidth: "800px", width: "100%" }}
+            style={{ maxWidth: "720px", width: "100%" }}
+            className="modal-dialog modal-dialog-centered"
           >
             <ModalHeader>Nạp tiền vào tài khoản:</ModalHeader>
             <ModalBody>
@@ -667,7 +731,7 @@ function ListAccountsScreen() {
                           className="form-horizontal"
                           method="get"
                         >
-                          <Row>
+                          {/* <Row>
                             <Label sm="2">Số tiền:</Label>
                             <Col sm="7" md="7">
                               <FormGroup className="">
@@ -679,7 +743,41 @@ function ListAccountsScreen() {
                                 />
                               </FormGroup>
                             </Col>
-                          </Row>
+                          </Row> */}
+
+                          <Row>
+                    <Label sm="2" className="font-weight-bold ml-1">Số tiền</Label>
+                    <Col sm="5" className="">
+                      <FormGroup className={rangeState}>
+                        <Input
+                          name={"topUp"}
+                          type="text"
+                          onChange={(e) => {
+                            if (
+                              !(
+                                verifyNumber(e.target.value) &&
+                                e.target.value >= 0 &&
+                                e.target.value <= 1000000
+                              )
+                            ) {
+                              setrangeState("has-danger");
+                            } else {
+                              setrangeState("has-success");
+                            }
+                            setrange(e.target.value);
+                          }}
+                        />
+                        {rangeState === "has-danger" ? (
+                          <label className="error">
+                            Xin nhập số tiền dưới một triệu đồng.
+                          </label>
+                        ) : null}
+                      </FormGroup>
+                    </Col>
+                      <Col style={codeStyle} className="label-on-right" tag="label" sm="4">
+                      <code>(Không vượt quá một triệu đồng)</code>
+                    </Col>
+                  </Row>
 
                           <Row>
                             <Col sm="12">

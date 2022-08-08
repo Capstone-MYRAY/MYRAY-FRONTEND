@@ -470,6 +470,7 @@ function ListReportsScreen() {
             isOpen={isOpenEdit}
             size="lg"
             style={{ maxWidth: "850px", width: "100%" }}
+            className="modal-dialog modal-dialog-centered"
           >
             <ModalHeader>Giải quyết báo cáo</ModalHeader>
             <ModalBody>
