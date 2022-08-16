@@ -97,7 +97,7 @@ function AdminNavbar(props) {
               <span className="navbar-toggler-bar bar3" />
             </button>
           </div>
-          <NavbarBrand href="/">{props.brandText}</NavbarBrand>
+          <NavbarBrand>{props.brandText}</NavbarBrand>
           </Col>
 
         </div>

@@ -8,6 +8,7 @@ import AddNewArea from "views/ManageAreas/AddNewArea";
 import AddGuidePost from "views/ManageGuidePosts/AddGuidePost";
 import AddNewModerator from "views/ManageModerators/AddNewModerator";
 import UserPage from "views/Pages/UserPage"; 
+import ListWorkTypesScreen from "views/ManageWorkTypes/ListWorkTypesScreen";
 //=======================
 
 let routes = [
@@ -99,6 +100,13 @@ let routes = [
         layout: "/admin",
       },
     ],
+  },
+  {
+    path: "/loai-cong-viec",
+    name: "Loại công việc",
+    icon: "fa fa-cog text-green",
+    component: ListWorkTypesScreen,
+    layout: "/admin",
   },
   {
     path: "/loai-cay",

@@ -319,8 +319,8 @@ function ListModeratorsScreen() {
                   </CardHeader>
                   <CardBody>
                     <Row className="d-flex justify-content-center">
-                      <Form>
-                        <Row>
+                      <Form style={{ width: "100%" }}>
+                        <Row style={{ width: "100%", padding: "0 10%"}}>
                           <Col md="6">
                             <Table responsive>
                               <tr>

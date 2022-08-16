@@ -23,10 +23,14 @@ import { listPostTypesState } from "state/postTypeState";
 import postTypeApi from "api/postTypeApi";
 
 function ListPostTypesScreen() {
-  //TreeType state
   const [postTypeList, setListPostTypes] = useRecoilState(listPostTypesState);
   const [selectedPostType, setSelectedPostType] = useState({});
   const [isCreate, setIsCreate] = useState(true);
+  const [postTypeInput, setPostTypeInput] = useState("");
+  const [priceInput, setPriceInput] = useState("");
+  const [backgroundInput, setBackgroundInput] = useState("");
+  const [fontColorInput, setFontColorInput] = useState("");
+  const [descriptionInput, setDescriptionInput] = useState("");
 
   const [filtersParams, setFiltersParams] = useState({
     page: 1,
@@ -59,19 +63,24 @@ function ListPostTypesScreen() {
   };
 
   //Press "Them moi loai tin button"
-  const clearFormForCreate = (e) => {
+  const clearFormForCreate = () => {
     setSelectedPostType(null);
     setIsCreate(true);
-      e.target.typeName.value = "";
-      e.target.description.value = "";
-      e.target.price.value = "";
-      e.target.background.value = "";
-      e.target.color.value = "";
+    setPostTypeInput("");
+    setPriceInput("");
+    setBackgroundInput("");
+    setFontColorInput("");
+    setDescriptionInput("");
   }
 
   //Handle edit button
   const editPostType = (postType) => {
     setSelectedPostType(postType);
+    setPostTypeInput(postType.name);
+    setPriceInput(postType.price);
+    setBackgroundInput(postType.background);
+    setFontColorInput(postType.color);
+    setDescriptionInput(postType.description);
     setIsCreate(false);
     console.log(
       "🚀 ~ file: List PostType.js ~ selectedPostType",
@@ -159,7 +168,7 @@ function ListPostTypesScreen() {
 
       try {
         fetchListPostType(filtersParams);
-        clearFormForCreate(e);
+        clearFormForCreate();
       } catch (err) {
         console.log("Failed to fetch list postType. ", err);
       }
@@ -314,7 +323,7 @@ function ListPostTypesScreen() {
                                 <FormGroup className="">
                                   <Label className="font-weight-bold">Loại tin</Label>
                                       <Input
-                                        defaultValue={!isCreate ? selectedPostType.name : ""}
+                                        defaultValue={postTypeInput}
                                         placeholder="Nhập tên loại tin"
                                         type="text"
                                         name={"typeName"}
@@ -327,7 +336,7 @@ function ListPostTypesScreen() {
                                 <FormGroup className="">
                                   <Label className="font-weight-bold">Giá cả</Label>
                                       <Input
-                                        defaultValue={selectedPostType? selectedPostType.price : ""}
+                                        defaultValue={priceInput}
                                         placeholder="Nhập giá"
                                         type="text"
                                         name={"price"}
@@ -341,7 +350,7 @@ function ListPostTypesScreen() {
                                 <FormGroup className="">
                                   <Label className="font-weight-bold">Màu nền (hex)</Label>
                                       <Input
-                                        defaultValue={selectedPostType ? (selectedPostType.background ? selectedPostType.background : "") : ""}
+                                        defaultValue={backgroundInput}
                                         placeholder="Nhập màu sắc hiển thị"
                                         type="text"
                                         name={"background"}
@@ -355,7 +364,7 @@ function ListPostTypesScreen() {
                                 <FormGroup className="">
                                   <Label className="font-weight-bold">Màu chữ (hex)</Label>
                                       <Input
-                                        defaultValue={selectedPostType ? (selectedPostType.color ? selectedPostType.color : "") : ""}
+                                        defaultValue={fontColorInput}
                                         placeholder="Nhập màu sắc hiển thị"
                                         type="text"
                                         name={"color"}
@@ -375,7 +384,7 @@ function ListPostTypesScreen() {
                                         placeholder="Nhập mô tả loại tin"
                                         rows="4"
                                         type="textarea"
-                                        defaultValue={selectedPostType ? selectedPostType.description : ""}
+                                        defaultValue={descriptionInput}
                                         name={"description"}
                                       />
                                     </FormGroup>

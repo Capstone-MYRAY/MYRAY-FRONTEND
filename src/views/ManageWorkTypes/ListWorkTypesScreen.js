@@ -20,70 +20,63 @@ import {
 } from "reactstrap";
 import Swal from 'sweetalert2';
 import { useRecoilState } from "recoil";
-import { listTreeTypesState } from "state/treeTypeState";
-import treeTypeApi from "api/treeTypeApi";
+import { listWorkTypesState } from "state/workTypeState";
+import workTypeApi from "api/workTypeApi";
 import { typeVNStatus } from "variables/general";
 
-function ListTreeTypesScreen() {
-  //TreeType state
-  const [treeTypeList, setListTreeTypes] = useRecoilState(listTreeTypesState);
-  const [selectedTreeType, setSelectedTreeType] = useState({});
+function ListWorkTypesScreen() {
+  const [workTypeList, setListWorkTypes] = useRecoilState(listWorkTypesState);
+  const [selectedWorkType, setSelectedWorkType] = useState({});
   const [isCreate, setIsCreate] = useState(true);
-  const [treeTypeInput, setTreeTypeInput] = useState("");
-  const [descriptionInput, setDescriptionInput] = useState("");
+  const [workTypeInput, setWorkTypeInput] = useState("");
 
   const [filtersParams, setFiltersParams] = useState({
     page: 1,
     "page-size": 20,
   });
 
-  //TreeTypes state
-  //-----------------------------Call API to get list TreeTypes, then set to TreeTypes state
+  //WorkTypes state
+  //-----------------------------Call API to get list WorkTypes, then set to WorkTypes state
   useEffect(() => {
-    const fetchListTreeTypes = async () => {
+    const fetchListWorkTypes = async () => {
       try {
-        //TreeTypes
-        const response = await treeTypeApi.getAll(filtersParams);
-        setListTreeTypes(response.data.list_object);
+        const response = await workTypeApi.getAll(filtersParams);
+        setListWorkTypes(response.data.list_object);
       } catch (err) {
-        console.log("Failed to fetch list TreeTypes. ", err);
+        console.log("Failed to fetch list WorkTypes. ", err);
       }
     };
-    fetchListTreeTypes();
+    fetchListWorkTypes();
   }, []);
 
-  const fetchListTreeType = async (filters) => {
+  const fetchListWorkType = async (filters) => {
     try {
-      //tree type
-      const response = await treeTypeApi.getAll(filters);
+      const response = await workTypeApi.getAll(filters);
       response.data
-        ? setListTreeTypes(response.data.list_object)
-        : setListTreeTypes([]);
+        ? setListWorkTypes(response.data.list_object)
+        : setListWorkTypes([]);
     } catch (err) {
-      console.log("Failed to fetch list TreeType. ", err);
+      console.log("Failed to fetch list WorkTypes. ", err);
     }
   };
 
-  //Press "Them moi loai cay" button"
   const clearFormForCreate = () => {
     setIsCreate(true);
-    setDescriptionInput("");
-    setTreeTypeInput("");
+    setWorkTypeInput("");
   };
 
   //Handle edit button
-  const editTreeType = (treeType) => {
-    setSelectedTreeType(treeType);
-    setTreeTypeInput(treeType.type);
-    setDescriptionInput(treeType.description);
+  const editWorkType = (workType) => {
+    setSelectedWorkType(workType);
+    setWorkTypeInput(workType.name);
     setIsCreate(false);
     console.log(
       "🚀 ~ file: List treeType.js ~ selectedTreeType",
-      selectedTreeType
+      selectedWorkType
     );
   };
 
-  const handleDeleteButton = async (treeType) => {
+  const handleDeleteButton = async (workType) => {
     Swal.fire({
       title: 'Bạn có muốn xóa thông tin này?',
       icon: 'warning',
@@ -94,18 +87,18 @@ function ListTreeTypesScreen() {
       cancelButtonText: 'Hủy',
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteTreeType(treeType);
+        deleteWorkType(workType);
       }
     })
   };
 
   //Handle delete button
-  const deleteTreeType = async (treeType) => {
-    setSelectedTreeType(treeType);
+  const deleteWorkType = async (workType) => {
+    setSelectedWorkType(workType);
     try {
-      const response = await treeTypeApi.delete(treeType.id);
+      const response = await workTypeApi.delete(workType.id);
       console.log(
-        "🚀 ~ file: List treeType.js ~ line 197 ~ handleSubmit ~ response",
+        "🚀 ~ file: List workType ~ response",
         response
       );
       Swal.fire({  
@@ -114,9 +107,9 @@ function ListTreeTypesScreen() {
         text: 'Xóa thành công!',  
       });
       try {
-        fetchListTreeType(filtersParams);
+        fetchListWorkType(filtersParams);
       } catch (err) {
-        console.log("Failed to fetch list treeType. ", err);
+        console.log("Failed to fetch list workType. ", err);
       }
     } catch (err) {
       Swal.fire({  
@@ -130,16 +123,14 @@ function ListTreeTypesScreen() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let treeTypeObj = {};
+      let workTypeObj = {
+        name: e.target.typeName.value,
+      };
       if (isCreate) {
-        treeTypeObj = {
-          type: e.target.typeName.value,
-          description: e.target.description.value,
-        };
 
-        const responseCreate = await treeTypeApi.post(treeTypeObj);
+        const responseCreate = await workTypeApi.post(workTypeObj);
         console.log(
-          "🚀 ~ file: List treeType.js ~ line 197 ~ handleSubmit ~ responseCreate",
+          "🚀 ~ file: List workType ~ handleSubmit ~ responseCreate",
           responseCreate
         );
         Swal.fire({  
@@ -148,16 +139,14 @@ function ListTreeTypesScreen() {
           text: 'Tạo mới thành công!',  
         });
       } else {
-        treeTypeObj = {
-          id: selectedTreeType ? selectedTreeType.id : null,
-          type: e.target.typeName.value,
-          description: e.target.description.value,
-          status: selectedTreeType.status,
+        workTypeObj = {
+            ...workTypeObj,
+          id: selectedWorkType ? selectedWorkType.id : null,
         };
 
-        const responseUpdate = await treeTypeApi.put(treeTypeObj);
+        const responseUpdate = await workTypeApi.put(workTypeObj);
         console.log(
-          "🚀 ~ file: List treeType.js ~ line 197 ~ handleSubmit ~ responseUpdate",
+          "🚀 ~ file: List workType ~ handleSubmit ~ responseUpdate",
           responseUpdate
         );
         Swal.fire({  
@@ -168,21 +157,21 @@ function ListTreeTypesScreen() {
       }
 
       try {
-        fetchListTreeType(filtersParams);
+        fetchListWorkType(filtersParams);
         clearFormForCreate();
       } catch (err) {
-        console.log("Failed to fetch list TreeType. ", err);
+        console.log("Failed to fetch list workType. ", err);
       }
     } catch (err) {
       if (isCreate) {
-        console.log(`Failed to create TreeType. ${err}`);
+        console.log(`Failed to create workType. ${err}`);
         Swal.fire({  
           icon: 'error',
           title: 'Lỗi',  
           text: 'Tạo mới không thành công!',  
         });
       } else {
-        console.log(`Failed to update TreeType ${err}`);
+        console.log(`Failed to update workType ${err}`);
         Swal.fire({  
           icon: 'error',
           title: 'Lỗi',  
@@ -192,18 +181,18 @@ function ListTreeTypesScreen() {
     }
   };
 
-  const dataState = treeTypeList.map((prop, key) => {
+  const dataState = workTypeList.map((prop, key) => {
     key = prop.id;
     return {
       id: key,
-      type: prop.type,
+      name: prop.name,
       status: typeVNStatus[prop.status],
       actions: (
         // we've added some custom button actions
         <div className="actions-right">
           {/* use this button to add a edit kind of action */}
           <Button
-            onClick={editTreeType.bind(this, prop)}
+            onClick={editWorkType.bind(this, prop)}
             className="btn-icon btn-round"
             color="primary"
             size="sm"
@@ -241,7 +230,7 @@ function ListTreeTypesScreen() {
               <CardHeader>
                 <Row>
                   <Col xs={9} md={9}>
-                    <CardTitle tag="h4">Quản lý loại cây</CardTitle>
+                    <CardTitle tag="h4">Quản lý loại công việc</CardTitle>
                   </Col>
                   {!isCreate ? (
                     <div>
@@ -262,12 +251,12 @@ function ListTreeTypesScreen() {
               </CardHeader>
               <CardBody>
                 <ReactTable
-                  models="treetype"
+                  models="worktype"
                   data={dataState}
                   columns={[
                     {
-                      Header: "Loại cây",
-                      accessor: "type",
+                      Header: "Loại công việc",
+                      accessor: "name",
                     },
                     {
                       Header: "Trạng thái",
@@ -297,8 +286,8 @@ function ListTreeTypesScreen() {
                         <Col xs={8} md={8}>
                           <h5 className="card-title">
                             {isCreate
-                              ? "Thêm mới loại cây"
-                              : "Chỉnh sửa loại cây"}
+                              ? "Thêm mới loại công việc"
+                              : "Chỉnh sửa loại công việc"}
                           </h5>
                         </Col>
                       </Row>
@@ -314,11 +303,11 @@ function ListTreeTypesScreen() {
                                   <Col md="12">
                                     <FormGroup className="">
                                       <Label className="font-weight-bold">
-                                        Loại cây
+                                        Loại công việc
                                       </Label>
                                       <Input
-                                        defaultValue={treeTypeInput}
-                                        placeholder="Hãy nhập tên loại cây"
+                                        defaultValue={workTypeInput}
+                                        placeholder="Hãy nhập tên loại công việc"
                                         type="text"
                                         name={"typeName"}
                                       />
@@ -326,23 +315,6 @@ function ListTreeTypesScreen() {
                                   </Col>
                                 </Row>
 
-                                <Row>
-                                  <Col md="12">
-                                    <FormGroup>
-                                      <Label className="font-weight-bold">
-                                        Mô tả
-                                      </Label>
-                                      <Input
-                                        cols="80"
-                                        placeholder="Hãy nhập mô tả loại cây"
-                                        rows="4"
-                                        type="textarea"
-                                        defaultValue={descriptionInput}
-                                        name={"description"}
-                                      />
-                                    </FormGroup>
-                                  </Col>
-                                </Row>
                               </Col>
                             </Row>
 
@@ -374,4 +346,4 @@ function ListTreeTypesScreen() {
   );
 }
 
-export default ListTreeTypesScreen;
+export default ListWorkTypesScreen;

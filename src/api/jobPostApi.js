@@ -13,13 +13,13 @@ const jobPostApi = {
   },
 
   // [Moderator] Endpoint for approve JobPost.
-  patchApproveJob: (id) => {
-    return axiosClient.patch(`/jobpost/approvejob/${id}`);
+  patchApproveJob: (jobPostId) => {
+    return axiosClient.patch(`/jobpost/approvejob/${jobPostId}`);
   },
 
   // [Moderator] Endpoint for reject JobPost
-  patchRejectJob: (id) => {
-    return axiosClient.patch(`/jobpost/rejectjob/${id}`);
+  patchRejectJob: (params) => {
+    return axiosClient.patch(`/jobpost/rejectjob`, params );
   },
 
 };

@@ -229,7 +229,7 @@ function ListGuidePostsScreen() {
 
   const btnStyle = { width: "max-content" };
 
-  const ckStyle = { width: "100%" };
+  const ckStyle = { width: "100%", height: "300px" };
 
   const editorConfiguration = {
     toolbar: {
@@ -372,9 +372,9 @@ function ListGuidePostsScreen() {
                                         Nội dung
                                       </Label>
                                     </Row>
-                                    <Row className="content mt-1">
+                                    <Row className="content mt-1" style={ckStyle}>
                                         <CKEditor
-                                          style={ckStyle}
+                                          // style={ckStyle}
                                           editor={ClassicEditor}
                                           config={editorConfiguration} 
                                           data={guidepostContent}

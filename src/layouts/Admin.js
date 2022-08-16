@@ -21,6 +21,7 @@ import { moderatorState, moderatorsComboboxData } from "state/moderatorState";
 import { listGuidePostState } from "state/guidePostState";
 import { statisticState, chartDataState } from "state/statisticState";
 import { accountInfoState } from "state/authState";
+import { listWorkTypesState } from "state/workTypeState";
 import areaApi from "api/areaApi";
 import treeTypeApi from "api/treeTypeApi";
 import postTypeApi from "api/postTypeApi";
@@ -28,6 +29,7 @@ import moderatorApi from "api/moderatorApi";
 import guidePostApi from "api/guidePostApi";
 import statisticApi from "api/statisticApi";
 import accountApi from "api/accountApi";
+import workTypeApi from "api/workTypeApi";
 
 var ps;
 
@@ -55,6 +57,7 @@ const [statisticResult, setStatisticResult] = useRecoilState(statisticState);
 const [chartData, setChartData] = useRecoilState(chartDataState);
 const [userInfo, setUserInfo] = useRecoilState(accountInfoState);
 const userAccountLocal = JSON.parse(localStorage.getItem('account'));
+const [workTypeList, setListWorkTypes] = useRecoilState(listWorkTypesState);
 //-----------------------------Call API to get list area, then set to area state
 useEffect(() => {
   const fetchListArea = async () => {
@@ -174,6 +177,24 @@ useEffect(() => {
   }
   
   fetchListPostTypes();
+},[]);
+
+//Work type state
+//-----------------------------Call API to get list Work Types, then set to Work Types state
+useEffect(() => {
+  const fetchListWorkTypes = async () => {
+   
+    try {
+       //Work Types
+       const response = await workTypeApi.getAll(conditionDefault);
+       setListWorkTypes(response.data.list_object);
+       console.log("Success to fetch list Work Types. ", response.data.list_object);
+    } catch (err) {
+      console.log("Failed to fetch list Work Types. ", err);
+    }
+  }
+  
+  fetchListWorkTypes();
 },[]);
 
 //Tree type state

@@ -103,7 +103,7 @@ const gender = ["Nam", "Nữ", "Khác"];
 
 const reportStatus = ["Đã xóa", "Chờ xử lí", "Đã xử lí"];
 
-const treeTypeVNStatus = ["Ẩn","Hoạt động"];
+const typeVNStatus = ["Ẩn","Hoạt động"];
 
 const accountStatus = ["Không hoạt động", "Hoạt động", "Bị khóa"];
 
@@ -127,7 +127,7 @@ export {
   gender,
   roleNameVN,
   reportStatus,
-  treeTypeVNStatus,
+  typeVNStatus,
   accountStatus,
   accountStatusNum
 };

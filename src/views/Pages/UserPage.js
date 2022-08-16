@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
 // reactstrap components
 import {
-  Card, CardBody, CardHeader, Col,
+  Card, CardBody, CardHeader, Col, Button,
   Form, FormGroup, Input, Row
 } from "reactstrap";
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
@@ -139,6 +139,15 @@ function User() {
                       </FormGroup>
                     </Col>
                   </Row>
+                  <div className="d-flex justify-content-center">
+                          <Button
+                            color="primary"
+                            // onClick={}
+                          >
+                            Cập nhật
+                          </Button>
+
+                        </div>
                 </Form>
               </CardBody>
             </Card>
@@ -172,6 +181,8 @@ function User() {
                         // onChange={(e) => addSingleFile(e)}
                       />
                     </FormGroup>
+
+                    
               </CardBody>
             </Card>
           </Col>

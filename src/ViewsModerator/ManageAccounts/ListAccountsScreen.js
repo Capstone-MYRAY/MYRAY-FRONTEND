@@ -35,9 +35,10 @@ import Datetime from 'react-datetime';
 import SwitchSelector from "react-switch-selector";
 import { accountState } from "state/accountState";
 import { accountStatus} from "variables/general";
-
+import { reportState, accountReportedState } from "state/reportState";
 
 function ListAccountsScreen() {
+  const [accReportedState, setAccountReportedState] = useRecoilState(accountReportedState);
   const [listAccounts, setListAccounts] = useRecoilState(accountState);
   const [isOpenDetail, setIsOpentDetail] = useState(false);
   const [isOpenEdit, setIsOpentEdit] = useState(false);
@@ -535,8 +536,8 @@ const verifyNumber = (value) => {
                   </CardHeader>
                   <CardBody>
                     <Row className="d-flex justify-content-center">
-                      <Form>
-                        <Row>
+                      <Form style={{ width: "100%" }}>
+                        <Row style={{ width: "100%", padding: "0 20%"}}>
                           <Col md="6">
                             <Table responsive>
                               <tr>
@@ -585,7 +586,7 @@ const verifyNumber = (value) => {
                         </Row>
 
                         <div className="d-flex justify-content-center">
-                        {selectedAccount.role_id == roleId.landowner ? (
+                        {/* {selectedAccount.role_id == roleId.landowner ? (
                         <Button
                             className="mr-2"
                             color="warning"
@@ -593,7 +594,7 @@ const verifyNumber = (value) => {
                           >
                             Nạp tiền
                           </Button>
-                        ) : null}
+                        ) : null} */}
 
                           <Button
                             className="ml-2 mr-2"

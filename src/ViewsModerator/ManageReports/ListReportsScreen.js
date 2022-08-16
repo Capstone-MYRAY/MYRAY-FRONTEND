@@ -27,7 +27,7 @@ import Swal from 'sweetalert2';
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import { useRecoilState } from "recoil";
 // import ImageUpload from "components/CustomUpload/ImageUpload";
-import { reportState } from "state/reportState";
+import { reportState, accountReportedState } from "state/reportState";
 import reportApi from "api/reportApi";
 import accountApi from "api/accountApi";
 import jobPostApi from "api/jobPostApi";
@@ -42,12 +42,14 @@ import {
 
 function ListReportsScreen() {
   const [listReports, setListReports] = useRecoilState(reportState);
+  const [accReportedState, setAccountReportedState] = useRecoilState(accountReportedState);
   const [isOpenDetail, setIsOpentDetail] = useState(false);
   const [isOpenEdit, setIsOpentEdit] = useState(false);
   const [selectedReport, setSelectedReport] = useState({});
   const [selectedAccountCreateReport, setSelectedAccountCreateReport] =
     useState({});
   const [selectedAccountReported, setSelectedAccountReported] = useState({});
+  const [selectedAccountReportedHistory, setSelectedAccountReportedHistory] = useState({});
   const [selectedJobPostReported, setSelectedJobPostReported] = useState({});
   const [filtersParams, setFiltersParams] = useState({
     page: 1,
@@ -122,6 +124,12 @@ function ListReportsScreen() {
       reportedAccount.data
     );
 
+    const reportedAccountHistory = await reportApi.getAll({...filtersParams, reportedId: report.reported_id});
+    console.log(
+      "🚀 ~ file: ListReportsScreen ~ reportedAccountHistory ~ response",
+      reportedAccountHistory.data
+    );
+
     const jobPost = await jobPostApi.get(report.job_post_id);
     console.log(
       "🚀 ~ file: ListReportsScreen ~ job_post_id ~ response",
@@ -130,6 +138,7 @@ function ListReportsScreen() {
 
     setSelectedAccountCreateReport(createdAccount.data);
     setSelectedAccountReported(reportedAccount.data);
+    setSelectedAccountReportedHistory(reportedAccountHistory.data);
     setSelectedJobPostReported(jobPost.data);
 
     setIsOpentDetail(true);
@@ -315,8 +324,8 @@ function ListReportsScreen() {
                   </CardHeader>
                   <CardBody>
                     <Row className="d-flex justify-content-center">
-                      <Form>
-                        <Row>
+                      <Form style={{ width: "100%" }}>
+                        <Row style={{ width: "100%" , padding: "0 8%" }}>
                           <Col md="4">
                             <h6 style={{ color: "red" }}>Báo cáo:</h6>
                             <Table responsive>
@@ -335,8 +344,8 @@ function ListReportsScreen() {
                                 <th md="1">Trạng thái:</th>
                                 <td md="7">
                                   {
-                                    JobPostStatusVN[
-                                      parseInt(selectedJobPostReported.status)
+                                    reportStatus[
+                                      parseInt(selectedReport.status)
                                     ]
                                   }
                                 </td>
@@ -360,9 +369,15 @@ function ListReportsScreen() {
                               <tr>
                                 <th md="1">Họ và tên:</th>
                                 <td md="7">
-                                  {selectedAccountReported.fullname
+                                {selectedAccountReported.fullname
                                     ? selectedAccountReported.fullname
                                     : ""}
+{/* 
+                                    <a href="/moderator/quan-ly-tai-khoan" onClick={() => setAccountReportedState(selectedAccountReported)}> 
+                                    {selectedAccountReported.fullname
+                                    ? selectedAccountReported.fullname
+                                    : ""}
+                                    </a> */}
                                 </td>
                               </tr>
 
@@ -485,7 +500,7 @@ function ListReportsScreen() {
                           method="get"
                         >
                           <Row>
-                            <Label sm="3">Cách giải quyết:</Label>
+                            <Label className="font-weight-bold mt-2" sm="3">Cách giải quyết:</Label>
                             <Col sm="9" md="9">
                               <FormGroup>
                                 <Row className="">
@@ -495,9 +510,10 @@ function ListReportsScreen() {
                                     rows="20"
                                     type="textarea"
                                     defaultValue={
-                                      selectedReport.resolve_content
+                                      selectedReport.resolve_content ? selectedReport.resolve_content : ""
                                     }
                                     name={"resolve_content"}
+                                    style={{fontSize:"20px"}}
                                   />
                                 </Row>
                               </FormGroup>

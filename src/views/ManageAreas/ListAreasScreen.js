@@ -32,6 +32,7 @@ import {
   listDistrictState,
 } from "state/areaState";
 import {moderatorComboboxDataState} from "state/moderatorState";
+import { typeVNStatus } from "variables/general";
 
 function ListAreasScreen() {
   //Alumni state
@@ -305,6 +306,7 @@ function ListAreasScreen() {
       commune: prop.commune,
       district: prop.district,
       address: prop.address,
+      status: typeVNStatus[prop.status],
       moderator:
         prop.manager_of.length > 0
           ? prop.manager_of[0].fullname
@@ -320,7 +322,7 @@ function ListAreasScreen() {
             size="sm"
           >
             Chi tiết
-          </Button>{" "}
+          </Button>
           {/* use this button to remove the data row */}
           <Button
             onClick={deleteArea.bind(this, prop)}
@@ -329,7 +331,7 @@ function ListAreasScreen() {
             size="sm"
           >
             Ẩn
-          </Button>{" "}
+          </Button>
         </div>
       ),
     };
@@ -425,6 +427,10 @@ function ListAreasScreen() {
                         accessor: "moderator",
                       },
                       {
+                        Header: "Trạng thái",
+                        accessor: "status",
+                      },
+                      {
                         Header: "",
                         accessor: "actions",
                         sortable: false,
@@ -477,6 +483,11 @@ function ListAreasScreen() {
                                 <tr>
                                   <th md="1">Địa chỉ:</th>
                                   <td md="7">{selectedArea.address}</td>
+                                </tr>
+
+                                <tr>
+                                  <th md="1">Trạng thái:</th>
+                                  <td md="7">{typeVNStatus[selectedArea.status]}</td>
                                 </tr>
 
                                 <tr>
