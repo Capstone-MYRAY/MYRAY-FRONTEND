@@ -12,6 +12,8 @@ import Moment from "react-moment";
 import Datetime from "react-datetime";
 import momentjs from "moment";
 import "moment-timezone";
+import Swal from "sweetalert2";
+import moderatorApi from "api/moderatorApi";
 
 function User() {
   const [userInfo, setUserInfo] = useRecoilState(accountInfoState);
@@ -46,6 +48,51 @@ function User() {
     setDOBSelected(e.format("DD/MM/YYYY"));
   };
 
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+
+    const updateModerator = {
+      id: userInfo.id,
+      role_id: userInfo.role_id,
+      fullname: e.target.fullname.value,
+      date_of_birth: momentjs(Date(dobDateSelected)).format(
+        "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+      ),
+      address: e.target.address.value,
+      phone_number: e.target.phone_number.value,
+      email: e.target.email.value,
+      about_me: e.target.about_me.value,
+      // area_id: 0
+    };
+    console.log(
+      "🚀 ~ file: moderatorApi.js ~ line 197 ~ handleSubmit ~ response",
+      updateModerator
+    );
+
+    try {
+      const response = await moderatorApi.put(updateModerator);
+      console.log(
+        "🚀 ~ file: moderatorApi.js ~ line 197 ~ handleSubmit ~ response",
+        response
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Cập nhật thành công!",
+      });
+
+    } catch (err) {
+      console.log(`Failed to update moderator ${err}`);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Cập nhật không thành công!",
+      });
+    }
+
+  };
+
   return (
     <>
     <PanelHeader size="sm" />
@@ -57,7 +104,7 @@ function User() {
                 <h5 className="title">Chỉnh sửa hồ sơ</h5>
               </CardHeader>
               <CardBody>
-                <Form>
+                <Form  onSubmit={handleUpdateSubmit} method="get"> 
                   <Row>
                   <Col className="pr-1" md="6">
                       <FormGroup>
@@ -66,6 +113,7 @@ function User() {
                           defaultValue={userInfo.fullname}
                           placeholder="Họ và tên"
                           type="text"
+                          name="fullname"
                         />
                       </FormGroup>
                     </Col>
@@ -96,6 +144,7 @@ function User() {
                           defaultValue={userInfo.phone_number}
                           placeholder="Số điện thoại"
                           type="text"
+                          name={"phone_number"}
                         />
                       </FormGroup>
                     </Col>
@@ -108,6 +157,7 @@ function User() {
                           defaultValue={userInfo.email}
                           placeholder="Email"
                           type="text"
+                          name={"email"}
                         />
                       </FormGroup>
                       
@@ -121,6 +171,7 @@ function User() {
                           defaultValue={userInfo.address}
                           placeholder="Địa chỉ"
                           type="text"
+                          name={"address"}
                         />
                       </FormGroup>
                     </Col>
@@ -135,6 +186,7 @@ function User() {
                           placeholder="Giới thiệu"
                           rows="4"
                           type="textarea"
+                          name={"about_me"}
                         />
                       </FormGroup>
                     </Col>
@@ -142,7 +194,7 @@ function User() {
                   <div className="d-flex justify-content-center">
                           <Button
                             color="primary"
-                            // onClick={}
+                            type="submit"
                           >
                             Cập nhật
                           </Button>
@@ -169,7 +221,7 @@ function User() {
                       <Input
                         type="text"
                         className="inputFileVisible"
-                        placeholder="Đổi ảnh đại diện..."
+                        placeholder="Đổi ảnh đại diện"
                         // onClick={(e) => handleSingleFileInput(e)}
                         // defaultValue={singleFileName}
                       />

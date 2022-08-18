@@ -321,7 +321,7 @@ function ListPostTypesScreen() {
                               <Row>
                                 <Col md="12">
                                 <FormGroup className="">
-                                  <Label className="font-weight-bold">Loại tin</Label>
+                                  <Label className="font-weight-bold">Loại tin <code>*</code>:</Label>
                                       <Input
                                         defaultValue={postTypeInput}
                                         placeholder="Nhập tên loại tin"
@@ -334,7 +334,7 @@ function ListPostTypesScreen() {
                                 <Row>
                                 <Col md="12">
                                 <FormGroup className="">
-                                  <Label className="font-weight-bold">Giá cả</Label>
+                                  <Label className="font-weight-bold">Giá cả <code>*</code>:</Label>
                                       <Input
                                         defaultValue={priceInput}
                                         placeholder="Nhập giá"
@@ -348,7 +348,7 @@ function ListPostTypesScreen() {
                                 <Row>
                                 <Col md="12">
                                 <FormGroup className="">
-                                  <Label className="font-weight-bold">Màu nền (hex)</Label>
+                                  <Label className="font-weight-bold">Màu nền (hex) <code>*</code>:</Label>
                                       <Input
                                         defaultValue={backgroundInput}
                                         placeholder="Nhập màu sắc hiển thị"
@@ -362,7 +362,7 @@ function ListPostTypesScreen() {
                                 <Row>
                                 <Col md="12">
                                 <FormGroup className="">
-                                  <Label className="font-weight-bold">Màu chữ (hex)</Label>
+                                  <Label className="font-weight-bold">Màu chữ (hex) <code>*</code>:</Label>
                                       <Input
                                         defaultValue={fontColorInput}
                                         placeholder="Nhập màu sắc hiển thị"

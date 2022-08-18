@@ -207,7 +207,7 @@ function AddNewModerator() {
                               method="get"
                             >
                               <Row>
-                                <Label className="font-weight-bold" sm="3">Họ và tên:</Label>
+                                <Label className="font-weight-bold" sm="3">Họ và tên <code>*</code>:</Label>
                                 <Col sm="9" md="9">
                                   <FormGroup className="">
                                     <Input
@@ -220,7 +220,7 @@ function AddNewModerator() {
                               </Row>
 
                               <Row>
-                                <Label className="font-weight-bold" sm="3">Ngày sinh:</Label>
+                                <Label className="font-weight-bold" sm="3">Ngày sinh <code>*</code>:</Label>
                                 <Col sm="9" md="9">
                                   <FormGroup className="">
                                     <Datetime
@@ -239,7 +239,7 @@ function AddNewModerator() {
                               </Row>
 
                               <Row>
-                            <Label className="font-weight-bold" sm="3">Giới tính:</Label>
+                            <Label className="font-weight-bold" sm="3">Giới tính <code>*</code>:</Label>
                             <FormGroup check className="form-check-radio">
                               <Label check>
                                   <Input
@@ -280,7 +280,7 @@ function AddNewModerator() {
                           </Row>
 
                               <Row>
-                                <Label className="font-weight-bold" sm="3">Email:</Label>
+                                <Label className="font-weight-bold" sm="3">Email <code>*</code>:</Label>
                                 <Col sm="9" md="9">
                                   <FormGroup className="">
                                     <Input
@@ -293,7 +293,7 @@ function AddNewModerator() {
                               </Row>
 
                               <Row>
-                                <Label className="font-weight-bold" sm="3">Số điện thoại:</Label>
+                                <Label className="font-weight-bold" sm="3">Số điện thoại <code>*</code>:</Label>
                                 <Col sm="9" md="9">
                                   <FormGroup className="">
                                     <Input

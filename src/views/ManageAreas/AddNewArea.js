@@ -326,7 +326,7 @@ function AddNewArea() {
                               <Row className="d-flex justify-content-center">
                               <Col className="px-1" md="7">
                                 <FormGroup>
-                                  <Label className="font-weight-bold">Tỉnh thành:</Label>
+                                  <Label className="font-weight-bold">Tỉnh thành <code>*</code>:</Label>
                                   <Select
                                             className="react-select primary"
                                             classNamePrefix="react-select"
@@ -345,7 +345,7 @@ function AddNewArea() {
                               </Col>
                               <Col className="px-1" md="7">
                                 <FormGroup>
-                                  <Label className="font-weight-bold">Quận huyện:</Label>
+                                  <Label className="font-weight-bold">Quận huyện <code>*</code>:</Label>
                                   <Select
                                             className="react-select primary"
                                             classNamePrefix="react-select"
@@ -365,7 +365,7 @@ function AddNewArea() {
                               </Col>
                               <Col className="px-1" md="7">
                                 <FormGroup>
-                                  <Label className="font-weight-bold">Xã/Thị trấn:</Label>
+                                  <Label className="font-weight-bold">Xã/Thị trấn <code>*</code>:</Label>
                                   <Select
                                             className="react-select primary"
                                             classNamePrefix="react-select"

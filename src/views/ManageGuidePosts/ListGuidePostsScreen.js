@@ -33,6 +33,7 @@ function ListGuidePostsScreen() {
   const [guidepostList, setListGuidepost] = useRecoilState(listGuidePostState);
   const [selectedGuidePost, setSelectedGuidepost] = useState({});
   const [isCreate, setIsCreate] = useState(true);
+  const [titleInput, setTitleInput] = useState("");
 
   const [filtersParams, setFiltersParams] = useState({
     page: 1,
@@ -71,13 +72,14 @@ function ListGuidePostsScreen() {
     setSelectedGuidepost(null);
     setIsCreate(true);
     setGuidepostContent("");
-    e.target.title.value = "";
+    setTitleInput("");
   };
 
   //Handle edit button
   const editPostType = (guidePost) => {
     setGuidepostContent(guidePost.content);
     setSelectedGuidepost(guidePost);
+    setTitleInput(guidePost.title);
     setIsCreate(false);
     console.log(
       "🚀 ~ file: List guidePost.js ~ guidePost",
@@ -346,7 +348,7 @@ function ListGuidePostsScreen() {
                                     <FormGroup>
                                     <Row>
                                       <Label className="font-weight-bold">
-                                        Tiêu đề
+                                        Tiêu đề <code>*</code>:
                                       </Label>
                                       </Row>
                                       <Input
@@ -369,7 +371,7 @@ function ListGuidePostsScreen() {
                                   <FormGroup >
                                     <Row>
                                       <Label className="font-weight-bold">
-                                        Nội dung
+                                        Nội dung <code>*</code>:
                                       </Label>
                                     </Row>
                                     <Row className="content mt-1" style={ckStyle}>

@@ -500,7 +500,7 @@ function ListReportsScreen() {
                           method="get"
                         >
                           <Row>
-                            <Label className="font-weight-bold mt-2" sm="3">Cách giải quyết:</Label>
+                            <Label className="font-weight-bold mt-2" sm="3">Cách giải quyết <code>*</code>:</Label>
                             <Col sm="9" md="9">
                               <FormGroup>
                                 <Row className="">

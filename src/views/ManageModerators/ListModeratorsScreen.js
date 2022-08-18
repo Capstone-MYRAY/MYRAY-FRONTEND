@@ -31,6 +31,8 @@ import { moderatorState } from "state/moderatorState";
 import moderatorApi from "api/moderatorApi";
 import { JobPostStatusVN, jobType, gender } from "variables/general";
 import Datetime from "react-datetime";
+import { typeVNStatus } from "variables/general";
+
 
 function ListModeratorsScreen() {
   const [listModerators, setListModerators] = useRecoilState(moderatorState);
@@ -170,6 +172,24 @@ function ListModeratorsScreen() {
     setIsOpentEdit(false);
   };
 
+  const handleDeleteButton = async (moderator) => {
+    Swal.fire({
+      title: 'Bạn có muốn khóa tài khoản này?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#4F9E1D',
+      confirmButtonText: 'Khóa',
+      cancelButtonText: 'Hủy',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteModerator(moderator);
+      }
+    })
+  };
+
+
+
   const deleteModerator = async (moderator) => {
     setSelectedModerator(moderator);
     console.log(
@@ -220,7 +240,7 @@ function ListModeratorsScreen() {
           : "Không quản lý khu vực nào",
       phone_number: prop.phone_number,
       email: prop.email,
-      address: prop.address,
+      status: typeVNStatus[prop.status],
 
       actions: (
         // we've added some custom button actions
@@ -236,12 +256,12 @@ function ListModeratorsScreen() {
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
-            onClick={deleteModerator.bind(this, prop)}
+            onClick={handleDeleteButton.bind(this, prop)}
             className="btn-round"
             color="danger"
             size="sm"
           >
-            Xóa
+            Khóa
           </Button>{" "}
         </div>
       ),
@@ -288,8 +308,8 @@ function ListModeratorsScreen() {
                         accessor: "email",
                       },
                       {
-                        Header: "Địa chỉ",
-                        accessor: "address",
+                        Header: "Trạng thái",
+                        accessor: "status",
                       },
                       {
                         Header: "",
@@ -443,7 +463,7 @@ function ListModeratorsScreen() {
                           method="get"
                         >
                           <Row>
-                            <Label className="font-weight-bold" sm="3">Họ và tên:</Label>
+                            <Label className="font-weight-bold" sm="3">Họ và tên <code>*</code>:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
@@ -457,7 +477,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label className="font-weight-bold" sm="3">Ngày sinh:</Label>
+                            <Label className="font-weight-bold" sm="3">Ngày sinh <code>*</code>:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Datetime
@@ -476,7 +496,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label className="font-weight-bold" sm="3">Giới tính:</Label>
+                            <Label className="font-weight-bold" sm="3">Giới tính <code>*</code>:</Label>
                             <FormGroup check className="form-check-radio">
                               <Label check>
                                 {selectedModerator.gender == 0 ? (
@@ -546,7 +566,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label className="font-weight-bold" sm="3">Email:</Label>
+                            <Label className="font-weight-bold" sm="3">Email <code>*</code>:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input
@@ -560,7 +580,7 @@ function ListModeratorsScreen() {
                           </Row>
 
                           <Row>
-                            <Label className="font-weight-bold" sm="3">Số điện thoại:</Label>
+                            <Label className="font-weight-bold" sm="3">Số điện thoại <code>*</code>:</Label>
                             <Col sm="9" md="9">
                               <FormGroup className="">
                                 <Input

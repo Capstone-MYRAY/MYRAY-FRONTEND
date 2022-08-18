@@ -623,7 +623,7 @@ const verifyNumber = (value) => {
           <Modal
             isOpen={isOpenEdit}
             size="lg"
-            style={{ maxWidth: "800px", width: "100%" }}
+            style={{ maxWidth: "600px", width: "100%" }}
             className="modal-dialog modal-dialog-centered"
           >
             <ModalHeader>Cập nhật thông tin</ModalHeader>
@@ -639,7 +639,7 @@ const verifyNumber = (value) => {
                           method="get"
                         >
                           <Row>
-                            <Label sm="2">Họ và tên:</Label>
+                            <Label sm="5">Họ và tên <code>*</code>:</Label>
                             <Col sm="7" md="7">
                               <FormGroup className="">
                                 <Input
@@ -653,7 +653,7 @@ const verifyNumber = (value) => {
                           </Row>
 
                           <Row>
-                            <Label sm="2">Ngày sinh:</Label>
+                            <Label sm="5">Ngày sinh <code>*</code>:</Label>
                             <Col sm="7" md="7">
                               <FormGroup className="">
                               <Datetime
@@ -671,7 +671,7 @@ const verifyNumber = (value) => {
 
 
                           <Row>
-                            <Label sm="2">Số điện thoại:</Label>
+                            <Label sm="5">Số điện thoại <code>*</code>:</Label>
                             <Col sm="7" md="7">
                               <FormGroup className="">
                                 <Input

@@ -23,7 +23,7 @@ import Select from "react-select";
 import React, { useEffect, useState } from "react";
 import momentjs from "moment";
 import "moment-timezone";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import { useRecoilState } from "recoil";
 // import ImageUpload from "components/CustomUpload/ImageUpload";
@@ -130,6 +130,22 @@ function ListJobPostsScreen() {
     setIsOpentDetail(false);
   };
 
+  const handleVerifyButton = async () => {
+    Swal.fire({
+      title: "Bạn có muốn duyệt bài đăng này không?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#4F9E1D",
+      confirmButtonText: "Xác nhận",
+      cancelButtonText: "Hủy",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        verifyJobPost();
+      }
+    });
+  };
+
   const verifyJobPost = async () => {
     try {
       const response = await jobPostApi.patchApproveJob(selectedJobPost.id);
@@ -138,10 +154,10 @@ function ListJobPostsScreen() {
         response
       );
 
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Bài đăng đã được duyệt!',  
+      Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Bài đăng đã được duyệt!",
       });
 
       try {
@@ -151,12 +167,11 @@ function ListJobPostsScreen() {
         console.log("Failed to fetch list jobPost. ", err);
       }
     } catch (err) {
-      Swal.fire({  
-        icon: 'error',
-        title: 'Lỗi',  
-        text: 'Bài đăng chưa được duyệt!',  
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Bài đăng chưa được duyệt!",
       });
-
     }
 
     closeDetailScreen();
@@ -164,15 +179,18 @@ function ListJobPostsScreen() {
 
   const rejectJobPost = async (reasonReject) => {
     try {
-      const response = await jobPostApi.patchRejectJob({id: selectedJobPost.id, reason_reject: reasonReject});
+      const response = await jobPostApi.patchRejectJob({
+        id: selectedJobPost.id,
+        reason_reject: reasonReject,
+      });
       console.log(
         "🚀 ~ file: selectedJobPost.js ~ line 165 ~ handleSubmit ~ response",
         response
       );
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Bài đăng đã bị từ chối!',  
+      Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Bài đăng đã bị từ chối!",
       });
 
       try {
@@ -181,12 +199,11 @@ function ListJobPostsScreen() {
       } catch (err) {
         console.log("Failed to fetch list jobPost. ", err);
       }
-      
     } catch (err) {
-      Swal.fire({  
-        icon: 'error',
-        title: 'Lỗi',  
-        text: 'Bài đăng chưa được duyệt!',  
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Bài đăng chưa được duyệt!",
       });
     }
     closeDetailScreen();
@@ -194,37 +211,41 @@ function ListJobPostsScreen() {
 
   const handleDeleteButton = async (jobpost) => {
     Swal.fire({
-      title: 'Bạn có muốn ẩn thông tin này?',
-      icon: 'warning',
+      title: "Bạn có muốn ẩn thông tin này?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#4F9E1D',
-      confirmButtonText: 'Ẩn',
-      cancelButtonText: 'Hủy',
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#4F9E1D",
+      confirmButtonText: "Ẩn",
+      cancelButtonText: "Hủy",
     }).then((result) => {
       if (result.isConfirmed) {
         deleteJobpost(jobpost);
       }
-    })
+    });
   };
 
   const handleRejectButton = async () => {
     const value = await Swal.fire({
-      input: 'textarea',
-      inputLabel: 'Lý do từ chối',
-      inputPlaceholder: 'Nhập lý do từ chối...',
+      input: "textarea",
+      inputLabel: "Lý do từ chối",
+      inputPlaceholder: "Nhập lý do từ chối...",
       inputAttributes: {
-        'aria-label': 'Nhập lý do từ chối'
+        "aria-label": "Nhập lý do từ chối",
       },
-      showCancelButton: true
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#4F9E1D",
+      confirmButtonText: "Xác nhận",
+      cancelButtonText: "Hủy",
     }).then((result) => {
-      if (result) {
-        console.log("resultresultresultresultresultresult: ",result)
+      if (result.isConfirmed) {
+        console.log("resultresultresultresultresultresult: ", result);
         rejectJobPost(result.value);
       }
     });
-  }
-  
+  };
+
   const deleteJobpost = async () => {
     try {
       // const response = await jobPostApi.patchRejectJob({id: selectedJobPost.id, reason_reject: "Bài đăng không hợp lệ"});
@@ -232,10 +253,10 @@ function ListJobPostsScreen() {
       //   "🚀 ~ file: selectedJobPost.js ~ line 165 ~ handleSubmit ~ response",
       //   response
       // );
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Bài đăng đã bị ẩn!',  
+      Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Bài đăng đã bị ẩn!",
       });
 
       // try {
@@ -244,12 +265,11 @@ function ListJobPostsScreen() {
       // } catch (err) {
       //   console.log("Failed to fetch list jobPost. ", err);
       // }
-      
     } catch (err) {
-      Swal.fire({  
-        icon: 'error',
-        title: 'Lỗi',  
-        text: 'Bài đăng chưa được duyệt!',  
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Bài đăng chưa được duyệt!",
       });
     }
   };
@@ -283,7 +303,7 @@ function ListJobPostsScreen() {
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
-              onClick={handleDeleteButton.bind(this, prop)}
+            onClick={handleDeleteButton.bind(this, prop)}
             className="btn-round"
             color="danger"
             size="sm"
@@ -373,7 +393,7 @@ function ListJobPostsScreen() {
         <div>
           <div
             className="content mt-1"
-            style={{ maxWidth: "1700px", width: "100%" }}
+            style={{ maxWidth: "1700px", width: "100%"}}
           >
             <Row>
               <Col md="12">
@@ -381,14 +401,17 @@ function ListJobPostsScreen() {
                   <CardHeader>
                     <h5 className="title">Bài đăng</h5>
                   </CardHeader>
-                  <CardBody className="d-flex justify-content-center">
-                    <Row style={{ width: "100%" }}>
-                      <Form style={{ width: "100%" }}>
-                        <Row style={{ width: "100%" }}>
+                  <CardBody >
+                    <Row style={{ width: "100%" }} className="d-flex justify-content-center">
+                      <Form style={{ width: "100%", padding: "0 10%" }}>
+                        {/* <Row
+                          className="d-flex justify-content-center"
+                          style={{ width: "100%" }}
+                        > */}
                           {selectedJobPost.type == "PayPerHourJob" &&
                           selectedJobPost.pay_per_hour_job ? (
                             // "PayPerHourJob"
-                            <div style={{ width: "100%", padding: "0 8%"}}>
+                            <div style={{ width: "100%", padding: "0 8%" }}>
                               <Row>
                                 <Col md="4">
                                   <Table responsive>
@@ -429,8 +452,6 @@ function ListJobPostsScreen() {
                                           : ""}
                                       </td>
                                     </tr>
-
-                                    
                                   </Table>
                                 </Col>
 
@@ -449,7 +470,7 @@ function ListJobPostsScreen() {
                                     </tr>
 
                                     <tr>
-                                      <th md="1">Loại hình công việc:</th>
+                                      <th md="1">Loại công việc:</th>
                                       <td md="10">{jobType.PayPerHourJob}</td>
                                     </tr>
 
@@ -457,20 +478,22 @@ function ListJobPostsScreen() {
                                       <th md="1">Giá công:</th>
                                       <td md="7">
                                         {selectedJobPost.pay_per_hour_job.salary
-                                          ? selectedJobPost.pay_per_hour_job
-                                              .salary.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+                                          ? selectedJobPost.pay_per_hour_job.salary.toLocaleString(
+                                              "it-IT",
+                                              {
+                                                style: "currency",
+                                                currency: "VND",
+                                              }
+                                            )
                                           : 0}{" "}
                                       </td>
                                     </tr>
-
-                                    
                                   </Table>
                                 </Col>
 
                                 <Col md="4">
                                   <Table responsive>
-
-                                  <tr>
+                                    <tr>
                                       <th md="1">Số người ước lượng:</th>
                                       <td md="7">
                                         {selectedJobPost.pay_per_hour_job
@@ -509,8 +532,6 @@ function ListJobPostsScreen() {
                                           : ""}
                                       </td>
                                     </tr>
-
-                                    
                                   </Table>
                                 </Col>
                               </Row>
@@ -559,7 +580,6 @@ function ListJobPostsScreen() {
                                           : ""}
                                       </td>
                                     </tr>
-
                                   </Table>
                                 </Col>
 
@@ -578,7 +598,7 @@ function ListJobPostsScreen() {
                                     </tr>
 
                                     <tr>
-                                      <th md="1">Loại hình công việc:</th>
+                                      <th md="1">Loại công việc:</th>
                                       <td md="7">{jobType.PayPerTaskJob}</td>
                                     </tr>
 
@@ -586,8 +606,13 @@ function ListJobPostsScreen() {
                                       <th md="1">Giá:</th>
                                       <td md="7">
                                         {selectedJobPost.pay_per_task_job.salary
-                                          ? selectedJobPost.pay_per_task_job
-                                              .salary.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+                                          ? selectedJobPost.pay_per_task_job.salary.toLocaleString(
+                                              "it-IT",
+                                              {
+                                                style: "currency",
+                                                currency: "VND",
+                                              }
+                                            )
                                           : 0}{" "}
                                       </td>
                                     </tr>
@@ -611,7 +636,7 @@ function ListJobPostsScreen() {
                                       <th md="1">Ngày kết thúc khoán:</th>
                                       <td md="7">
                                         <Moment format="DD/MM/YYYY">
-                                        {selectedJobPost.end_job_date
+                                          {selectedJobPost.end_job_date
                                             ? selectedJobPost.end_job_date
                                             : ""}
                                         </Moment>
@@ -619,7 +644,7 @@ function ListJobPostsScreen() {
                                     </tr>
 
                                     <tr>
-                                      <th md="1">Ngày kết thúc công việc:</th>
+                                      <th md="2">Ngày kết thúc công việc:</th>
                                       <td md="7">
                                         <Moment format="DD/MM/YYYY">
                                           {selectedJobPost.end_job_date
@@ -635,46 +660,47 @@ function ListJobPostsScreen() {
                           ) : (
                             <div></div>
                           )}
-                        </Row>
 
+                          <Row
+                            className="d-flex justify-content-center"
+                            // style={{ width: "100%" }}
+                          >
+                            <Col md="8">
+                              <Table responsive>
+                                <tr>
+                                  <th md="2">Mô tả công việc:</th>
+                                  <td md="5">
+                                    <Col className="" md="12">
+                                      <FormGroup>
+                                        <Row className="">
+                                          <Input
+                                            cols="80"
+                                            placeholder="Mô tả"
+                                            rows="20"
+                                            type="textarea"
+                                            defaultValue={
+                                              selectedJobPost.description
+                                            }
+                                            name={"description"}
+                                            style={{ fontSize: "14px" }}
+                                          />
+                                        </Row>
+                                      </FormGroup>
+                                    </Col>
+                                  </td>
+                                </tr>
+                              </Table>
+                            </Col>
+                          </Row>
+                        {/* </Row> */}
 
-                        <Row className="d-flex justify-content-center" style={{ width: "100%" }}>
-
-                        <Col md="8">
-                                  <Table responsive>
-                                  <tr>
-                                      <th md="2">Mô tả công việc:</th>
-                                      <td md="7">
-                                      <Col className="" md="12">
-                                <FormGroup>
-                                  <Row className="">
-                                    <Input
-                                      cols="80"
-                                      placeholder="Mô tả"
-                                      rows="20"
-                                      type="textarea"
-                                      defaultValue={selectedJobPost.description}
-                                      name={"description"}
-                                      style={{fontSize:"14px"}}
-                                    />
-                                  </Row>
-                                </FormGroup>
-                                
-                                </Col>
-
-                                      </td>
-                                    </tr>
-                              
-                                </Table>
-                          </Col>
-                        </Row>
                         <div className="d-flex justify-content-center">
                           {selectedJobPost.status == JobPostStatus.pending ? (
                             <div>
                               <Button
                                 className="mr-2"
                                 color="primary"
-                                onClick={verifyJobPost}
+                                onClick={handleVerifyButton}
                               >
                                 Duyệt
                               </Button>

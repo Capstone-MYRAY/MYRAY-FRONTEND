@@ -303,7 +303,7 @@ function ListWorkTypesScreen() {
                                   <Col md="12">
                                     <FormGroup className="">
                                       <Label className="font-weight-bold">
-                                        Loại công việc
+                                        Loại công việc <code>*</code>:
                                       </Label>
                                       <Input
                                         defaultValue={workTypeInput}

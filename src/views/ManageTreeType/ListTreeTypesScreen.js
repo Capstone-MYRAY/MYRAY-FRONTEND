@@ -314,7 +314,7 @@ function ListTreeTypesScreen() {
                                   <Col md="12">
                                     <FormGroup className="">
                                       <Label className="font-weight-bold">
-                                        Loại cây
+                                        Loại cây <code>*</code>:
                                       </Label>
                                       <Input
                                         defaultValue={treeTypeInput}
@@ -330,7 +330,7 @@ function ListTreeTypesScreen() {
                                   <Col md="12">
                                     <FormGroup>
                                       <Label className="font-weight-bold">
-                                        Mô tả
+                                        Mô tả:
                                       </Label>
                                       <Input
                                         cols="80"
