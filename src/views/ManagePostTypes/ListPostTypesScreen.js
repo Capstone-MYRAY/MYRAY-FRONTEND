@@ -88,6 +88,23 @@ function ListPostTypesScreen() {
     );
   };
 
+  const handleDeleteButton = async (postType) => {
+    Swal.fire({
+      title: 'Bạn có muốn xóa thông tin này?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#4F9E1D',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deletePostType(postType);
+      }
+    })
+  };
+
+
   //Handle delete button
   const deletePostType = async (postType) => {
     setSelectedPostType(postType);
@@ -215,7 +232,7 @@ function ListPostTypesScreen() {
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
-            onClick={deletePostType.bind(this, prop)}
+            onClick={handleDeleteButton.bind(this, prop)}
             className="btn-icon btn-round"
             color="danger"
             size="sm"

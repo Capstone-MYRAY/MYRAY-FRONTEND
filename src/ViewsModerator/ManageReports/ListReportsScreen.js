@@ -405,7 +405,7 @@ function ListReportsScreen() {
                                 <th md="1">Điểm đánh giá:</th>
                                 <td md="7">
                                   {selectedAccountReported.rating
-                                    ? selectedAccountReported.rating + "/5"
+                                    ? selectedAccountReported.rating.toFixed(2) + "/5"
                                     : "Chưa có đánh giá"}
                                 </td>
                               </tr>
@@ -448,7 +448,7 @@ function ListReportsScreen() {
                                 <th md="1">Điểm đánh giá:</th>
                                 <td md="7">
                                   {selectedAccountCreateReport.rating
-                                    ? selectedAccountCreateReport.rating + "/5"
+                                    ? selectedAccountCreateReport.rating.toFixed(2) + "/5"
                                     : "Chưa có đánh giá"}
                                 </td>
                               </tr>

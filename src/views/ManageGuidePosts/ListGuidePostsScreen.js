@@ -87,6 +87,24 @@ function ListGuidePostsScreen() {
     );
   };
 
+  const handleDeleteButton = async (guidepost) => {
+    Swal.fire({
+      title: 'Bạn có muốn xóa thông tin này?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#4F9E1D',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteguidepost(guidepost);
+      }
+    })
+  };
+
+
+
   //Handle delete button
   const deleteguidepost = async (guidepost) => {
     setSelectedGuidepost(guidepost);
@@ -217,7 +235,7 @@ function ListGuidePostsScreen() {
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
-            onClick={deleteguidepost.bind(this, prop)}
+            onClick={handleDeleteButton.bind(this, prop)}
             className="btn-round"
             color="danger"
             size="sm"

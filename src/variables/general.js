@@ -58,8 +58,8 @@ const events = [
   },
 ];
 
-const JobPostStatusEnglish = ["Deleted", "Pending", "Posted", "Reject", "Expired", "OutOfDate", "Cancel",  "Approved",];
-const JobPostStatusVN = ["Đã xóa", "Chờ duyệt", "Đang đăng tải", "Bị từ chối", "Hết hạn", "Quá hạn", "Đã hủy", "Đã duyệt"];
+const JobPostStatusEnglish = ["Deleted", "Pending", "Posted", "Reject", "Expired", "OutOfDate", "Cancel",  "Approved","ShortHandled","Enough","End"];
+const JobPostStatusVN = ["Đã xóa", "Chờ duyệt", "Đang đăng tải", "Bị từ chối", "Hết hạn", "Quá hạn", "Đã hủy", "Đã duyệt","Chưa đủ người","Tuyển đủ người","Kết thúc"];
 
 const JobPostStatusVNCombobox = [
   { value: -1, label: "Tất cả"},
@@ -71,6 +71,10 @@ const JobPostStatusVNCombobox = [
   { value: 5, label: "Quá hạn"},
   { value: 6, label: "Đã hủy"},
   { value: 7, label: "Đã duyệt"},
+  { value: 8, label: "Chưa đủ người"},
+  { value: 9, label: "Tuyển đủ người"},
+  { value: 10, label: "Kết thúc"},
+
 ];
 
 const JobPostStatus = {

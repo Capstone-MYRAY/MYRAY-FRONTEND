@@ -272,8 +272,9 @@ function AddNewArea() {
       e.target.address.value = "";
 
       try {
-        const listAreaUpdate = await areaApi.getAll();
-        setlistArea(listAreaUpdate.data);
+        const listAreaUpdate = await areaApi.getAll(filtersParams);
+        console.log("listAreaUpdate.data.list_object listAreaUpdate.data.list_object listAreaUpdate.data.list_object. ", listAreaUpdate.data.list_object);
+        listAreaUpdate.data ? setlistArea(listAreaUpdate.data.list_object) : setlistArea([]);
       } catch (err) {
         console.log("Failed to fetch list Area. ", err);
       }

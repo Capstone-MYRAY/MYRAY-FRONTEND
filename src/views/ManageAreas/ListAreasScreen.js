@@ -226,6 +226,24 @@ function ListAreasScreen() {
     setIsOpentDetail(true);
   };
 
+  const handleDeleteButton = async (area) => {
+    Swal.fire({
+      title: 'Bạn có muốn ẩn thông tin này?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#4F9E1D',
+      confirmButtonText: 'Ẩn',
+      cancelButtonText: 'Hủy',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteArea(area);
+      }
+    })
+  };
+
+
+
   //Handle delete button
   const deleteArea = async (area) => {
     setSelectedArea(area);
@@ -325,7 +343,7 @@ function ListAreasScreen() {
           </Button>
           {/* use this button to remove the data row */}
           <Button
-            onClick={deleteArea.bind(this, prop)}
+            onClick={handleDeleteButton.bind(this, prop)}
             className="btn-round"
             color="danger"
             size="sm"
