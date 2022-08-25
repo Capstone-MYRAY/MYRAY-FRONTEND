@@ -19,7 +19,9 @@ import {
   Input,
   Row,
   Label,
+  Container,
 } from "reactstrap";
+import Select from "react-select";
 import Swal from 'sweetalert2';
 import { useRecoilState } from "recoil";
 import {
@@ -48,6 +50,12 @@ function ListGuidePostsScreen() {
         //Guidepost
         const response = await guidePostApi.getAll(filtersParams);
         setListGuidepost(response.data.list_object);
+        //Pagination
+      let total_page = response.data.paging_metadata.total_pages;
+      setPageOptions([...Array(total_page).keys()]);
+      setCanNextPage(response.data.paging_metadata.has_next_page);
+      setCanPreviousPage(response.data.paging_metadata.has_previous_page);
+      setPageIndex(response.data.paging_metadata.page_index);
       } catch (err) {
         console.log("Failed to fetch list Guidepost. ", err);
       }
@@ -62,6 +70,12 @@ function ListGuidePostsScreen() {
       response.data
         ? setListGuidepost(response.data.list_object)
         : setListGuidepost([]);
+        //Pagination
+      let total_page = response.data.paging_metadata.total_pages;
+      setPageOptions([...Array(total_page).keys()]);
+      setCanNextPage(response.data.paging_metadata.has_next_page);
+      setCanPreviousPage(response.data.paging_metadata.has_previous_page);
+      setPageIndex(response.data.paging_metadata.page_index);
     } catch (err) {
       console.log("Failed to fetch list guidepost. ", err);
     }
@@ -286,6 +300,44 @@ function ListGuidePostsScreen() {
     },
   };
 
+  
+  const [numberOfRows, setNumberOfRows] = React.useState({
+    value: 20,
+    label: "20 kết quả",
+  });
+  const [pageSelect, handlePageSelect] = useState({
+    value: 0,
+    label: "Trang 1",
+  });
+  const [canPreviousPage, setCanPreviousPage] = useState(false);
+  const [canNextPage, setCanNextPage] = useState(false);
+  const [pageOptions, setPageOptions] = useState([]);
+  const [pageIndex, setPageIndex] = useState(1);
+
+  let pageSelectData = Array.apply(null, Array(pageOptions.length)).map(
+    function () {}
+  );
+
+  let numberOfRowsData = [10, 20, 50, 100];
+
+  const gotoPage = async (value) => {
+    let page = value + 1;
+    filtersParams.page = page;
+    fetchListGuidepost(filtersParams);
+  };
+
+  const nextPage = async () => {
+    let page = pageIndex + 1;
+    filtersParams.page = page;
+    fetchListGuidepost(filtersParams);
+  };
+
+  const previousPage = async () => {
+    let page = pageIndex - 1;
+    filtersParams.page = page;
+    fetchListGuidepost(filtersParams);
+  };
+
   return (
     <>
       <PanelHeader size="sm" />
@@ -317,6 +369,77 @@ function ListGuidePostsScreen() {
                 </Row>
               </CardHeader>
               <CardBody>
+              <div className="ReactTable -striped -highlight primary-pagination">
+                    <div className="pagination-top">
+                      <div className="-pagination">
+                        <div className="-previous">
+                          <button
+                            type="button"
+                            onClick={() => previousPage()}
+                            disabled={!canPreviousPage}
+                            className="-btn"
+                          >
+                            Trước
+                          </button>
+                        </div>
+                        <div className="-center">
+                          <Container>
+                            <Row className="justify-content-center">
+                              <Col md="6" sm="6" xs="12">
+                                <Select
+                                  className="react-select primary"
+                                  classNamePrefix="react-select"
+                                  name="pageSelect"
+                                  value={pageSelect}
+                                  onChange={(value) => {
+                                    gotoPage(value.value);
+                                    handlePageSelect(value);
+                                  }}
+                                  options={pageSelectData.map((prop, key) => {
+                                    return {
+                                      value: key,
+                                      label: "Trang " + (key + 1),
+                                    };
+                                  })}
+                                  placeholder="Chọn trang"
+                                />
+                              </Col>
+                              {/* <Col md="6" sm="6" xs="12">
+                    <Select
+                      className="react-select primary"
+                      classNamePrefix="react-select"
+                      name="numberOfRows"
+                      value={numberOfRows}
+                      onChange={(value) => {
+                        // setPageSize(value.value);
+                        setNumberOfRows(value);
+                      }}
+                      options={numberOfRowsData.map((prop) => {
+                        return {
+                          value: prop,
+                          label: prop + " kết quả",
+                        };
+                      })}
+                      placeholder="Chọn số dòng hiển thị"
+                    />
+                  </Col> */}
+                            </Row>
+                          </Container>
+                        </div>
+                        <div className="-next">
+                          <button
+                            type="button"
+                            onClick={() => nextPage()}
+                            disabled={!canNextPage}
+                            className="-btn"
+                          >
+                            Tiếp
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 <ReactTable
                   models="treetype"
                   data={dataState}

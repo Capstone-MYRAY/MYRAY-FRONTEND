@@ -120,74 +120,7 @@ function Table({ columns, data }) {
   return (
     <>
       <div className="ReactTable -striped -highlight primary-pagination">
-        <div className="pagination-top">
-          <div className="-pagination">
-            <div className="-previous">
-              <button
-                type="button"
-                onClick={() => previousPage()}
-                disabled={!canPreviousPage}
-                className="-btn"
-              >
-                Trước
-              </button>
-            </div>
-            <div className="-center">
-              <Container>
-                <Row className="justify-content-center">
-                  <Col md="6" sm="6" xs="12">
-                    <Select
-                      className="react-select primary"
-                      classNamePrefix="react-select"
-                      name="pageSelect"
-                      value={pageSelect}
-                      onChange={(value) => {
-                        gotoPage(value.value);
-                        handlePageSelect(value);
-                      }}
-                      options={pageSelectData.map((prop, key) => {
-                        return {
-                          value: key,
-                          label: "Trang " + (key + 1),
-                        };
-                      })}
-                      placeholder="Chọn trang"
-                    />
-                  </Col>
-                  <Col md="6" sm="6" xs="12">
-                    <Select
-                      className="react-select primary"
-                      classNamePrefix="react-select"
-                      name="numberOfRows"
-                      value={numberOfRows}
-                      onChange={(value) => {
-                        setPageSize(value.value);
-                        setNumberOfRows(value);
-                      }}
-                      options={numberOfRowsData.map((prop) => {
-                        return {
-                          value: prop,
-                          label: prop + " kết quả",
-                        };
-                      })}
-                      placeholder="Chọn số dòng hiển thị"
-                    />
-                  </Col>
-                </Row>
-              </Container>
-            </div>
-            <div className="-next">
-              <button
-                type="button"
-                onClick={() => nextPage()}
-                disabled={!canNextPage}
-                className="-btn"
-              >
-                Tiếp
-              </button>
-            </div>
-          </div>
-        </div>
+        
         <table {...getTableProps()} className="rt-table">
           <thead className="rt-thead -header">
             {headerGroups.map((headerGroup) => (

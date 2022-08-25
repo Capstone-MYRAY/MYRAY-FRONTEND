@@ -16,7 +16,15 @@ import {
   ModalHeader,
   Row,
   Table,
+  Container,
 } from "reactstrap";
+import {
+  useTable,
+  useFilters,
+  useAsyncDebounce,
+  useSortBy,
+  usePagination,
+} from "react-table";
 import Moment from "react-moment";
 import { Link } from "react-router-dom";
 import Select from "react-select";
@@ -38,21 +46,45 @@ import {
 
 function ListJobPostsScreen() {
   const [listJobPost, setListJobPosts] = useRecoilState(jobPostState);
+
   useEffect(() => {
     const fetchListJobPost = async () => {
       try {
         const jobPost = await jobPostApi.getAll(filtersParams);
         setListJobPosts(jobPost.data.list_object);
-        console.log(
-          "Success to fetch list JobPost. ",
-          jobPost.data.list_object
-        );
+
+        //Pagination
+        let total_page = jobPost.data.paging_metadata.total_pages;
+        setPageOptions([...Array(total_page).keys()]);
+        setCanNextPage(jobPost.data.paging_metadata.has_next_page);
+        setCanPreviousPage(jobPost.data.paging_metadata.has_previous_page);
+        setPageIndex(jobPost.data.paging_metadata.page_index);
+
+        console.log("Success to fetch list JobPost. ", jobPost.data);
       } catch (err) {
         console.log("Failed to fetch list JobPost. ", err);
       }
     };
     fetchListJobPost();
   }, []);
+
+  const fetchListJobPost = async (filters) => {
+    try {
+      const jobPost = await jobPostApi.getAll(filters);
+      setListJobPosts(jobPost.data.list_object);
+
+      //Pagination
+      let total_page = jobPost.data.paging_metadata.total_pages;
+      setPageOptions([...Array(total_page).keys()]);
+      setCanNextPage(jobPost.data.paging_metadata.has_next_page);
+      setCanPreviousPage(jobPost.data.paging_metadata.has_previous_page);
+      setPageIndex(jobPost.data.paging_metadata.page_index);
+
+      console.log("Success to fetch list JobPost. ", jobPost.data.list_object);
+    } catch (err) {
+      console.log("Failed to fetch list JobPost. ", err);
+    }
+  };
 
   const [isOpenDetail, setIsOpentDetail] = useState(false);
   const [isOpenEdit, setIsOpentEdit] = useState(false);
@@ -78,16 +110,27 @@ function ListJobPostsScreen() {
   };
 
   const filtersStatus = async (status) => {
-    setstatusFilterSelected(status);
+    handlePageSelect({
+      value: 0,
+      label: "Trang 1",
+    });
+
+    setstatusFilterSelected({
+      value: status.value,
+      label: status.label,
+    });
     console.log(
-      "🚀 ~ file: List JobPost.js ~ line 153 ~ filters ~ value",
-      status
+      "🚀 ~ file: List JobPost.js ~ line 153 ~ filters ~ value= ",
+      status.value
     );
     try {
       let jobPost = [];
       if (status.value !== -1) {
-        const filters = { status: status.value, ...filtersParams };
-
+        const filters = { ...filtersParams, status: status.value };
+        console.log(
+          "🚀 ~ file: List JobPost filtersfiltersfiltersfiltersfilters",
+          filters
+        );
         jobPost = await jobPostApi.getAll(filters);
 
         setFiltersParams(filters);
@@ -314,6 +357,44 @@ function ListJobPostsScreen() {
       ),
     };
   });
+
+  const [numberOfRows, setNumberOfRows] = React.useState({
+    value: 20,
+    label: "20 kết quả",
+  });
+  const [pageSelect, handlePageSelect] = useState({
+    value: 0,
+    label: "Trang 1",
+  });
+  const [canPreviousPage, setCanPreviousPage] = useState(false);
+  const [canNextPage, setCanNextPage] = useState(false);
+  const [pageOptions, setPageOptions] = useState([]);
+  const [pageIndex, setPageIndex] = useState(1);
+
+  let pageSelectData = Array.apply(null, Array(pageOptions.length)).map(
+    function () {}
+  );
+
+  let numberOfRowsData = [10, 20, 50, 100];
+
+  const gotoPage = async (value) => {
+    let page = value + 1;
+    filtersParams.page = page;
+    fetchListJobPost(filtersParams);
+  };
+
+  const nextPage = async () => {
+    let page = pageIndex + 1;
+    filtersParams.page = page;
+    fetchListJobPost(filtersParams);
+  };
+
+  const previousPage = async () => {
+    let page = pageIndex - 1;
+    filtersParams.page = page;
+    fetchListJobPost(filtersParams);
+  };
+
   return (
     <>
       <PanelHeader size="sm" />
@@ -356,6 +437,77 @@ function ListJobPostsScreen() {
                   </Row>
                 </CardHeader>
                 <CardBody>
+                  <div className="ReactTable -striped -highlight primary-pagination">
+                    <div className="pagination-top">
+                      <div className="-pagination">
+                        <div className="-previous">
+                          <button
+                            type="button"
+                            onClick={() => previousPage()}
+                            disabled={!canPreviousPage}
+                            className="-btn"
+                          >
+                            Trước
+                          </button>
+                        </div>
+                        <div className="-center">
+                          <Container>
+                            <Row className="justify-content-center">
+                              <Col md="6" sm="6" xs="12">
+                                <Select
+                                  className="react-select primary"
+                                  classNamePrefix="react-select"
+                                  name="pageSelect"
+                                  value={pageSelect}
+                                  onChange={(value) => {
+                                    gotoPage(value.value);
+                                    handlePageSelect(value);
+                                  }}
+                                  options={pageSelectData.map((prop, key) => {
+                                    return {
+                                      value: key,
+                                      label: "Trang " + (key + 1),
+                                    };
+                                  })}
+                                  placeholder="Chọn trang"
+                                />
+                              </Col>
+                              {/* <Col md="6" sm="6" xs="12">
+                    <Select
+                      className="react-select primary"
+                      classNamePrefix="react-select"
+                      name="numberOfRows"
+                      value={numberOfRows}
+                      onChange={(value) => {
+                        // setPageSize(value.value);
+                        setNumberOfRows(value);
+                      }}
+                      options={numberOfRowsData.map((prop) => {
+                        return {
+                          value: prop,
+                          label: prop + " kết quả",
+                        };
+                      })}
+                      placeholder="Chọn số dòng hiển thị"
+                    />
+                  </Col> */}
+                            </Row>
+                          </Container>
+                        </div>
+                        <div className="-next">
+                          <button
+                            type="button"
+                            onClick={() => nextPage()}
+                            disabled={!canNextPage}
+                            className="-btn"
+                          >
+                            Tiếp
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <ReactTable
                     data={dataState}
                     columns={[
@@ -393,7 +545,7 @@ function ListJobPostsScreen() {
         <div>
           <div
             className="content mt-1"
-            style={{ maxWidth: "1700px", width: "100%"}}
+            style={{ maxWidth: "1700px", width: "100%" }}
           >
             <Row>
               <Col md="12">
@@ -401,297 +553,298 @@ function ListJobPostsScreen() {
                   <CardHeader>
                     <h5 className="title">Bài đăng</h5>
                   </CardHeader>
-                  <CardBody >
-                    <Row style={{ width: "100%" }} className="d-flex justify-content-center">
+                  <CardBody>
+                    <Row
+                      style={{ width: "100%" }}
+                      className="d-flex justify-content-center"
+                    >
                       <Form style={{ width: "100%", padding: "0 10%" }}>
                         {/* <Row
                           className="d-flex justify-content-center"
                           style={{ width: "100%" }}
                         > */}
-                          {selectedJobPost.type == "PayPerHourJob" &&
-                          selectedJobPost.pay_per_hour_job ? (
-                            // "PayPerHourJob"
-                            <div style={{ width: "100%", padding: "0 8%" }}>
-                              <Row>
-                                <Col md="4">
-                                  <Table responsive>
-                                    <tr>
-                                      <th md="1">Tiêu đề:</th>
-                                      <td md="10">
-                                        {selectedJobPost.title
-                                          ? selectedJobPost.title
+                        {selectedJobPost.type == "PayPerHourJob" &&
+                        selectedJobPost.pay_per_hour_job ? (
+                          // "PayPerHourJob"
+                          <div style={{ width: "100%", padding: "0 8%" }}>
+                            <Row>
+                              <Col md="4">
+                                <Table responsive>
+                                  <tr>
+                                    <th md="1">Tiêu đề:</th>
+                                    <td md="10">
+                                      {selectedJobPost.title
+                                        ? selectedJobPost.title
+                                        : ""}
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="1">Ngày tạo:</th>
+                                    <td md="10">
+                                      <Moment format="DD/MM/YYYY">
+                                        {selectedJobPost.created_date
+                                          ? selectedJobPost.created_date
                                           : ""}
-                                      </td>
-                                    </tr>
+                                      </Moment>
+                                    </td>
+                                  </tr>
 
-                                    <tr>
-                                      <th md="1">Ngày tạo:</th>
-                                      <td md="10">
-                                        <Moment format="DD/MM/YYYY">
-                                          {selectedJobPost.created_date
-                                            ? selectedJobPost.created_date
-                                            : ""}
-                                        </Moment>
-                                      </td>
-                                    </tr>
+                                  <tr>
+                                    <th md="1">Chủ đất:</th>
+                                    <td md="10">
+                                      {selectedJobPost.published_name
+                                        ? selectedJobPost.published_name
+                                        : ""}
+                                    </td>
+                                  </tr>
 
-                                    <tr>
-                                      <th md="1">Chủ đất:</th>
-                                      <td md="10">
-                                        {selectedJobPost.published_name
-                                          ? selectedJobPost.published_name
-                                          : ""}
-                                      </td>
-                                    </tr>
+                                  <tr>
+                                    <th md="1">Vườn:</th>
+                                    <td md="10">
+                                      {selectedJobPost.garden_name
+                                        ? selectedJobPost.garden_name
+                                        : ""}
+                                    </td>
+                                  </tr>
+                                </Table>
+                              </Col>
 
-                                    <tr>
-                                      <th md="1">Vườn:</th>
-                                      <td md="10">
-                                        {selectedJobPost.garden_name
-                                          ? selectedJobPost.garden_name
-                                          : ""}
-                                      </td>
-                                    </tr>
-                                  </Table>
-                                </Col>
+                              <Col md="4">
+                                <Table responsive>
+                                  <tr>
+                                    <th md="1">Loại cây:</th>
+                                    <td md="10">
+                                      {selectedJobPost.tree_jobs.length > 0
+                                        ? selectedJobPost.tree_jobs[
+                                            selectedJobPost.tree_jobs.length - 1
+                                          ].type
+                                        : ""}
+                                    </td>
+                                  </tr>
 
-                                <Col md="4">
-                                  <Table responsive>
-                                    <tr>
-                                      <th md="1">Loại cây:</th>
-                                      <td md="10">
-                                        {selectedJobPost.tree_jobs.length > 0
-                                          ? selectedJobPost.tree_jobs[
-                                              selectedJobPost.tree_jobs.length -
-                                                1
-                                            ].type
-                                          : ""}
-                                      </td>
-                                    </tr>
+                                  <tr>
+                                    <th md="1">Loại công việc:</th>
+                                    <td md="10">{jobType.PayPerHourJob}</td>
+                                  </tr>
 
-                                    <tr>
-                                      <th md="1">Loại công việc:</th>
-                                      <td md="10">{jobType.PayPerHourJob}</td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="1">Giá công:</th>
-                                      <td md="7">
-                                        {selectedJobPost.pay_per_hour_job.salary
-                                          ? selectedJobPost.pay_per_hour_job.salary.toLocaleString(
-                                              "it-IT",
-                                              {
-                                                style: "currency",
-                                                currency: "VND",
-                                              }
-                                            )
-                                          : 0}{" "}
-                                      </td>
-                                    </tr>
-                                  </Table>
-                                </Col>
-
-                                <Col md="4">
-                                  <Table responsive>
-                                    <tr>
-                                      <th md="1">Số người ước lượng:</th>
-                                      <td md="7">
-                                        {selectedJobPost.pay_per_hour_job
-                                          .min_farmer
-                                          ? selectedJobPost.pay_per_hour_job
-                                              .min_farmer
-                                          : 0}{" "}
-                                        -{" "}
-                                        {selectedJobPost.pay_per_hour_job
-                                          .max_farmer
-                                          ? selectedJobPost.pay_per_hour_job
-                                              .max_farmer
-                                          : 0}{" "}
-                                        người
-                                      </td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="1">Ngày bắt đầu công việc:</th>
-                                      <td md="7">
-                                        <Moment format="DD/MM/YYYY">
-                                          {selectedJobPost.start_job_date
-                                            ? selectedJobPost.start_job_date
-                                            : ""}
-                                        </Moment>
-                                      </td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="1">Giờ làm việc:</th>
-                                      <td md="7">
-                                        {selectedJobPost.pay_per_hour_job
-                                          .start_time
-                                          ? selectedJobPost.pay_per_hour_job
-                                              .start_time
-                                          : ""}
-                                      </td>
-                                    </tr>
-                                  </Table>
-                                </Col>
-                              </Row>
-                            </div>
-                          ) : selectedJobPost.type == "PayPerTaskJob" &&
-                            selectedJobPost.pay_per_task_job ? (
-                            // "PayPerTaskJob"
-                            <div>
-                              <Row>
-                                <Col md="4">
-                                  <Table responsive>
-                                    <tr>
-                                      <th md="1">Tiêu đề:</th>
-                                      <td md="7">
-                                        {selectedJobPost.title
-                                          ? selectedJobPost.title
-                                          : ""}
-                                      </td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="1">Ngày tạo:</th>
-                                      <td md="7">
-                                        <Moment format="DD/MM/YYYY">
-                                          {selectedJobPost.created_date
-                                            ? selectedJobPost.created_date
-                                            : ""}
-                                        </Moment>
-                                      </td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="1">Chủ đất:</th>
-                                      <td md="7">
-                                        {selectedJobPost.published_name
-                                          ? selectedJobPost.published_name
-                                          : ""}
-                                      </td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="1">Vườn:</th>
-                                      <td md="7">
-                                        {selectedJobPost.garden_name
-                                          ? selectedJobPost.garden_name
-                                          : ""}
-                                      </td>
-                                    </tr>
-                                  </Table>
-                                </Col>
-
-                                <Col md="4">
-                                  <Table responsive>
-                                    <tr>
-                                      <th md="1">Loại cây:</th>
-                                      <td md="7">
-                                        {selectedJobPost.tree_jobs.length > 0
-                                          ? selectedJobPost.tree_jobs[
-                                              selectedJobPost.tree_jobs.length -
-                                                1
-                                            ].type
-                                          : ""}
-                                      </td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="1">Loại công việc:</th>
-                                      <td md="7">{jobType.PayPerTaskJob}</td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="1">Giá:</th>
-                                      <td md="7">
-                                        {selectedJobPost.pay_per_task_job.salary
-                                          ? selectedJobPost.pay_per_task_job.salary.toLocaleString(
-                                              "it-IT",
-                                              {
-                                                style: "currency",
-                                                currency: "VND",
-                                              }
-                                            )
-                                          : 0}{" "}
-                                      </td>
-                                    </tr>
-                                  </Table>
-                                </Col>
-
-                                <Col md="4">
-                                  <Table responsive>
-                                    <tr>
-                                      <th md="1">Ngày bắt đầu công việc:</th>
-                                      <td md="7">
-                                        <Moment format="DD/MM/YYYY">
-                                          {selectedJobPost.start_job_date
-                                            ? selectedJobPost.start_job_date
-                                            : ""}
-                                        </Moment>
-                                      </td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="1">Ngày kết thúc khoán:</th>
-                                      <td md="7">
-                                        <Moment format="DD/MM/YYYY">
-                                          {selectedJobPost.end_job_date
-                                            ? selectedJobPost.end_job_date
-                                            : ""}
-                                        </Moment>
-                                      </td>
-                                    </tr>
-
-                                    <tr>
-                                      <th md="2">Ngày kết thúc công việc:</th>
-                                      <td md="7">
-                                        <Moment format="DD/MM/YYYY">
-                                          {selectedJobPost.end_job_date
-                                            ? selectedJobPost.end_job_date
-                                            : ""}
-                                        </Moment>
-                                      </td>
-                                    </tr>
-                                  </Table>
-                                </Col>
-                              </Row>
-                            </div>
-                          ) : (
-                            <div></div>
-                          )}
-
-                          <Row
-                            className="d-flex justify-content-center"
-                            // style={{ width: "100%" }}
-                          >
-                            <Col md="8">
-                              <Table responsive>
-                                <tr>
-                                  <th md="2">Mô tả công việc:</th>
-                                  <td md="5">
-                                    <Col className="" md="12">
-                                      <FormGroup>
-                                        <Row className="">
-                                          <Input
-                                            cols="80"
-                                            placeholder="Mô tả"
-                                            rows="20"
-                                            type="textarea"
-                                            defaultValue={
-                                              selectedJobPost.description
+                                  <tr>
+                                    <th md="1">Giá công:</th>
+                                    <td md="7">
+                                      {selectedJobPost.pay_per_hour_job.salary
+                                        ? selectedJobPost.pay_per_hour_job.salary.toLocaleString(
+                                            "it-IT",
+                                            {
+                                              style: "currency",
+                                              currency: "VND",
                                             }
-                                            name={"description"}
-                                            style={{ fontSize: "14px" }}
-                                          />
-                                        </Row>
-                                      </FormGroup>
-                                    </Col>
-                                  </td>
-                                </tr>
-                              </Table>
-                            </Col>
-                          </Row>
+                                          )
+                                        : 0}{" "}
+                                    </td>
+                                  </tr>
+                                </Table>
+                              </Col>
+
+                              <Col md="4">
+                                <Table responsive>
+                                  <tr>
+                                    <th md="1">Số người ước lượng:</th>
+                                    <td md="7">
+                                      {selectedJobPost.pay_per_hour_job
+                                        .min_farmer
+                                        ? selectedJobPost.pay_per_hour_job
+                                            .min_farmer
+                                        : 0}{" "}
+                                      -{" "}
+                                      {selectedJobPost.pay_per_hour_job
+                                        .max_farmer
+                                        ? selectedJobPost.pay_per_hour_job
+                                            .max_farmer
+                                        : 0}{" "}
+                                      người
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="1">Ngày bắt đầu công việc:</th>
+                                    <td md="7">
+                                      <Moment format="DD/MM/YYYY">
+                                        {selectedJobPost.start_job_date
+                                          ? selectedJobPost.start_job_date
+                                          : ""}
+                                      </Moment>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="1">Giờ làm việc:</th>
+                                    <td md="7">
+                                      {selectedJobPost.pay_per_hour_job
+                                        .start_time
+                                        ? selectedJobPost.pay_per_hour_job
+                                            .start_time
+                                        : ""}
+                                    </td>
+                                  </tr>
+                                </Table>
+                              </Col>
+                            </Row>
+                          </div>
+                        ) : selectedJobPost.type == "PayPerTaskJob" &&
+                          selectedJobPost.pay_per_task_job ? (
+                          // "PayPerTaskJob"
+                          <div>
+                            <Row>
+                              <Col md="4">
+                                <Table responsive>
+                                  <tr>
+                                    <th md="1">Tiêu đề:</th>
+                                    <td md="7">
+                                      {selectedJobPost.title
+                                        ? selectedJobPost.title
+                                        : ""}
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="1">Ngày tạo:</th>
+                                    <td md="7">
+                                      <Moment format="DD/MM/YYYY">
+                                        {selectedJobPost.created_date
+                                          ? selectedJobPost.created_date
+                                          : ""}
+                                      </Moment>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="1">Chủ đất:</th>
+                                    <td md="7">
+                                      {selectedJobPost.published_name
+                                        ? selectedJobPost.published_name
+                                        : ""}
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="1">Vườn:</th>
+                                    <td md="7">
+                                      {selectedJobPost.garden_name
+                                        ? selectedJobPost.garden_name
+                                        : ""}
+                                    </td>
+                                  </tr>
+                                </Table>
+                              </Col>
+
+                              <Col md="4">
+                                <Table responsive>
+                                  <tr>
+                                    <th md="1">Loại cây:</th>
+                                    <td md="7">
+                                      {selectedJobPost.tree_jobs.length > 0
+                                        ? selectedJobPost.tree_jobs[
+                                            selectedJobPost.tree_jobs.length - 1
+                                          ].type
+                                        : ""}
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="1">Loại công việc:</th>
+                                    <td md="7">{jobType.PayPerTaskJob}</td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="1">Giá:</th>
+                                    <td md="7">
+                                      {selectedJobPost.pay_per_task_job.salary
+                                        ? selectedJobPost.pay_per_task_job.salary.toLocaleString(
+                                            "it-IT",
+                                            {
+                                              style: "currency",
+                                              currency: "VND",
+                                            }
+                                          )
+                                        : 0}{" "}
+                                    </td>
+                                  </tr>
+                                </Table>
+                              </Col>
+
+                              <Col md="4">
+                                <Table responsive>
+                                  <tr>
+                                    <th md="1">Ngày bắt đầu công việc:</th>
+                                    <td md="7">
+                                      <Moment format="DD/MM/YYYY">
+                                        {selectedJobPost.start_job_date
+                                          ? selectedJobPost.start_job_date
+                                          : ""}
+                                      </Moment>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="1">Ngày kết thúc khoán:</th>
+                                    <td md="7">
+                                      <Moment format="DD/MM/YYYY">
+                                        {selectedJobPost.end_job_date
+                                          ? selectedJobPost.end_job_date
+                                          : ""}
+                                      </Moment>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th md="2">Ngày kết thúc công việc:</th>
+                                    <td md="7">
+                                      <Moment format="DD/MM/YYYY">
+                                        {selectedJobPost.end_job_date
+                                          ? selectedJobPost.end_job_date
+                                          : ""}
+                                      </Moment>
+                                    </td>
+                                  </tr>
+                                </Table>
+                              </Col>
+                            </Row>
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+
+                        <Row
+                          className="d-flex justify-content-center"
+                          // style={{ width: "100%" }}
+                        >
+                          <Col md="8">
+                            <Table responsive>
+                              <tr>
+                                <th md="2">Mô tả công việc:</th>
+                                <td md="5">
+                                  <Col className="" md="12">
+                                    <FormGroup>
+                                      <Row className="">
+                                        <Input
+                                          cols="80"
+                                          placeholder="Mô tả"
+                                          rows="20"
+                                          type="textarea"
+                                          defaultValue={
+                                            selectedJobPost.description
+                                          }
+                                          name={"description"}
+                                          style={{ fontSize: "14px" }}
+                                        />
+                                      </Row>
+                                    </FormGroup>
+                                  </Col>
+                                </td>
+                              </tr>
+                            </Table>
+                          </Col>
+                        </Row>
                         {/* </Row> */}
 
                         <div className="d-flex justify-content-center">

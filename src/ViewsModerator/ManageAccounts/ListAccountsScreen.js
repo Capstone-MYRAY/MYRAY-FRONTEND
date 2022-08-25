@@ -16,6 +16,7 @@ import {
   ModalHeader,
   Row,
   Table,
+  Container,
 } from "reactstrap";
 import Moment from "react-moment";
 import { Link } from "react-router-dom";
@@ -23,22 +24,29 @@ import Select from "react-select";
 import React, { useEffect, useState } from "react";
 import momentjs from "moment";
 import "moment-timezone";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import { useRecoilState } from "recoil";
 // import ImageUpload from "components/CustomUpload/ImageUpload";
 import { moderatorState } from "state/moderatorState";
 import accountApi from "api/accountApi";
 import moderatorApi from "api/moderatorApi";
-import { JobPostStatusVN, jobType, gender, roleId, accountStatusNum } from "variables/general";
-import Datetime from 'react-datetime';
+import {
+  JobPostStatusVN,
+  jobType,
+  gender,
+  roleId,
+  accountStatusNum,
+} from "variables/general";
+import Datetime from "react-datetime";
 import SwitchSelector from "react-switch-selector";
 import { accountState } from "state/accountState";
-import { accountStatus} from "variables/general";
+import { accountStatus } from "variables/general";
 import { reportState, accountReportedState } from "state/reportState";
 
 function ListAccountsScreen() {
-  const [accReportedState, setAccountReportedState] = useRecoilState(accountReportedState);
+  const [accReportedState, setAccountReportedState] =
+    useRecoilState(accountReportedState);
   const [listAccounts, setListAccounts] = useRecoilState(accountState);
   const [isOpenDetail, setIsOpentDetail] = useState(false);
   const [isOpenEdit, setIsOpentEdit] = useState(false);
@@ -58,28 +66,34 @@ function ListAccountsScreen() {
     const fetchListAccounts = async () => {
       try {
         let role_Id = roleId.landowner;
-      let filtersParamsToggle = {...filtersParams, roleId: role_Id};
-      //Accounts
-      switch(toggleSelected) {
-        case "Landowner":
-          role_Id = roleId.landowner;
-          console.log("roleIdroleIdroleIdroleIdroleId ", role_Id);
-          break;
-        case "Farmer":
-          role_Id = roleId.farmer;
-          filtersParamsToggle = ({...filtersParams, roleId: role_Id});
-          break;
-        default:
-          break;
-      }
-      
+        let filtersParamsToggle = { ...filtersParams, roleId: role_Id };
+        //Accounts
+        switch (toggleSelected) {
+          case "Landowner":
+            role_Id = roleId.landowner;
+            console.log("roleIdroleIdroleIdroleIdroleId ", role_Id);
+            break;
+          case "Farmer":
+            role_Id = roleId.farmer;
+            filtersParamsToggle = { ...filtersParams, roleId: role_Id };
+            break;
+          default:
+            break;
+        }
 
-      const response = await accountApi.getAll(filtersParamsToggle);
-      setListAccounts(response.data.list_object);
-      console.log(
-        `Success to fetch list accounts. ${role_Id}`,
-        response.data.list_object
-      );
+        const response = await accountApi.getAll(filtersParamsToggle);
+        //Pagination
+        let total_page = response.data.paging_metadata.total_pages;
+        setPageOptions([...Array(total_page).keys()]);
+        setCanNextPage(response.data.paging_metadata.has_next_page);
+        setCanPreviousPage(response.data.paging_metadata.has_previous_page);
+        setPageIndex(response.data.paging_metadata.page_index);
+
+        setListAccounts(response.data.list_object);
+        console.log(
+          `Success to fetch list accounts. ${role_Id}`,
+          response.data.list_object
+        );
       } catch (err) {
         console.log("Failed to fetch list accounts. ", err);
       }
@@ -92,6 +106,14 @@ function ListAccountsScreen() {
     try {
       const response = await accountApi.getAll(filtersParams);
       setListAccounts(response.data.list_object);
+
+      //Pagination
+      let total_page = response.data.paging_metadata.total_pages;
+      setPageOptions([...Array(total_page).keys()]);
+      setCanNextPage(response.data.paging_metadata.has_next_page);
+      setCanPreviousPage(response.data.paging_metadata.has_previous_page);
+      setPageIndex(response.data.paging_metadata.page_index);
+
       console.log(
         "Success to fetch list accounts. ",
         response.data.list_object
@@ -103,25 +125,25 @@ function ListAccountsScreen() {
 
   const options = [
     {
-        label: <span style={{color: "#ffffff"}}>Chủ đất</span>,
-        value: "Landowner",
-        // {
-        //      landowner: true
-        // },
-        selectedBackgroundColor: "#4F9E1D",
-        selectedFontColor: "#ffffff",
+      label: <span style={{ color: "#ffffff" }}>Chủ đất</span>,
+      value: "Landowner",
+      // {
+      //      landowner: true
+      // },
+      selectedBackgroundColor: "#4F9E1D",
+      selectedFontColor: "#ffffff",
     },
     {
-        label: <span style={{color: "#ffffff"}}>Nông dân</span>,
-        value: "Farmer",
-        selectedBackgroundColor: "#4F9E1D",
-        selectedFontColor: "#ffffff",
-    }
- ];
- 
- const onChange = async (newValue) => {
-     console.log(newValue);
-     setToggleSelected(newValue);
+      label: <span style={{ color: "#ffffff" }}>Nông dân</span>,
+      value: "Farmer",
+      selectedBackgroundColor: "#4F9E1D",
+      selectedFontColor: "#ffffff",
+    },
+  ];
+
+  const onChange = async (newValue) => {
+    console.log(newValue);
+    setToggleSelected(newValue);
     //  switch(newValue) {
     //   case "Landowner":
     //     roleId = roleId.landowner;
@@ -137,47 +159,54 @@ function ListAccountsScreen() {
     // }
     try {
       let role_Id = roleId.landowner;
-      let filtersParamsToggle = {...filtersParams, roleId: role_Id};
+      let filtersParamsToggle = { ...filtersParams, roleId: role_Id };
       //Accounts
-      switch(newValue) {
+      switch (newValue) {
         case "Landowner":
           role_Id = roleId.landowner;
           console.log("roleIdroleIdroleIdroleIdroleId ", role_Id);
           break;
         case "Farmer":
           role_Id = roleId.farmer;
-          filtersParamsToggle = ({...filtersParams, roleId: role_Id});
+          filtersParamsToggle = { ...filtersParams, roleId: role_Id };
           break;
         default:
           break;
       }
-      
 
       const response = await accountApi.getAll(filtersParamsToggle);
       setListAccounts(response.data.list_object);
+
+      //Pagination
+      let total_page = response.data.paging_metadata.total_pages;
+      setPageOptions([...Array(total_page).keys()]);
+      setCanNextPage(response.data.paging_metadata.has_next_page);
+      setCanPreviousPage(response.data.paging_metadata.has_previous_page);
+      setPageIndex(response.data.paging_metadata.page_index);
+
       console.log(
         `Success to fetch list accounts. ${role_Id}`,
         response.data.list_object
       );
-      
     } catch (err) {
       console.log("Failed to fetch list accounts. ", err);
     }
- };
- 
- const initialSelectedIndex = options.findIndex(({value}) => value === "Landowner");
+  };
+
+  const initialSelectedIndex = options.findIndex(
+    ({ value }) => value === "Landowner"
+  );
 
   const createDate = () => {
     const d = new Date();
     return d;
-  }
+  };
 
   const [dobDateSelected, setDOBSelected] = React.useState(createDate());
 
-  
   const handleChangeDOB = (e) => {
     setDOBSelected(e.format("DD-MM-YYYY"));
-  }
+  };
 
   const openEditModal = () => {};
 
@@ -191,13 +220,13 @@ function ListAccountsScreen() {
     } else {
       setToggleSelected("Farmer");
     }
-    
+
     setIsOpentEdit(false);
   };
 
   const closeTopUpModal = () => {
     setIsOpentTopUp(false);
-  }
+  };
 
   //Handle edit button
   const openDetailScreen = async (account) => {
@@ -225,19 +254,23 @@ function ListAccountsScreen() {
     e.preventDefault();
 
     const updateAccount = {
-      id:selectedAccount.id,
-  role_id: selectedAccount.role_id,
-  fullname: e.target.fullname.value,
-  date_of_birth: momentjs(Date(dobDateSelected)).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-  phone_number: e.target.phone_number.value,
-  
-    }
+      id: selectedAccount.id,
+      role_id: selectedAccount.role_id,
+      fullname: e.target.fullname.value,
+      date_of_birth: momentjs(Date(dobDateSelected)).format(
+        "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+      ),
+      phone_number: e.target.phone_number.value,
+    };
 
     console.log("update account:" + updateAccount.address);
 
     try {
       const response = await accountApi.put(updateAccount);
-      console.log("🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response", response)
+      console.log(
+        "🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response",
+        response
+      );
 
       try {
         const response = await accountApi.getAll(filtersParams);
@@ -250,20 +283,18 @@ function ListAccountsScreen() {
         console.log("Failed to fetch list account. ", err);
       }
 
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Cập nhật thành công!',  
+      Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Cập nhật thành công!",
       });
-
     } catch (err) {
       console.log(`Failed to update account ${err}`);
-      Swal.fire({  
-        icon: 'error',
-        title: 'Lỗi',  
-        text: 'Cập nhật không thành công!',  
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Cập nhật không thành công!",
       });
-
     }
 
     setIsOpentEdit(false);
@@ -274,34 +305,33 @@ function ListAccountsScreen() {
     setSelectedAccount(accountCurrent);
     if (accountCurrent.status == accountStatusNum.banned) {
       Swal.fire({
-        title: 'Bạn có muốn mở khóa tài khoản này?',
-        icon: 'warning',
+        title: "Bạn có muốn mở khóa tài khoản này?",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#4F9E1D',
-        confirmButtonText: 'Mở khóa',
-        cancelButtonText: 'Hủy',
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#4F9E1D",
+        confirmButtonText: "Mở khóa",
+        cancelButtonText: "Hủy",
       }).then((event) => {
         if (event.isConfirmed) {
           banAccount(accountCurrent);
         }
-      })
+      });
     } else {
       Swal.fire({
-        title: 'Bạn có muốn khóa tài khoản này?',
-        icon: 'warning',
+        title: "Bạn có muốn khóa tài khoản này?",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#4F9E1D',
-        confirmButtonText: 'Khóa',
-        cancelButtonText: 'Hủy',
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#4F9E1D",
+        confirmButtonText: "Khóa",
+        cancelButtonText: "Hủy",
       }).then((event) => {
         if (event.isConfirmed) {
           banAccount(accountCurrent);
         }
-      })
+      });
     }
-    
   };
 
   const banAccount = async (account) => {
@@ -309,27 +339,30 @@ function ListAccountsScreen() {
       if (account.status == accountStatusNum.banned) {
         console.log("🚀 ~ selectedAccount UNbanAccount ~ response", account);
         const response = await accountApi.patchUnban(account.id);
-      console.log("🚀 ~ banAccount ~ response", response)
+        console.log("🚀 ~ banAccount ~ response", response);
 
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Mở khóa thành công!',  
-      });
+        Swal.fire({
+          icon: "success",
+          title: "Thành công",
+          text: "Mở khóa thành công!",
+        });
       } else {
         console.log("🚀 ~ selectedAccount BANAccount ~ response", account);
         const response = await accountApi.banAccount(account.id);
-      console.log("🚀 ~ unbanAccount ~ response", response)
+        console.log("🚀 ~ unbanAccount ~ response", response);
 
-      Swal.fire({  
-        icon: 'success',
-        title: 'Thành công',  
-        text: 'Khóa thành công!',  
-      });
+        Swal.fire({
+          icon: "success",
+          title: "Thành công",
+          text: "Khóa thành công!",
+        });
       }
 
       try {
-        const response = await accountApi.getAll({...filtersParams, roleId: account.role_id});
+        const response = await accountApi.getAll({
+          ...filtersParams,
+          roleId: account.role_id,
+        });
         setListAccounts(response.data.list_object);
         console.log(
           "Success to fetch list account. ",
@@ -340,10 +373,10 @@ function ListAccountsScreen() {
       }
     } catch (err) {
       console.log(`Failed to delete moderator ${err}`);
-      Swal.fire({  
-        icon: 'error',
-        title: 'Lỗi',  
-        text: 'Không thành công!',  
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Không thành công!",
       });
     }
   };
@@ -360,19 +393,27 @@ function ListAccountsScreen() {
       const account = {
         accountId: selectedAccount.id,
         topUp: e.target.topUp.value,
-      }
-      console.log("🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response", account.topUp, "    " , account.accountId)
-  
+      };
+      console.log(
+        "🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response",
+        account.topUp,
+        "    ",
+        account.accountId
+      );
+
       try {
         const response = await accountApi.topUp(account);
-        console.log("🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response", response)
-  
-        Swal.fire({  
-          icon: 'success',
-          title: 'Thành công',  
-          text: 'Nạp tiền thành công!',  
+        console.log(
+          "🚀 ~ file: account.js ~ line 197 ~ handleSubmit ~ response",
+          response
+        );
+
+        Swal.fire({
+          icon: "success",
+          title: "Thành công",
+          text: "Nạp tiền thành công!",
         });
-  
+
         try {
           const response = await accountApi.getAll(filtersParams);
           setListAccounts(response.data.list_object);
@@ -383,37 +424,34 @@ function ListAccountsScreen() {
         } catch (err) {
           console.log("Failed to fetch list account. ", err);
         }
-  
       } catch (err) {
         console.log(`Failed to update account ${err}`);
-        Swal.fire({  
-          icon: 'error',
-          title: 'Lỗi',  
-          text: 'Nạp tiền không thành công!',  
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: "Nạp tiền không thành công!",
         });
-  
       }
 
       setIsOpentTopUp(false);
-    setIsOpentDetail(false);
+      setIsOpentDetail(false);
     } else {
-      Swal.fire({  
-        icon: 'error',
-        title: 'Số tiền không hợp lệ',  
-        text: `Vui lòng nhập số tiền không vượt quá một triệu đồng!`,  
+      Swal.fire({
+        icon: "error",
+        title: "Số tiền không hợp lệ",
+        text: `Vui lòng nhập số tiền không vượt quá một triệu đồng!`,
       });
     }
-
   };
 
-// function that verifies if value contains only numbers
-const verifyNumber = (value) => {
-  var numberRex = new RegExp("^[0-9]+$");
-  if (numberRex.test(value)) {
-    return true;
-  }
-  return false;
-};
+  // function that verifies if value contains only numbers
+  const verifyNumber = (value) => {
+    var numberRex = new RegExp("^[0-9]+$");
+    if (numberRex.test(value)) {
+      return true;
+    }
+    return false;
+  };
 
   const dataState = listAccounts.map((prop, key) => {
     key = prop.id;
@@ -422,7 +460,10 @@ const verifyNumber = (value) => {
       fullname: prop.fullname,
       phone_number: prop.phone_number,
       address: prop.address,
-      balance: prop.balance.toLocaleString('it-IT', {style : 'currency', currency : 'VND'}),
+      balance: prop.balance.toLocaleString("it-IT", {
+        style: "currency",
+        currency: "VND",
+      }),
       point: prop.point,
       status: accountStatus[prop.status],
       actions: (
@@ -435,23 +476,60 @@ const verifyNumber = (value) => {
             color="primary"
             size="sm"
           >
-          Chi tiết
+            Chi tiết
           </Button>{" "}
           {/* use this button to remove the data row */}
           <Button
-              onClick={handleBanButton.bind(this, prop)}
+            onClick={handleBanButton.bind(this, prop)}
             className="btn-round"
             color="danger"
             size="sm"
           >
-          {prop.status == accountStatusNum.banned ? "Mở khóa" : "Khóa"}
+            {prop.status == accountStatusNum.banned ? "Mở khóa" : "Khóa"}
           </Button>{" "}
         </div>
       ),
     };
   });
 
-  const codeStyle = { "max-width" : "280px" };
+  const codeStyle = { "max-width": "280px" };
+
+  const [numberOfRows, setNumberOfRows] = React.useState({
+    value: 20,
+    label: "20 kết quả",
+  });
+  const [pageSelect, handlePageSelect] = useState({
+    value: 0,
+    label: "Trang 1",
+  });
+  const [canPreviousPage, setCanPreviousPage] = useState(false);
+  const [canNextPage, setCanNextPage] = useState(false);
+  const [pageOptions, setPageOptions] = useState([]);
+  const [pageIndex, setPageIndex] = useState(1);
+
+  let pageSelectData = Array.apply(null, Array(pageOptions.length)).map(
+    function () {}
+  );
+
+  let numberOfRowsData = [10, 20, 50, 100];
+
+  const gotoPage = async (value) => {
+    let page = value + 1;
+    filtersParams.page = page;
+    fetchListAccount(filtersParams);
+  };
+
+  const nextPage = async () => {
+    let page = pageIndex + 1;
+    filtersParams.page = page;
+    fetchListAccount(filtersParams);
+  };
+
+  const previousPage = async () => {
+    let page = pageIndex - 1;
+    filtersParams.page = page;
+    fetchListAccount(filtersParams);
+  };
 
   return (
     <>
@@ -466,25 +544,102 @@ const verifyNumber = (value) => {
                     <Col xs={10} md={10}>
                       <CardTitle tag="h4">Quản lý tài khoản</CardTitle>
                     </Col>
-                    
                   </Row>
 
                   <Row>
                     <Col xs={3} md={2}>
-                    <div className="your-required-wrapper" style={{width: 300, height: 40, color: "#fff !important"}}>
-        <SwitchSelector
-            onChange={onChange}
-            options={options}
-            initialSelectedIndex={initialSelectedIndex}
-            backgroundColor={"#353b48"}
-            fontColor={"#fff !important"}
-            selectedFontColor={"#fff !important"}
-        />
-    </div>
+                      <div
+                        className="your-required-wrapper"
+                        style={{
+                          width: 300,
+                          height: 40,
+                          color: "#fff !important",
+                        }}
+                      >
+                        <SwitchSelector
+                          onChange={onChange}
+                          options={options}
+                          initialSelectedIndex={initialSelectedIndex}
+                          backgroundColor={"#353b48"}
+                          fontColor={"#fff !important"}
+                          selectedFontColor={"#fff !important"}
+                        />
+                      </div>
                     </Col>
                   </Row>
                 </CardHeader>
                 <CardBody>
+                  <div className="ReactTable -striped -highlight primary-pagination">
+                    <div className="pagination-top">
+                      <div className="-pagination">
+                        <div className="-previous">
+                          <button
+                            type="button"
+                            onClick={() => previousPage()}
+                            disabled={!canPreviousPage}
+                            className="-btn"
+                          >
+                            Trước
+                          </button>
+                        </div>
+                        <div className="-center">
+                          <Container>
+                            <Row className="justify-content-center">
+                              <Col md="6" sm="6" xs="12">
+                                <Select
+                                  className="react-select primary"
+                                  classNamePrefix="react-select"
+                                  name="pageSelect"
+                                  value={pageSelect}
+                                  onChange={(value) => {
+                                    gotoPage(value.value);
+                                    handlePageSelect(value);
+                                  }}
+                                  options={pageSelectData.map((prop, key) => {
+                                    return {
+                                      value: key,
+                                      label: "Trang " + (key + 1),
+                                    };
+                                  })}
+                                  placeholder="Chọn trang"
+                                />
+                              </Col>
+                              {/* <Col md="6" sm="6" xs="12">
+                    <Select
+                      className="react-select primary"
+                      classNamePrefix="react-select"
+                      name="numberOfRows"
+                      value={numberOfRows}
+                      onChange={(value) => {
+                        // setPageSize(value.value);
+                        setNumberOfRows(value);
+                      }}
+                      options={numberOfRowsData.map((prop) => {
+                        return {
+                          value: prop,
+                          label: prop + " kết quả",
+                        };
+                      })}
+                      placeholder="Chọn số dòng hiển thị"
+                    />
+                  </Col> */}
+                            </Row>
+                          </Container>
+                        </div>
+                        <div className="-next">
+                          <button
+                            type="button"
+                            onClick={() => nextPage()}
+                            disabled={!canNextPage}
+                            className="-btn"
+                          >
+                            Tiếp
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <ReactTable
                     data={dataState}
                     columns={[
@@ -537,7 +692,7 @@ const verifyNumber = (value) => {
                   <CardBody>
                     <Row className="d-flex justify-content-center">
                       <Form style={{ width: "100%" }}>
-                        <Row style={{ width: "100%", padding: "0 20%"}}>
+                        <Row style={{ width: "100%", padding: "0 20%" }}>
                           <Col md="6">
                             <Table responsive>
                               <tr>
@@ -545,7 +700,6 @@ const verifyNumber = (value) => {
                                 <td md="7">{selectedAccount.fullname}</td>
                               </tr>
 
-                              
                               <tr>
                                 <th md="1">Số điện thoại:</th>
                                 <td md="7">{selectedAccount.phone_number}</td>
@@ -562,31 +716,33 @@ const verifyNumber = (value) => {
 
                               <tr>
                                 <th md="1">Giới tính:</th>
-                                <td md="7">
-                                  {gender[selectedAccount.gender]}
-                                </td>
+                                <td md="7">{gender[selectedAccount.gender]}</td>
                               </tr>
                             </Table>
                           </Col>
 
                           <Col md="6">
                             <Table responsive>
-                            <tr>
+                              <tr>
                                 <th md="1">Số dư tài khoản:</th>
-                                <td md="7">{selectedAccount.balance.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</td>
+                                <td md="7">
+                                  {selectedAccount.balance.toLocaleString(
+                                    "it-IT",
+                                    { style: "currency", currency: "VND" }
+                                  )}
+                                </td>
                               </tr>
 
                               <tr>
                                 <th md="1">Điểm:</th>
                                 <td md="7">{selectedAccount.point}</td>
                               </tr>
-                              
                             </Table>
                           </Col>
                         </Row>
 
                         <div className="d-flex justify-content-center">
-                        {/* {selectedAccount.role_id == roleId.landowner ? (
+                          {/* {selectedAccount.role_id == roleId.landowner ? (
                         <Button
                             className="mr-2"
                             color="warning"
@@ -634,16 +790,18 @@ const verifyNumber = (value) => {
                     <Row>
                       <Col md="12">
                         <Form
-                            onSubmit={handleUpdateSubmit}
+                          onSubmit={handleUpdateSubmit}
                           className="form-horizontal"
                           method="get"
                         >
                           <Row>
-                            <Label sm="5">Họ và tên <code>*</code>:</Label>
+                            <Label sm="5">
+                              Họ và tên <code>*</code>:
+                            </Label>
                             <Col sm="7" md="7">
                               <FormGroup className="">
                                 <Input
-                                    defaultValue={selectedAccount.fullname}
+                                  defaultValue={selectedAccount.fullname}
                                   placeholder="fullname"
                                   type="text"
                                   name={"fullname"}
@@ -653,29 +811,34 @@ const verifyNumber = (value) => {
                           </Row>
 
                           <Row>
-                            <Label sm="5">Ngày sinh <code>*</code>:</Label>
+                            <Label sm="5">
+                              Ngày sinh <code>*</code>:
+                            </Label>
                             <Col sm="7" md="7">
                               <FormGroup className="">
-                              <Datetime
-                                          timeFormat={false}
-                                          utc={true}
-                                          dateFormat="DD/MM/YYYY"
-                                          inputProps={{ placeholder: "Datetime Picker" }}
-                                          name="date_of_birth"
-                                          onChange={handleChangeDOB}
-                                          value={dobDateSelected}
-                                        />
+                                <Datetime
+                                  timeFormat={false}
+                                  utc={true}
+                                  dateFormat="DD/MM/YYYY"
+                                  inputProps={{
+                                    placeholder: "Datetime Picker",
+                                  }}
+                                  name="date_of_birth"
+                                  onChange={handleChangeDOB}
+                                  value={dobDateSelected}
+                                />
                               </FormGroup>
                             </Col>
-                          </Row>   
-
+                          </Row>
 
                           <Row>
-                            <Label sm="5">Số điện thoại <code>*</code>:</Label>
+                            <Label sm="5">
+                              Số điện thoại <code>*</code>:
+                            </Label>
                             <Col sm="7" md="7">
                               <FormGroup className="">
                                 <Input
-                                    defaultValue={selectedAccount.phone_number}
+                                  defaultValue={selectedAccount.phone_number}
                                   placeholder="phonenumber"
                                   type="text"
                                   name={"phone_number"}
@@ -713,7 +876,6 @@ const verifyNumber = (value) => {
             </ModalBody>
           </Modal>
 
-
           <Modal
             isOpen={isOpenTopUp}
             size="lg"
@@ -728,7 +890,7 @@ const verifyNumber = (value) => {
                     <Row>
                       <Col md="12">
                         <Form
-                            onSubmit={handleTopUpSubmit}
+                          onSubmit={handleTopUpSubmit}
                           className="form-horizontal"
                           method="get"
                         >
@@ -747,38 +909,45 @@ const verifyNumber = (value) => {
                           </Row> */}
 
                           <Row>
-                    <Label sm="2" className="font-weight-bold ml-1">Số tiền</Label>
-                    <Col sm="5" className="">
-                      <FormGroup className={rangeState}>
-                        <Input
-                          name={"topUp"}
-                          type="text"
-                          onChange={(e) => {
-                            if (
-                              !(
-                                verifyNumber(e.target.value) &&
-                                e.target.value >= 0 &&
-                                e.target.value <= 1000000
-                              )
-                            ) {
-                              setrangeState("has-danger");
-                            } else {
-                              setrangeState("has-success");
-                            }
-                            setrange(e.target.value);
-                          }}
-                        />
-                        {rangeState === "has-danger" ? (
-                          <label className="error">
-                            Xin nhập số tiền dưới một triệu đồng.
-                          </label>
-                        ) : null}
-                      </FormGroup>
-                    </Col>
-                      <Col style={codeStyle} className="label-on-right" tag="label" sm="4">
-                      <code>(Không vượt quá một triệu đồng)</code>
-                    </Col>
-                  </Row>
+                            <Label sm="2" className="font-weight-bold ml-1">
+                              Số tiền
+                            </Label>
+                            <Col sm="5" className="">
+                              <FormGroup className={rangeState}>
+                                <Input
+                                  name={"topUp"}
+                                  type="text"
+                                  onChange={(e) => {
+                                    if (
+                                      !(
+                                        verifyNumber(e.target.value) &&
+                                        e.target.value >= 0 &&
+                                        e.target.value <= 1000000
+                                      )
+                                    ) {
+                                      setrangeState("has-danger");
+                                    } else {
+                                      setrangeState("has-success");
+                                    }
+                                    setrange(e.target.value);
+                                  }}
+                                />
+                                {rangeState === "has-danger" ? (
+                                  <label className="error">
+                                    Xin nhập số tiền dưới một triệu đồng.
+                                  </label>
+                                ) : null}
+                              </FormGroup>
+                            </Col>
+                            <Col
+                              style={codeStyle}
+                              className="label-on-right"
+                              tag="label"
+                              sm="4"
+                            >
+                              <code>(Không vượt quá một triệu đồng)</code>
+                            </Col>
+                          </Row>
 
                           <Row>
                             <Col sm="12">
