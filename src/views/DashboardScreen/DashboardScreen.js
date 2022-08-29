@@ -370,7 +370,7 @@ function DashboardScreen() {
                         </div>
                       </Col>
                       <Col className="text-right" xs="7">
-                      <h6 className="stats-title">Chủ đất</h6>
+                      <h6 className="stats-title">Chủ vườn</h6>
                         <h3 className="info-title">{new Intl.NumberFormat( 'en-US', { maximumFractionDigits: 1,notation: "compact" , compactDisplay: "short" }).format(statisticResult.total_landowner)}</h3>
                       </Col>
                     </Row>

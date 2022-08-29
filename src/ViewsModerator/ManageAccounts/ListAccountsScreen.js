@@ -125,7 +125,7 @@ function ListAccountsScreen() {
 
   const options = [
     {
-      label: <span style={{ color: "#ffffff" }}>Chủ đất</span>,
+      label: <span style={{ color: "#ffffff" }}>Chủ vườn</span>,
       value: "Landowner",
       // {
       //      landowner: true

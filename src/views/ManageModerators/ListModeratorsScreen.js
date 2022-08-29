@@ -429,10 +429,10 @@ function ListModeratorsScreen() {
                         Header: "Số điện thoại",
                         accessor: "phone_number",
                       },
-                      {
-                        Header: "Email",
-                        accessor: "email",
-                      },
+                      // {
+                      //   Header: "Email",
+                      //   accessor: "email",
+                      // },
                       {
                         Header: "Trạng thái",
                         accessor: "status",

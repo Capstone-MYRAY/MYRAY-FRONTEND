@@ -63,7 +63,7 @@ const JobPostStatusVN = ["Đã xóa", "Chờ duyệt", "Đang đăng tải", "B�
 
 const JobPostStatusVNCombobox = [
   { value: -1, label: "Tất cả"},
-  { value: 0, label: "Hủy bỏ"},
+  // { value: 0, label: "Hủy bỏ"},
   { value: 1, label: "Chờ duyệt"},
   { value: 2, label: "Đang đăng tải"},
   { value: 3, label: "Bị từ chối"},
@@ -101,7 +101,7 @@ const roleId = {
   farmer: 4,
 }
 
-const roleNameVN = ["Khác","Quản trị viên","Người điều hành","Chủ đất","Nông dân"]
+const roleNameVN = ["Khác","Quản trị viên","Người điều hành","Chủ vườn","Nông dân"]
 
 const gender = ["Nam", "Nữ", "Khác"];
 

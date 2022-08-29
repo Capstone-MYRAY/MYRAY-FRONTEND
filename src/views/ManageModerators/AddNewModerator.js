@@ -140,7 +140,7 @@ function AddNewModerator() {
       gender: e.target.exampleRadios.value,
       address: e.target.address.value,
       phone_number: e.target.phone_number.value,
-      password: "123456",
+      password: "12345678",
       email: e.target.email.value,
       about_me: e.target.about_me.value,
     };

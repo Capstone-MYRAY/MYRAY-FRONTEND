@@ -227,7 +227,10 @@ function ListAreasScreen() {
       value: 0,
       label: area.commune,
     })
-
+    console.log(
+      "🚀 ~ file: List Area.js areaareaareaareaareaarea:",
+      area
+    );
 
     setSelectedArea(area);
     setIsOpentDetail(true);
@@ -333,9 +336,10 @@ function ListAreasScreen() {
       address: prop.address,
       status: typeVNStatus[prop.status],
       moderator:
-        prop.manager_of.length > 0
-          ? prop.manager_of[0].fullname
-          : "Chưa có người điều hành",
+        // prop.manager_of.length > 0
+        //   ? prop.manager_of[0].fullname
+        //   : "Chưa có người điều hành",
+        prop.manager_of.length > 0 ? prop.manager_of[prop.manager_of.length - 1].fullname : "Chưa có người điều hành",
       actions: (
         // we've added some custom button actions
         <div className="actions-right">
@@ -626,7 +630,7 @@ function ListAreasScreen() {
 
                                 <tr>
                                   <th md="1">Người điều hành:</th>
-                                  <td md="7">{selectedArea.commune}</td>
+                                  <td md="7">{selectedArea.manager_of.length > 0 ? selectedArea.manager_of[selectedArea.manager_of.length - 1].fullname : "Chưa có người điều hành"} </td>
                                 </tr>
                               </Table>
                             </Col>

@@ -36,7 +36,9 @@ import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import { useRecoilState } from "recoil";
 // import ImageUpload from "components/CustomUpload/ImageUpload";
 import { jobPostState } from "state/jobPostState";
+import { accountInfoState } from "state/authState";
 import jobPostApi from "api/jobPostApi";
+import accountApi from "api/accountApi";
 import {
   JobPostStatusVN,
   jobType,
@@ -46,11 +48,25 @@ import {
 
 function ListJobPostsScreen() {
   const [listJobPost, setListJobPosts] = useRecoilState(jobPostState);
-
+  const [userInfo, setUserInfo] = useRecoilState(accountInfoState);
+  const userAccountLocal = JSON.parse(localStorage.getItem('account'));
   useEffect(() => {
     const fetchListJobPost = async () => {
       try {
-        const jobPost = await jobPostApi.getAll(filtersParams);
+        const userAccount = await accountApi.get(userAccountLocal.id);
+        setUserInfo(userAccount.data);
+        let moderatorInfo = userAccount.data;
+         let filter = filtersParams;
+        if (moderatorInfo.area_accounts.length > 0) {
+          filter = {
+            ...filtersParams, 
+            province: moderatorInfo.area_accounts[moderatorInfo.area_accounts.length - 1].province,
+            district: moderatorInfo.area_accounts[moderatorInfo.area_accounts.length - 1].district, 
+            commune: moderatorInfo.area_accounts[moderatorInfo.area_accounts.length - 1].commune,
+          };
+        }
+         
+        const jobPost = await jobPostApi.getAll(filter);
         setListJobPosts(jobPost.data.list_object);
 
         //Pagination
@@ -70,7 +86,20 @@ function ListJobPostsScreen() {
 
   const fetchListJobPost = async (filters) => {
     try {
-      const jobPost = await jobPostApi.getAll(filters);
+      const userAccount = await accountApi.get(userAccountLocal.id);
+      setUserInfo(userAccount.data);
+      let moderatorInfo = userAccount.data;
+       let filter = filtersParams;
+      if (moderatorInfo.area_accounts.length > 0) {
+        filter = {
+          ...filtersParams, 
+          province: moderatorInfo.area_accounts[moderatorInfo.area_accounts.length - 1].province,
+          district: moderatorInfo.area_accounts[moderatorInfo.area_accounts.length - 1].district, 
+          commune: moderatorInfo.area_accounts[moderatorInfo.area_accounts.length - 1].commune,
+        };
+      }
+       
+      const jobPost = await jobPostApi.getAll(filter);
       setListJobPosts(jobPost.data.list_object);
 
       //Pagination
@@ -80,7 +109,7 @@ function ListJobPostsScreen() {
       setCanPreviousPage(jobPost.data.paging_metadata.has_previous_page);
       setPageIndex(jobPost.data.paging_metadata.page_index);
 
-      console.log("Success to fetch list JobPost. ", jobPost.data.list_object);
+      console.log("Success to fetch list JobPost. ", jobPost.data);
     } catch (err) {
       console.log("Failed to fetch list JobPost. ", err);
     }
@@ -178,8 +207,8 @@ function ListJobPostsScreen() {
       title: "Bạn có muốn duyệt bài đăng này không?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#4F9E1D",
+      confirmButtonColor: "#4F9E1D",
+      cancelButtonColor: "#d33",
       confirmButtonText: "Xác nhận",
       cancelButtonText: "Hủy",
     }).then((result) => {
@@ -591,7 +620,7 @@ function ListJobPostsScreen() {
                                   </tr>
 
                                   <tr>
-                                    <th md="1">Chủ đất:</th>
+                                    <th md="1">Chủ vườn:</th>
                                     <td md="10">
                                       {selectedJobPost.published_name
                                         ? selectedJobPost.published_name
@@ -718,7 +747,7 @@ function ListJobPostsScreen() {
                                   </tr>
 
                                   <tr>
-                                    <th md="1">Chủ đất:</th>
+                                    <th md="1">Chủ vườn:</th>
                                     <td md="7">
                                       {selectedJobPost.published_name
                                         ? selectedJobPost.published_name

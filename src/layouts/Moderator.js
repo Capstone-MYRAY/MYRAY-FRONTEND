@@ -65,8 +65,16 @@ useEffect(() => {
   const fetchListReports = async () => {
    
     try {
-       //Moderators 
-       const response = await reportApi.getAll(conditionDefault);
+       //Report 
+       const userAccount = await accountApi.get(userAccountLocal.id);
+      
+
+       let filters = {
+        params: {...conditionDefault}, 
+        areaId: userAccount.data.area_accounts[userAccount.data.area_accounts.length - 1].area_id
+      };
+      console.log("Reports filtersfiltersfiltersfilters: ", filters);
+       const response = await reportApi.getAll(filters);
        setListReports(response.data.list_object);
        console.log("Success to fetch list Reports. ", response.data.list_object);
 
@@ -77,9 +85,6 @@ useEffect(() => {
   
   fetchListReports();
 },[]);
-
-
-
 
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {

@@ -263,7 +263,7 @@ function ListGuidePostsScreen() {
 
   const btnStyle = { width: "max-content" };
 
-  const ckStyle = { width: "100%", height: "300px" };
+  const ckStyle = { width: "100%", };
 
   const editorConfiguration = {
     toolbar: {
@@ -550,7 +550,7 @@ function ListGuidePostsScreen() {
                                 </Row>
                               </Col>
                             </Row>
-                            <div className="d-flex justify-content-center">
+                            {/* <div className="d-flex justify-content-center"> */}
                               <Row>
                                 <Col md="12">
                                   <Button
@@ -561,7 +561,7 @@ function ListGuidePostsScreen() {
                                   </Button>
                                 </Col>
                               </Row>
-                            </div>
+                            {/* </div> */}
                           </Form>
                         </Col>
                       </Row>

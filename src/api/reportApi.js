@@ -2,9 +2,10 @@ import axiosClient from "./axiosClient";
 
 const reportApi = {
     // [Admin] Endpoint for get all report  with condition
-    getAll: (params) => {
-       const url = '/report';
-       return axiosClient.get(url, { params });
+    getAll: (filters) => {
+      let params =  filters.params;
+       const url = `/report/area/${filters.areaId}`;
+       return axiosClient.get(url, { params});
      },
    
      // [Admin] Endpoint for update report.
