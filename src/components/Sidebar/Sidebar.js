@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { NavLink } from "react-router-dom";
 // used for making the prop types of this component
@@ -7,13 +7,32 @@ import PropTypes from "prop-types";
 import PerfectScrollbar from "perfect-scrollbar";
 
 // reactstrap components
-import { Nav, Collapse, Button } from "reactstrap";
+import { Nav, Collapse } from "reactstrap";
 
 // core components
 import avatar from "assets/img/default-avatar.png";
 import logo from "myrayLogoGreen.png";
 import { accountInfoState } from "state/authState";
-
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Row,
+  Table,
+  Container,
+} from "reactstrap";
+import jobPostApi from "api/jobPostApi";
+import Swal from 'sweetalert2';
 var ps;
 
 function Sidebar(props) {
@@ -22,6 +41,44 @@ function Sidebar(props) {
   const userAccount = JSON.parse(localStorage.getItem('account'));
   const [userInfo, setUserInfo] = useRecoilState(accountInfoState);
   console.log("const userAccount = JSON.parse(localStorage.getItem('account'));" , userAccount);
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [configPoint, setConfigPoint] = useState({});
+
+  const closeEditModal = () => {
+    setIsOpenEdit(false);
+  };
+
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      
+      Swal.fire({  
+        icon: 'success',
+        title: 'Thành công',  
+        text: 'Cập nhật thành công!',  
+      });
+      
+      let paramsEarnPoint = {key: 'EarnPoint', value: e.target.EarnPoint.value}
+      const config = await jobPostApi.patchConfig(paramsEarnPoint);
+      console.log("paramsEarnPoint", config);
+  
+      let paramsPoint = {key: 'Point', value: e.target.Point.value}
+      const configPoint = await jobPostApi.patchConfig(paramsPoint);
+      console.log("configPointconfigPoint", configPoint);
+  
+    } catch (e) {
+      console.log("Failed to update setting. ", e);
+    }
+    
+    closeEditModal();
+  };
+
+  const openSetting = async () => {
+    const config = await jobPostApi.getConfig();
+    console.log("openSetting", config.data);
+    setConfigPoint(config.data);
+    setIsOpenEdit(true);
+  };
 
   const sidebar = React.useRef();
   React.useEffect(() => {
@@ -191,8 +248,14 @@ function Sidebar(props) {
                     </a>
                   </li>
                   <li>
+                    <a  onClick={openSetting}>
+                      <span className="sidebar-mini-icon">CĐ</span>
+                      <span className="sidebar-normal">Cài đặt</span>
+                    </a>
+                  </li>
+                  <li>
                     <a href="/auth" onClick={() => localStorage.removeItem('user')}>
-                      <span className="sidebar-mini-icon">SO</span>
+                      <span className="sidebar-mini-icon">ĐX</span>
                       <span className="sidebar-normal">Đăng xuất</span>
                     </a>
                   </li>
@@ -203,6 +266,90 @@ function Sidebar(props) {
           <Nav>{createLinks(props.routes)}</Nav>
         </div>
       </div>
+
+      <Modal
+            isOpen={isOpenEdit}
+            size="lg"
+            style={{ maxWidth: "500px", width: "100%" }}
+            className="modal-dialog modal-dialog-centered"
+          >
+            <ModalHeader>Cài đặt hệ thống:</ModalHeader>
+            <ModalBody>
+              <Row>
+                <Col xs={12} md={12}>
+                  <div className="content mt-1">
+                    <Row>
+                      <Col md="12">
+                        <h6>Cài đặt điểm thưởng</h6>
+                        <Form
+                          onSubmit={handleUpdateSubmit}
+                          className="form-horizontal"
+                          method="get"
+                        >
+                          <Row>
+                            <Label className="font-weight-bold" sm="5">Số tiền (VND): <code>*</code>:</Label>
+                            <Col sm="7" md="7">
+                              <FormGroup>
+                                <Row className="">
+                                  <Input
+                                    cols="80"
+                                    placeholder="VND"
+                                    rows="20"
+                                    type="text"
+                                    defaultValue={configPoint.earn_point}
+                                    name={"EarnPoint"}
+                                  />
+                                </Row>
+                              </FormGroup>
+                            </Col>
+                          </Row>
+
+                          <Row>
+                            <Label className="font-weight-bold" sm="5">Số điểm nhận được: <code>*</code>:</Label>
+                            <Col sm="7" md="7">
+                              <FormGroup>
+                                <Row className="">
+                                  <Input
+                                    cols="80"
+                                    placeholder=""
+                                    rows="20"
+                                    type="text"
+                                    defaultValue={configPoint.point}
+                                    name={"Point"}
+                                  />
+                                </Row>
+                              </FormGroup>
+                            </Col>
+                          </Row>
+
+                          <Row>
+                            <Col sm="12">
+                              <div className="d-flex justify-content-center">
+                                <Button
+                                  type="submit"
+                                  className="mr-2"
+                                  color="primary"
+                                >
+                                  Cập nhật
+                                </Button>
+                                <Button
+                                  className="ml-2"
+                                  onClick={closeEditModal}
+                                  color="danger"
+                                >
+                                  Đóng
+                                </Button>
+                              </div>
+                            </Col>
+                          </Row>
+                        </Form>
+                      </Col>
+                    </Row>
+                  </div>
+                </Col>
+              </Row>
+            </ModalBody>
+          </Modal>
     </>
   );
 }

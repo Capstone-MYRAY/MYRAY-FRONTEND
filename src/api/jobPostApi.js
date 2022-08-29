@@ -22,6 +22,17 @@ const jobPostApi = {
     return axiosClient.patch(`/jobpost/rejectjob`, params );
   },
 
+  //config
+  // [Admin] Endpoint for get config
+  getConfig: () => {
+    return axiosClient.get(`/config`);
+  },
+
+  // [Admin] Endpoint for update config
+  patchConfig: (params) => {
+    return axiosClient.patch(`/config?key=${params.key}&value=${params.value}`);
+  },
+
 };
 
 export default jobPostApi;

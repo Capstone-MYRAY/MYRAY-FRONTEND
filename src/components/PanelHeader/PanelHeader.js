@@ -17,7 +17,24 @@
 import React from "react";
 // used for making the prop types of this component
 import PropTypes from "prop-types";
-
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Row,
+  Table,
+  Container,
+} from "reactstrap";
 function PanelHeader(props) {
   return (
     <div
@@ -27,7 +44,17 @@ function PanelHeader(props) {
       }
     >
       {props.content}
+      <Button
+              // onClick={editAlumnus.bind(this, prop)}
+              className="btn-icon btn-round"
+              color="success"
+              size="sm"
+            >
+              <i className="fa fa-edit" />
+            </Button>
     </div>
+
+    
   );
 }
 

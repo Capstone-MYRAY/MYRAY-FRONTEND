@@ -22,7 +22,7 @@ const moderatorApi = {
 
  // [Admin] Endpoint for Admin Deactivation a moderator.
  delete: (accountId) => {
-  return axiosClient.delete(`/account/${accountId}`);
+  return axiosClient.delete(`/account/ban/${accountId}`);
 },
 
  // [Admin] Endpoint for create moderator

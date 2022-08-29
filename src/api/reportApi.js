@@ -4,8 +4,12 @@ const reportApi = {
     // [Admin] Endpoint for get all report  with condition
     getAll: (filters) => {
       let params =  filters.params;
-       const url = `/report/area/${filters.areaId}`;
-       return axiosClient.get(url, { params});
+       return axiosClient.get(`/report/area/${filters.areaId}`, { params });
+     },
+
+    getByReportedID: (filters) => {
+      let params =  filters.params;
+       return axiosClient.get(`/report/reported/${filters.reportedId}`, { params });
      },
    
      // [Admin] Endpoint for update report.

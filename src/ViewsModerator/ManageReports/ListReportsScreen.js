@@ -56,13 +56,21 @@ function ListReportsScreen() {
     page: 1,
     "page-size": 20,
   });
-
+const userAccountLocal = JSON.parse(localStorage.getItem('account'));
   //-----------------------------Call API to get list all Reports, then set to Reports state
   useEffect(() => {
     const fetchListReports = async () => {
       try {
         //Moderators do not manage area
-        const response = await reportApi.getAll(filtersParams);
+        const userAccount = await accountApi.get(userAccountLocal.id);
+      
+
+       let filters = {
+        params: {...filtersParams}, 
+        areaId: userAccount.data.area_accounts[userAccount.data.area_accounts.length - 1].area_id
+      };
+      console.log("Reports filtersfiltersfiltersfilters: ", filters);
+       const response = await reportApi.getAll(filters);
         setListReports(response.data.list_object);
 
         //Pagination
@@ -86,7 +94,15 @@ function ListReportsScreen() {
   const fetchListReports = async (filtersParams) => {
     try {
       //Reports
-      const response = await reportApi.getAll(filtersParams);
+      const userAccount = await accountApi.get(userAccountLocal.id);
+      
+
+       let filters = {
+        params: {...filtersParams}, 
+        areaId: userAccount.data.area_accounts[userAccount.data.area_accounts.length - 1].area_id
+      };
+      console.log("Reports filtersfiltersfiltersfilters: ", filters);
+       const response = await reportApi.getAll(filters);
       setListReports(response.data.list_object);
 
       //Pagination
@@ -139,7 +155,7 @@ function ListReportsScreen() {
       reportedAccount.data
     );
 
-    const reportedAccountHistory = await reportApi.getAll({...filtersParams, reportedId: report.reported_id});
+    const reportedAccountHistory = await reportApi.getByReportedID({params: {...filtersParams}, reportedId: report.reported_id});
     console.log(
       "🚀 ~ file: ListReportsScreen ~ reportedAccountHistory ~ response",
       reportedAccountHistory.data
